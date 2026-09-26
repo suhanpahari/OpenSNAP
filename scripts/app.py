@@ -43,12 +43,15 @@ class App:
         self.build_gui()
         self.load(args.scene)
         self.server.scene.on_click()(self.on_click)
+        if args.demo:
+            self.segment_everything()
 
     def build_gui(self):
         g = self.server.gui
-        g.add_markdown("**OpenSNAP** — click a point to segment & name the object. "
-                       "Shift-click adds clicks to the current object.")
+        g.add_markdown("**OpenSNAP** — click an object to select it: it is segmented and its name appears. "
+                       "Shift-click refines the selection.")
         self.status = g.add_markdown("_loading…_")
+        self.keep = g.add_checkbox("keep previous objects", initial_value=False)
         self.use_vlm = g.add_checkbox("VLM naming", initial_value=self.namer is not None, disabled=self.namer is None)
         self.vlm_mode = g.add_dropdown("VLM mode", ("choose", "free"), initial_value="choose")
         self.point_size = g.add_slider("point size", 0.002, 0.05, 0.001, self.args.point_size)
@@ -56,7 +59,7 @@ class App:
         g.add_button("New object").on_click(lambda _: self.new_object())
         g.add_button("Clear all").on_click(lambda _: self.clear())
         with g.add_folder("Segment everything"):
-            g.add_button("Run").on_click(lambda _: self.run_bg(self.segment_everything))
+            g.add_button("Show segments").on_click(lambda _: self.run_bg(self.segment_everything))
         with g.add_folder("Open-vocabulary labels"):
             self.vocab_box = g.add_text("classes", "wall, floor, chair, table, sofa, bed, cabinet, door, window, other")
             g.add_button("Label scene").on_click(lambda _: self.run_bg(self.label_scene))
@@ -82,8 +85,12 @@ class App:
             self.m.encode(self.coord, self.color, normal, d.get("strength"))
         self.props = None
         self.base_rgb = (self.color if self.color is not None else np.full_like(self.coord, 180)).astype(np.uint8)
-        self.objects, self.clicks, self.nodes = [], [], {}
+        self.objects, self.clicks, self.nodes, self.seg_id = [], [], {}, None
         self.draw_base()
+        lo, hi = self.coord.min(0), self.coord.max(0)
+        mid = (lo + hi) / 2
+        self.server.initial_camera.look_at = tuple(mid)
+        self.server.initial_camera.position = tuple(mid + np.array([0.35, -0.75, 0.75]) * (hi - lo).max())
         self.say(f"{os.path.basename(path.rstrip('/'))}: {len(self.coord):,} points, encoded in {time.time() - t:.1f}s")
 
     def draw_base(self, rgb=None):
@@ -106,27 +113,33 @@ class App:
         idx = self.pick(event.ray_origin, event.ray_direction)
         if idx is None:
             return
-        if event.modifier is None and self.clicks:
+        refine = event.modifier is not None and self.clicks and self.seg_id is None
+        if not refine:
             self.new_object()
         self.clicks.append(idx)
         self.run_bg(self.update_current)
 
     def update_current(self):
+        k = len(self.objects) if self.keep.value else 0
+        if not self.keep.value:
+            self.remove_objects()
+        seg = -1 if self.seg_id is None else int(self.seg_id[self.clicks[-1]])
         with self.lock:
-            props = self.m.click(self.clicks)
-            mask = (props.logits[0] > 0)[self.m.scene["inverse"]].cpu().numpy()
-            name, conf = self.name_fast(props, 0)
-        k = len(self.objects)
+            if seg >= 0:
+                props, i = self.props, seg
+            else:
+                props, i = self.m.click(self.clicks), 0
+            mask = (props.logits[i] > 0)[self.m.scene["inverse"]].cpu().numpy()
+            name, conf = self.name_fast(props, i)
         self.draw_object(k, mask, f"{name} ({conf:.2f})", clicks=self.clicks)
-        self.say(f"object {k}: **{name}** · IoU≈{props.scores[0]:.2f} · {mask.sum():,} pts")
+        self.say(f"selected: **{name}** · IoU≈{props.scores[i]:.2f} · {mask.sum():,} pts")
         if self.use_vlm.value and self.namer is not None:
-            self.say(f"object {k}: **{name}** · asking VLM…")
+            self.say(f"selected: **{name}** · asking VLM…")
             with self.lock:
-                best, ranked, reply = self.vlm_name(props, 0)
+                best, ranked, reply = self.vlm_name(props, i)
             self.draw_object(k, mask, f"{best} ({ranked[0][1]:.2f})", clicks=self.clicks)
             alts = ", ".join(f"{n} {p:.2f}" for n, p in ranked[1:4])
-            self.say(f"object {k}: **{best}** · VLM: “{reply.strip()}” · alt: {alts}")
-        self.current = (mask, props)
+            self.say(f"selected: **{best}** · VLM: “{reply.strip()}” · alt: {alts}")
 
     def vlm_name(self, props, i):
         if self.vlm_mode.value == "choose":
@@ -160,11 +173,15 @@ class App:
             self.objects.append(self.clicks)
         self.clicks = []
 
-    def clear(self):
+    def remove_objects(self):
         for handles in self.nodes.values():
             for h in handles:
                 h.remove()
-        self.nodes, self.objects, self.clicks = {}, [], []
+        self.nodes = {}
+
+    def clear(self):
+        self.remove_objects()
+        self.objects, self.clicks, self.seg_id = [], [], None
         self.draw_base()
 
     def ensure_props(self):
@@ -175,21 +192,21 @@ class App:
         return self.props
 
     def segment_everything(self):
+        """Colour all segments (no names); clicking a segment then names it."""
         self.clear()
         props = self.ensure_props()
         inv = self.m.scene["inverse"]
-        order = props.scores.argsort(descending=True).tolist()
-        for n, i in enumerate(order):
-            with self.lock:
-                mask = (props.logits[i] > 0)[inv].cpu().numpy()
-                if self.use_vlm.value and self.namer is not None:
-                    name, ranked, _ = self.vlm_name(props, i)
-                    conf = ranked[0][1]
-                else:
-                    name, conf = self.name_fast(props, i)
-            self.draw_object(512 + n, mask, f"{name} ({conf:.2f})")
-            self.say(f"segment everything: {n + 1}/{len(order)}")
-        self.say(f"segment everything: {len(order)} objects")
+        seg = np.full(len(self.coord), -1)
+        best = np.zeros(len(self.coord), np.float32)
+        for i in props.scores.argsort().tolist():
+            prob = props.logits[i].sigmoid()[inv].cpu().numpy() * float(props.scores[i])
+            m = (prob > 0.5 * float(props.scores[i])) & (prob > best)
+            seg[m], best[m] = i, prob[m]
+        self.seg_id = seg
+        rgb = self.base_rgb * 0.3 + 255 * 0.35
+        rgb[seg >= 0] = PALETTE[seg[seg >= 0] % len(PALETTE)] * 0.75 + self.base_rgb[seg >= 0] * 0.25
+        self.draw_base(rgb.astype(np.uint8))
+        self.say(f"{len(props.scores)} segments — click one to name it")
 
     def label_scene(self):
         labels = [c.strip() for c in self.vocab_box.value.split(",") if c.strip()]
@@ -229,6 +246,7 @@ def main():
     ap.add_argument("--point_size", type=float, default=0.015)
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--port", type=int, default=8080)
+    ap.add_argument("--demo", action="store_true", help="segment & name everything on start")
     args = ap.parse_args()
     App(args)
     while True:

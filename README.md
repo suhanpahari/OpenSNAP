@@ -75,18 +75,21 @@ export PYTHONNOUSERSITE=1
 
 ## Interactive viewer (viser)
 
+![viewer](assets/gallery.png)
+
 ```bash
 cd opensnap
 ../env/bin/python scripts/app.py --scene ../SNAP/data_examples/ScanNet/scene0011_00   # or .pth/.ply/.pcd/.bin/.npy
 # open http://localhost:8080
 ```
 
-- **Click** a point → SNAP mask + instant 3D name, then VLM name (choose/free mode). **Shift-click** adds clicks to refine the current object.
-- **Segment everything** → all objects with names.
+- **Click** an object → it is segmented and **only then** its name appears (instant 3D name, then VLM-verified name). **Shift-click** refines the selection; tick *keep previous objects* to collect several.
+- **Show segments** → colours every SNAP segment (no names); click a segment to name it.
 - **Open-vocabulary labels** → type any class list, colour the scene.
 - **Text query** → e.g. "something to sit on", highlights best-matching objects.
 
 Options: `--vlm Qwen/Qwen2.5-VL-7B-Instruct`, `--vlm ''` (no VLM), `--openscene_ckpt ''` (SNAP only, e.g. outdoor LiDAR with `--domain Outdoor`).
+Screenshots are produced by `scripts/capture_demo.py` (headless Chromium via Playwright).
 
 ## Python API
 
