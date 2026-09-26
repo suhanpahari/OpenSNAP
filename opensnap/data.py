@@ -46,3 +46,13 @@ def estimate_normals(coord, knn=20):
     pcd.estimate_normals(o3d.geometry.KDTreeSearchParamKNN(knn))
     pcd.orient_normals_towards_camera_location(coord.mean(0) + np.array([0, 0, 1.0]))
     return np.asarray(pcd.normals, np.float32)
+
+
+def lvis_vocab():
+    return [l.strip() for l in open(os.path.join(os.path.dirname(__file__), "vocab", "lvis.txt")) if l.strip()]
+
+
+def prior_vocab(name="snap"):
+    """Name-proposal vocabulary: SNAP's training classes, optionally extended with generic LVIS names."""
+    v = snap_train_vocab()
+    return v if name == "snap" else sorted(set(v) | set(lvis_vocab()))

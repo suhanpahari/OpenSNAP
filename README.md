@@ -64,6 +64,24 @@ Clicks are sampled per scene on non-structural GT classes; the free-form name is
 
 Take-aways: a small VLM is poor at *naming* raw point-cloud renders (13–23%), but good at *choosing* among 3D-proposed names (63% on ScanNet). Out of domain (Matterport) the VLM adds **+2–4 points** over 3D-only and the open pipeline matches/beats the closed-vocabulary upper bound; in-domain (ScanNet) the 3D evidence alone is already as good.
 
+
+### Does it generalise to unseen categories? (honest check)
+
+536 simulated clicks on **only the 63 Matterport-160 classes absent from SNAP's training vocabulary**, all 406 test regions (never used for tuning). *Open* methods propose names from SNAP vocabulary ∪ 1,198 generic [LVIS](https://www.lvisdataset.org/) names (`--prior snap+lvis`); the eval label list is never shown to them.
+
+| method | vocab | acc | mAcc |
+|---|---|---|---|
+| SNAP (original text head) | open | 8.0 | 1.9 |
+| VLM only (Qwen2.5-VL-3B, free naming) | open | 7.3 | 1.9 |
+| OpenSNAP-3D | open | 14.7 | 8.5 |
+| **3D-Propose-VLM-Choose** | open | **15.5** | **8.9** |
+| OpenScene feature at clicked point | closed (eval labels) | 19.8 | 10.6 |
+| OpenSNAP (mask-pooled) | closed (eval labels) | 14.9 | 6.7 |
+
+- vs SNAP, OpenSNAP roughly **doubles accuracy and 4.7× mAcc on unseen classes**, and can output words SNAP cannot (correct hits include *chandelier, pool table, faucet, footstool, television set*).
+- But many "unseen" classes are **synonyms** of seen ones (sofa/couch, television/tv, garbage bin/trash bin, railing/stair rail) — most gains come from those; truly novel concepts (vase, sculpture, utensil, headboard, drawer) are still ~0%.
+- On unseen classes **mask pooling does not beat OpenScene's point feature** (14.9 vs 19.8 with the same label list). Single-click SNAP masks have 42.7% mean IoU on these objects; when the mask is good (IoU ≥ 0.5) both reach 26%. The open-vocabulary knowledge comes from OpenScene/CLIP; SNAP contributes object extent, which helps seen classes (tables above) but not yet unseen ones.
+
 ## Install
 
 ```bash

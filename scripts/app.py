@@ -11,7 +11,7 @@ import viser
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap.core import Config, OpenSNAP  # noqa: E402
-from opensnap.data import estimate_normals, snap_train_vocab  # noqa: E402
+from opensnap.data import estimate_normals, prior_vocab, snap_train_vocab  # noqa: E402
 from opensnap.io import load_any  # noqa: E402
 from opensnap.snap_model import SnapModel  # noqa: E402
 from opensnap.text import TextEncoder  # noqa: E402
@@ -31,9 +31,9 @@ class App:
             from opensnap.openscene_model import OpenSceneModel
             dense = OpenSceneModel(args.openscene_ckpt, args.feature)
             clip_dense = clip_snap if dense.clip_name == "ViT-B/32" else TextEncoder(dense.clip_name)
-        self.vocab = snap_train_vocab()
+        self.vocab = prior_vocab(args.prior)
         self.m = OpenSNAP(SnapModel(args.snap_ckpt, domain=args.domain), clip_snap, dense, clip_dense,
-                          Config(alpha=args.alpha), anchors=self.vocab)
+                          Config(alpha=args.alpha), anchors=snap_train_vocab())
         self.namer = None
         if args.vlm:
             from opensnap.namer import VLMNamer
@@ -242,6 +242,7 @@ def main():
     ap.add_argument("--feature", default="lseg")
     ap.add_argument("--vlm", default="Qwen/Qwen2.5-VL-3B-Instruct", help="'' to disable")
     ap.add_argument("--alpha", type=float, default=0.7)
+    ap.add_argument("--prior", default="snap+lvis", choices=["snap", "snap+lvis"], help="name-proposal vocabulary")
     ap.add_argument("--normals", type=int, default=0)
     ap.add_argument("--point_size", type=float, default=0.015)
     ap.add_argument("--host", default="0.0.0.0")

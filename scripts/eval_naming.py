@@ -11,15 +11,15 @@ import torch.multiprocessing as mp
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap.core import SNAP_TEMPLATES, Config, Proposals  # noqa: E402
-from opensnap.data import LABELSETS, load_scene, scene_files, snap_train_vocab  # noqa: E402
+from opensnap.data import LABELSETS, load_scene, prior_vocab, scene_files, snap_train_vocab  # noqa: E402
 
 STRUCTURE = {"wall", "floor", "ceiling", "other", "otherfurniture", "objects", "misc", "void", "unlabeled"}
 OPEN_METHODS = ["snap", "opensnap_3d", "vlm", "rav", "vlm_choose", "choose"]
 CLOSED_METHODS = ["openscene_point", "opensnap_closed"]
 
 
-def sample_clicks(gt, labels, k, rng):
-    classes = [c for c in np.unique(gt) if c != 255 and labels[c] not in STRUCTURE]
+def sample_clicks(gt, labels, k, rng, only=None):
+    classes = [c for c in np.unique(gt) if c != 255 and labels[c] not in STRUCTURE and (only is None or labels[c] in only)]
     rng.shuffle(classes)
     return [(int(rng.choice(np.nonzero(gt == c)[0])), int(c)) for c in classes[:k]]
 
@@ -35,6 +35,8 @@ def worker(rank, gpu, files, args, queue):
     dense = OpenSceneModel(args.openscene_ckpt, args.feature)
     clip_dense = clip_snap if dense.clip_name == "ViT-B/32" else TextEncoder(dense.clip_name)
     anchors = snap_train_vocab()
+    prior = prior_vocab(args.prior)
+    only = {l for l in LABELSETS[args.dataset] if l.lower() not in set(anchors)} if args.unseen_only else None
     model = OpenSNAP(SnapModel(args.snap_ckpt), clip_snap, dense, clip_dense, Config(), anchors=anchors)
     namer = VLMNamer(args.vlm, style=args.vlm_style) if args.vlm else None
     judge = TextEncoder(args.judge)
@@ -54,23 +56,23 @@ def worker(rank, gpu, files, args, queue):
         np.random.seed(abs(hash(os.path.basename(f))) % 2 ** 31)
         model.encode(coord, color)
         dense_prob = model.dense_probs(labels)
-        for idx, c in sample_clicks(gt, labels, args.clicks, rng):
+        for idx, c in sample_clicks(gt, labels, args.clicks, rng, only):
             props = model.click([idx])
             mask = (props.logits[0] > 0)[model.scene["inverse"]].cpu().numpy()
             inter = (mask & (gt == c)).sum()
             rec = dict(scene=os.path.basename(f), gt=labels[c], mask_iou=float(inter / max((mask | (gt == c)).sum(), 1)))
             rec["snap"] = snap_vocab[int((props.tokens @ snap_text.T).argmax())]
-            p = model.mask_probs(props, anchors)[0]
-            rec["opensnap_3d"] = anchors[int(p.argmax())]
+            p = model.mask_probs(props, prior)[0]
+            rec["opensnap_3d"] = prior[int(p.argmax())]
             rec["openscene_point"] = labels[int(dense_prob[model.scene["inverse"][idx]].argmax())]
             rec["opensnap_closed"] = labels[int(model.mask_probs(props, labels)[0].argmax())]
             if namer is not None:
                 t = time.time()
-                best, ranked, reply = namer.name(model, props, 0, coord, color, prior_vocab=anchors)
+                best, ranked, reply = namer.name(model, props, 0, coord, color, prior_vocab=prior)
                 from opensnap.namer import parse
                 vlm = parse(reply)
                 rec.update(vlm=vlm[0] if vlm else "object", rav=best, vlm_reply=reply, vlm_sec=time.time() - t)
-                best, _, vlm_pick = namer.name_choose(model, props, 0, coord, color, anchors)
+                best, _, vlm_pick = namer.name_choose(model, props, 0, coord, color, prior)
                 rec.update(vlm_choose=vlm_pick, choose=best)
             for m in OPEN_METHODS:
                 if m in rec:
@@ -90,6 +92,8 @@ def main():
     ap.add_argument("--vlm_style", default="highlight", choices=["highlight", "isolate"])
     ap.add_argument("--judge", default="ViT-L/14@336px")
     ap.add_argument("--clicks", type=int, default=5)
+    ap.add_argument("--prior", default="snap", choices=["snap", "snap+lvis"])
+    ap.add_argument("--unseen_only", action="store_true")
     ap.add_argument("--gpus", default="0,1")
     ap.add_argument("--procs_per_gpu", type=int, default=2)
     ap.add_argument("--limit", type=int, default=0)
