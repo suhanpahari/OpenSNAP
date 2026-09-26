@@ -1,0 +1,48 @@
+import glob
+import os
+
+import numpy as np
+import torch
+
+from . import paths
+
+paths.add(paths.OPENSCENE_DIR)
+from dataset.label_constants import SCANNET_LABELS_20, MATTERPORT_LABELS_21, MATTERPORT_LABELS_160  # noqa: E402
+
+LABELSETS = {
+    "scannet": [*SCANNET_LABELS_20[:-1], "other"],
+    "matterport": list(MATTERPORT_LABELS_21),
+    "matterport160": list(MATTERPORT_LABELS_160),
+}
+DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160"}
+
+
+def snap_train_vocab():
+    """Class names SNAP's text head was supervised on (ScanNet200, SemanticKITTI, STPLS3D, DALES)."""
+    paths.add(paths.SNAP_DIR)
+    from datasets.demo import DemoDatset
+    d = DemoDatset.__new__(DemoDatset)
+    DemoDatset.__init__(d, domain="Indoor")
+    names = d.labels_scannet + d.labels_kitti + d.labels_stpls3d + d.labels_dales
+    return sorted({n.lower().replace("_", " ") for n in names})
+
+
+def scene_files(dataset, split, root=None):
+    root = root or os.path.join(paths.DOWNLOADS, "data", DATA_DIRS[dataset])
+    return sorted(glob.glob(os.path.join(root, split, "*.pth")))
+
+
+def load_scene(path):
+    coord, color, label = torch.load(path, weights_only=False)
+    label = np.asarray(label).astype(np.int64)
+    label[(label < 0) | (label == 255)] = 255
+    color = None if np.isscalar(color) else (np.asarray(color) + 1.0) * 127.5
+    return np.asarray(coord, np.float32), color, label
+
+
+def estimate_normals(coord, knn=20):
+    import open3d as o3d
+    pcd = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(coord.astype(np.float64)))
+    pcd.estimate_normals(o3d.geometry.KDTreeSearchParamKNN(knn))
+    pcd.orient_normals_towards_camera_location(coord.mean(0) + np.array([0, 0, 1.0]))
+    return np.asarray(pcd.normals, np.float32)

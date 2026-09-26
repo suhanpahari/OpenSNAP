@@ -1,0 +1,68 @@
+diff --git a/src/3rdparty/concurrent_unordered_map.cuh b/src/3rdparty/concurrent_unordered_map.cuh
+index ed8e1b2..75479f3 100644
+--- a/src/3rdparty/concurrent_unordered_map.cuh
++++ b/src/3rdparty/concurrent_unordered_map.cuh
+@@ -17,6 +17,7 @@
+ #ifndef CONCURRENT_UNORDERED_MAP_CUH
+ #define CONCURRENT_UNORDERED_MAP_CUH
+ 
++#include <thrust/execution_policy.h>
+ #include <cudf/detail/nvtx/ranges.hpp>
+ #include <hash/hash_allocator.cuh>
+ #include <hash/helper_functions.cuh>
+diff --git a/src/convolution_kernel.cuh b/src/convolution_kernel.cuh
+index aed7227..3b0eab1 100644
+--- a/src/convolution_kernel.cuh
++++ b/src/convolution_kernel.cuh
+@@ -25,6 +25,7 @@
+ #ifndef CONVOLUTION_CUH
+ #define CONVOLUTION_CUH
+ 
++#include <thrust/execution_policy.h>
+ #include <array>
+ #include <vector>
+ 
+diff --git a/src/coordinate_map_gpu.cu b/src/coordinate_map_gpu.cu
+index fb7325d..7e46156 100644
+--- a/src/coordinate_map_gpu.cu
++++ b/src/coordinate_map_gpu.cu
+@@ -24,6 +24,8 @@
+  * Networks", CVPR'19 (https://arxiv.org/abs/1904.08755) if you use any part
+  * of the code.
+  */
++#include <thrust/unique.h>
++#include <thrust/remove.h>
+ #include "coordinate_map_functors.cuh"
+ #include "coordinate_map_gpu.cuh"
+ #include "gpu.cuh"
+diff --git a/src/coordinate_map_gpu.cuh b/src/coordinate_map_gpu.cuh
+index 15228c4..9a2aed1 100644
+--- a/src/coordinate_map_gpu.cuh
++++ b/src/coordinate_map_gpu.cuh
+@@ -136,9 +136,11 @@ public:
+       LOG_DEBUG("Reserve map of",
+                 compute_hash_table_size(size, m_hashtable_occupancy),
+                 "for concurrent_unordered_map of size", size);
+-      m_map = map_type::create(
++      auto new_map = map_type::create(
+           compute_hash_table_size(size, m_hashtable_occupancy),
+           m_unused_element, m_unused_key, m_hasher, m_equal, m_map_allocator);
++      auto deleter = new_map.get_deleter();
++      m_map = std::shared_ptr<map_type>(new_map.release(), deleter);
+       LOG_DEBUG("Done concurrent_unordered_map creation");
+       CUDA_TRY(cudaStreamSynchronize(0));
+       m_capacity = size;
+diff --git a/src/spmm.cu b/src/spmm.cu
+index 8891a56..2c18d64 100644
+--- a/src/spmm.cu
++++ b/src/spmm.cu
+@@ -24,6 +24,9 @@
+  * Networks", CVPR'19 (https://arxiv.org/abs/1904.08755) if you use any part
+  * of the code.
+  */
++#include <thrust/execution_policy.h>
++#include <thrust/reduce.h>
++#include <thrust/sort.h>
+ #include "gpu.cuh"
+ #include "math_functions.cuh"
+ 

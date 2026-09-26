@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+results/tune/
+results/tmp_*
+results/*.log
+*.pth
+*.pth.tar

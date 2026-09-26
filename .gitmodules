@@ -1,0 +1,6 @@
+[submodule "third_party/SNAP"]
+	path = third_party/SNAP
+	url = https://github.com/neu-vi/SNAP
+[submodule "third_party/openscene"]
+	path = third_party/openscene
+	url = https://github.com/pengsongyou/openscene
