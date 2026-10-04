@@ -56,7 +56,8 @@ All numbers are produced by the scripts in this repo; every table, with its sour
 Unfiltered results from the viewer on 17 scenes from four datasets (none of them SNAP's example scenes). Each grid shows
 10 text queries (★ = word absent from SNAP's training vocabulary), 4 randomly chosen objects clicked and named
 (the VLM's choice shown below), open-vocabulary labels with the scene's own query words, and segment-everything.
-Failures are kept: flat objects on walls (paintings, whiteboards, maps, clocks) are the main failure mode.
+In query tiles the best match is red and other strong matches orange; when no stored object matches confidently the
+text decoder's mask is shown instead. Failures are kept (e.g. `rug` → sofa, `sideboard` → coffee table first).
 
 <details open><summary><b>Replica</b> (8 scenes, held out from all training)</summary>
 
