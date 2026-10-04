@@ -113,6 +113,7 @@ _Source: aux/text_*.json (104 scenes)_
 | trained v4 (own text decoder), 4k | 10.9 | 20.7 | 8.2 | 0.4 |
 | trained v4, 8k | 15.9 | 28.1 | 12.1 | 3.4 |
 | trained v4, 12k | 17.9 | 32.1 | 14.1 | 2.2 |
+| trained v4, 16k | 18.2 | 32.8 | 13.8 | 2.7 |
 
 Tail classes are held out of text training.
 
