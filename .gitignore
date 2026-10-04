@@ -6,3 +6,7 @@ results/*.log
 *.pth
 *.pth.tar
 .env
+assets/video/*_raw/
+assets/gallery_src*/
+assets/openvocab/
+assets/replica/
