@@ -11,22 +11,22 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap.data import snap_train_vocab  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC, DST = os.path.join(ROOT, "assets", "gallery_src"), os.path.join(ROOT, "assets", "openvocab_gallery")
-FONT = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 22)
-SMALL = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+SRC, DST = os.path.join(ROOT, "assets", "gallery_src2"), os.path.join(ROOT, "assets", "openvocab_gallery")
+FONT = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 19)
+SMALL = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 16)
 CROP = (0.20, 0.10, 0.78, 0.97)
 
 
-def tile(path, caption, sub="", w=560, h=470):
+def tile(path, caption, sub="", w=448, h=376):
     im = Image.open(path).convert("RGB")
     W, H = im.size
     im = im.crop((int(CROP[0] * W), int(CROP[1] * H), int(CROP[2] * W), int(CROP[3] * H))).resize((w, h))
     d = ImageDraw.Draw(im)
-    d.rectangle((0, 0, w, 38), fill=(25, 25, 25))
-    d.text((10, 7), caption, fill="white", font=FONT)
+    d.rectangle((0, 0, w, 32), fill=(25, 25, 25))
+    d.text((8, 6), caption, fill="white", font=FONT)
     if sub:
-        d.rectangle((0, h - 30, w, h), fill=(25, 25, 25))
-        d.text((10, h - 26), sub, fill=(200, 200, 200), font=SMALL)
+        d.rectangle((0, h - 26, w, h), fill=(25, 25, 25))
+        d.text((8, h - 23), sub, fill=(200, 200, 200), font=SMALL)
     return im
 
 
@@ -51,8 +51,8 @@ def statuses(log):
 def main():
     vocab = set(snap_train_vocab())
     queries = json.load(open(os.path.join(ROOT, "..", "downloads", "demo", "queries.json")))
-    st = {**statuses(os.path.join(ROOT, "..", "downloads", "demo", "lane_gallery_a.log")),
-          **statuses(os.path.join(ROOT, "..", "downloads", "demo", "lane_gallery_b.log"))}
+    st = {**statuses(os.path.join(ROOT, "..", "downloads", "demo", "lane2_gallery_a.log")),
+          **statuses(os.path.join(ROOT, "..", "downloads", "demo", "lane2_gallery_b.log"))}
     os.makedirs(DST, exist_ok=True)
     made = []
     for scene, qs in queries.items():
@@ -73,8 +73,8 @@ def main():
             if os.path.exists(p):
                 tiles.append(tile(p, cap))
         if tiles:
-            out = os.path.join(DST, f"{scene}.png")
-            grid(tiles).save(out, optimize=True)
+            out = os.path.join(DST, f"{scene}.jpg")
+            grid(tiles).save(out, quality=82, optimize=True, progressive=True)
             made.append((scene, len(tiles), out))
     for m in made:
         print(*m)

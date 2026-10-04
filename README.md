@@ -1,127 +1,122 @@
-# OpenSNAP: Open-Vocabulary Querying over 3D Point Clouds
+# OpenSNAP: Open-Vocabulary Segment-and-Query for 3D Point Clouds
 
 <p align="center">
   <img src="assets/video/opensnap_explainer.gif" width="90%" alt="OpenSNAP system explainer"><br>
-  <em>System explainer (60 s) — full-resolution video: <a href="assets/video/opensnap_explainer.mp4">assets/video/opensnap_explainer.mp4</a></em>
+  <em>System explainer (60 s) — full video: <a href="assets/video/opensnap_explainer.mp4">assets/video/opensnap_explainer.mp4</a></em>
 </p>
 
 <p align="center">
-  <img src="assets/gallery.png" width="90%" alt="Interactive viewer: click to name, text queries, open-vocabulary labels"><br>
-  <em>Interactive viewer: click an object to get its mask and name, text queries, open-vocabulary labels.</em>
+  <img src="assets/gallery.png" width="90%" alt="Interactive viewer"><br>
+  <em>Viewer: click an object → mask + name; type a phrase → its objects; type a class list → open-vocabulary labels.</em>
 </p>
 
-**OpenSNAP materialises a point cloud into a queryable object relation with open-vocabulary, probabilistic semantics,
-and answers declarative queries (OVQL) over it — text, clicks and spatial predicates — refining the relation on demand
-when a query mentions something the stored objects cannot explain (semantic cracking).**
+**OpenSNAP makes the promptable point-cloud segmenter [SNAP](https://github.com/neu-vi/SNAP) open-vocabulary and queryable.**
+Click any object and get its mask *and its name*; type any phrase and get the matching objects; run declarative
+queries such as `SELECT WHERE IS('chair') AND NEAR(IS('table'), 0.5)` over a single room or a whole building.
 
-OpenSNAP turns [SNAP](https://github.com/neu-vi/SNAP) (promptable point-cloud segmentation, closed-vocabulary text head) into an **open-vocabulary** model: click an object in any point cloud, get its mask **and its name** — no training.
+## What it does
 
-It combines three sources of evidence:
-
-1. **SNAP** — class-agnostic promptable masks + SNAP's own CLIP-space text token.
-2. **OpenScene** — per-point CLIP features from the 3D distilled model ([OpenScene](https://github.com/pengsongyou/openscene), point cloud only at inference).
-3. **A small VLM** (Qwen2.5-VL-3B/7B) looking at renders of the segmented object.
-
-## What is new
-
-| Component | Idea |
+| | |
 |---|---|
-| **Mask-Anchored Pooling** | Average OpenScene features inside each SNAP mask (weighted by mask probability) → one CLIP embedding per object. Point labels are an IoU-weighted vote over overlapping masks, blended with the dense prediction (`beta`). |
-| **Dual-Expert Fusion** | Product-of-experts of the pooled OpenScene embedding and SNAP's text token (`alpha`). The two live in different CLIP spaces, so fusion is done on class posteriors. |
-| **Vocabulary Relay** | SNAP's text head was trained with CE against a fixed vocabulary, so its token is best read *through* that vocabulary: posterior over training anchors × CLIP text-text similarity of anchors to the new query. |
-| **Render-Ask-Verify / 3D-Propose-VLM-Choose** | Object-centric renders (real-color context, red outline, occluders culled). *RAV*: the VLM names freely, 3D evidence re-ranks VLM names ∪ top 3D names. *Choose*: 3D proposes top-5 names from an open prior vocabulary, the VLM scores them as multiple-choice (letter log-probs), log-linear fusion. |
+| **Click → mask + name** | SNAP gives the mask; the name comes from fusing SNAP's language token with mask-pooled 3D CLIP features, and a small VLM chooses among the 3D-proposed names from renders of the object (*3D-propose / VLM-choose*). |
+| **Text → objects** | A trained text decoder (SNAP+ v4) answers "segment the &lt;phrase&gt;" in one pass while SNAP's click path stays exactly frozen; a training-free fallback uses the phrase as SNAP's click oracle. |
+| **Object relation + OVQL** | Each scene is materialised once into a table of objects (voxels, box, confidence, two language embeddings). OVQL queries combine `IS`, `CONTAINS`, `NEAR/ABOVE/BELOW/ON`, `AND/OR/NOT` with probabilistic semantics; answers are ranked by probability in ~1 ms. |
+| **Semantic cracking** | If no stored object explains a phrase, one is materialised at query time and persisted (with a negative cache), so later queries reuse it. |
+| **Building-scale search** | Many rooms share one persisted catalog; spatial predicates run as a batched per-room join. |
 
-## Results
+## Key results
 
-All numbers produced by the scripts in this repo on this machine. Hyper-parameters were tuned on 40 **ScanNet train** scenes (`results/tune`); the VLM render style/mode was picked on a ScanNet-val subset (143 clicks).
+All numbers are produced by the scripts in this repo; every table, with its source file, is in
+**[results/TABLES.md](results/TABLES.md)** (regenerate with `python3 scripts/make_tables.py`).
 
-### Open-vocabulary 3D semantic segmentation (OpenScene protocol, 1 run, prompt `a {} in a scene`)
+| task | benchmark | SNAP (its own text head) | other baseline | **OpenSNAP** |
+|---|---|---|---|---|
+| open-vocab 3D segmentation (mIoU) | ScanNet val | 41.5 | OpenScene 52.0 | **58.2** |
+| | Matterport-160 (unseen classes) | 6.9 (1.9) | OpenScene 9.5 (5.5) | **11.6 (5.7)** |
+| open-vocab instance segmentation (AP, same protocol) | S3DIS Area 5, 13 classes | 10.5 | — | **15.4** |
+| click → name (accuracy) | Matterport-160, 212 clicks | 30.7 | VLM alone 18.9 | **40.1** (7B VLM) |
+| | Matterport-160, unseen classes only | 12.2 | VLM alone 6.5 | **17.2** |
+| text → mask (mIoU) | ScanNet200 val (head/common/tail) | — | training-free 11.8 | **18.2** (32.8 / 13.8 / 2.7) |
+| | S3DIS (zero-shot dataset) | — | training-free 20.0 | **27.2** |
+| query latency | S3DIS room, stored relation | — | re-processing the scan 8.8 s | **0.8 ms** |
+| | building: 68 rooms, 5,149 objects | — | — | **0.9–3.4 ms** |
+| storage | 68-room catalog vs raw XYZ | — | 945 MB | **171 MB** |
+| semantic cracking (repeat queries / accuracy) | S3DIS workload, v4 refiner | — | refine every time 26.8 ms | **3.7 ms**, AP50 38.7 vs 38.9 |
+| interactive click segmentation | S3DIS, IoU@1/3/5 | 53.3 / 69.1 / 74.0 | — | identical (SNAP frozen) |
 
-**ScanNet val (312 scenes, 20 classes, LSeg 3D features)**
+## Open-vocabulary gallery
 
-| method | mIoU | mAcc | allAcc |
-|---|---|---|---|
-| OpenScene 3D-distill (reproduced) | 52.0 | 63.1 | 80.3 |
-| SNAP text token (masks + token) | 41.5 | 59.7 | 77.9 |
-| + Mask-Anchored Pooling | 57.2 | 66.8 | 83.7 |
-| Dual-Expert w/o relay | 56.2 | 67.1 | 84.0 |
-| **OpenSNAP (full)** | **58.2** | **68.0** | **84.6** |
+Unfiltered results from the viewer on 17 scenes from four datasets (none of them SNAP's example scenes). Each grid shows
+10 text queries (★ = word absent from SNAP's training vocabulary), 4 randomly chosen objects clicked and named
+(the VLM's choice shown below), open-vocabulary labels with the scene's own query words, and segment-everything.
+Failures are kept: flat objects on walls (paintings, whiteboards, maps, clocks) are the main failure mode.
 
-**Matterport3D test, 160 classes (406 regions, OpenSeg 3D features)** — *unseen* = the 63 classes not in SNAP's training vocabulary
+<details open><summary><b>Replica</b> (8 scenes, held out from all training)</summary>
 
-| method | mIoU | mAcc | allAcc | mIoU seen | mIoU unseen |
-|---|---|---|---|---|---|
-| OpenScene 3D-distill (reproduced) | 9.5 | 15.4 | 53.6 | 12.0 | 5.5 |
-| SNAP text token | 6.9 | 11.9 | 65.8 | 10.2 | 1.9 |
-| + Mask-Anchored Pooling | 10.0 | 15.6 | 57.6 | 12.9 | 5.5 |
-| **OpenSNAP (full)** | **11.6** | **17.1** | **69.4** | **15.4** | **5.7** |
+![replica_room0](assets/openvocab_gallery/replica_room0.jpg)
+![replica_room1](assets/openvocab_gallery/replica_room1.jpg)
+![replica_room2](assets/openvocab_gallery/replica_room2.jpg)
+![replica_office0](assets/openvocab_gallery/replica_office0.jpg)
+![replica_office1](assets/openvocab_gallery/replica_office1.jpg)
+![replica_office2](assets/openvocab_gallery/replica_office2.jpg)
+![replica_office3](assets/openvocab_gallery/replica_office3.jpg)
+![replica_office4](assets/openvocab_gallery/replica_office4.jpg)
+</details>
 
-OpenSNAP improves OpenScene by **+6.2 mIoU** on ScanNet and **+2.1 mIoU / +15.8 allAcc** on Matterport-160. Gains come mostly from seen classes; on unseen Matterport classes it is roughly on par with OpenScene (5.7 vs 5.5). All numbers use the segmenter's XYZ-only input encoding (colour/normals zeroed), as in its training.
+<details><summary><b>Matterport3D</b> (3 regions; SNAP never trained on Matterport)</summary>
 
-### Click-to-name (single simulated click → SNAP mask → free-form name)
+![mp3d_pa4otMbVnkk_06](assets/openvocab_gallery/mp3d_pa4otMbVnkk_06.jpg)
+![mp3d_yqstnuAEVhm_11](assets/openvocab_gallery/mp3d_yqstnuAEVhm_11.jpg)
+![mp3d_wc2JMjhGNzB_34](assets/openvocab_gallery/mp3d_wc2JMjhGNzB_34.jpg)
+</details>
 
-Clicks are sampled per scene on non-structural GT classes; the free-form name is mapped to the dataset vocabulary with CLIP ViT-L/14@336 text similarity and scored against the GT label at the click. *Open* methods never see the evaluation vocabulary.
+<details><summary><b>S3DIS</b> (3 rooms; zero-shot for SNAP)</summary>
 
-**Matterport3D-160 test (51 regions, 212 clicks)**
+![s3dis_conferenceRoom_2](assets/openvocab_gallery/s3dis_conferenceRoom_2.jpg)
+![s3dis_office_19](assets/openvocab_gallery/s3dis_office_19.jpg)
+![s3dis_pantry_1](assets/openvocab_gallery/s3dis_pantry_1.jpg)
+</details>
 
-| method | vocab | acc (7B) | acc (3B) |
-|---|---|---|---|
-| SNAP (original text head) | open | 26.9 | 28.8 |
-| VLM only (free naming) | open | 19.3 | 13.2 |
-| OpenSNAP-3D (dual-expert over SNAP vocab) | open | 34.9 | 34.4 |
-| Render-Ask-Verify | open | 36.8 | **36.8** |
-| **3D-Propose-VLM-Choose** | open | **38.7** | 36.3 |
-| OpenScene at clicked point | closed (knows eval labels) | 28.8 | 28.8 |
-| OpenSNAP closed-vocab | closed (knows eval labels) | 37.3 | 37.3 |
+<details><summary><b>ScanNet</b> (3 val scenes)</summary>
 
-**ScanNet val subset (143 clicks, Qwen2.5-VL-3B)**: SNAP 60.1 · VLM only 23.1 · VLM-choose alone 62.9 · OpenSNAP-3D 68.5 · RAV 68.5 · Choose 67.8.
+![scannet_scene0050_00](assets/openvocab_gallery/scannet_scene0050_00.jpg)
+![scannet_scene0231_00](assets/openvocab_gallery/scannet_scene0231_00.jpg)
+![scannet_scene0568_00](assets/openvocab_gallery/scannet_scene0568_00.jpg)
+</details>
 
-Take-aways: a small VLM is poor at *naming* raw point-cloud renders (13–23%), but good at *choosing* among 3D-proposed names (63% on ScanNet). Out of domain (Matterport) the VLM adds **+2–4 points** over 3D-only and the open pipeline matches/beats the closed-vocabulary upper bound; in-domain (ScanNet) the 3D evidence alone is already as good.
+<details><summary><b>Building-level search</b>: one query over all 68 rooms of S3DIS Area 5</summary>
 
+![building](assets/building_hits.png)
 
-### Does it generalise to unseen categories? (honest check)
-
-536 simulated clicks on **only the 63 Matterport-160 classes absent from SNAP's training vocabulary**, all 406 test regions (never used for tuning). *Open* methods propose names from SNAP vocabulary ∪ 1,198 generic [LVIS](https://www.lvisdataset.org/) names (`--prior snap+lvis`); the eval label list is never shown to them.
-
-| method | vocab | acc | mAcc |
-|---|---|---|---|
-| SNAP (original text head) | open | 8.0 | 1.9 |
-| VLM only (Qwen2.5-VL-3B, free naming) | open | 7.3 | 1.9 |
-| OpenSNAP-3D | open | 14.7 | 8.5 |
-| **3D-Propose-VLM-Choose** | open | **15.5** | **8.9** |
-| OpenScene feature at clicked point | closed (eval labels) | 19.8 | 10.6 |
-| OpenSNAP (mask-pooled) | closed (eval labels) | 14.9 | 6.7 |
-
-- vs SNAP, OpenSNAP roughly **doubles accuracy and 4.7× mAcc on unseen classes**, and can output words SNAP cannot (correct hits include *chandelier, pool table, faucet, footstool, television set*).
-- But many "unseen" classes are **synonyms** of seen ones (sofa/couch, television/tv, garbage bin/trash bin, railing/stair rail) — most gains come from those; truly novel concepts (vase, sculpture, utensil, headboard, drawer) are still ~0%.
-- On unseen classes **mask pooling does not beat OpenScene's point feature** (14.9 vs 19.8 with the same label list). Single-click SNAP masks have 42.7% mean IoU on these objects; when the mask is good (IoU ≥ 0.5) both reach 26%. The open-vocabulary knowledge comes from OpenScene/CLIP; SNAP contributes object extent, which helps seen classes (tables above) but not yet unseen ones.
+`sofa` and its synonym `couch` retrieve the same objects across rooms; `blackboard` and `pillar` (flat / structural)
+fail with low probabilities, shown as-is.
+</details>
 
 ## Install
 
 ```bash
 git clone --recursive https://github.com/suhanpahari/OpenSNAP opensnap
-bash opensnap/install.sh      # creates ../env (torch 2.4 + CUDA 12.4, MinkowskiEngine patched for CUDA 12)
-bash opensnap/download.sh     # SNAP-C, OpenScene checkpoints, OpenScene ScanNet/Matterport data, Qwen2.5-VL-3B -> ../downloads
+bash opensnap/install.sh            # ../env: torch 2.4 + CUDA 12.4, MinkowskiEngine (patched for CUDA 12), viser, Qwen2.5-VL
+WITH_MEDIA=1 bash opensnap/install.sh   # optional: Playwright (screenshots/demo video) and Manim (explainer video)
+HF_TOKEN=... bash opensnap/download.sh  # checkpoints, OpenScene data, Replica, Pointcept S3DIS/ScanNet, Qwen2.5-VL -> ../downloads
 export PYTHONNOUSERSITE=1
 ```
 
-## Interactive viewer (viser)
+Trained OpenSNAP checkpoints are kept locally in `../downloads/checkpoints/` (see its README):
+`opensnap_text_v4.pth` (text decoder, 6.9 MB) and `opensnap_click_v3_6k.pth`. Both load SNAP-C and OpenScene separately.
 
-![viewer](assets/gallery.png)
+## Viewer
 
 ```bash
 cd opensnap
-../env/bin/python scripts/app.py --scene ../SNAP/data_examples/ScanNet/scene0011_00   # or .pth/.ply/.pcd/.bin/.npy
+../env/bin/python scripts/app.py --scene ../downloads/demo/replica_room0   # dir with coord.npy/color.npy, or .pth/.ply/.pcd/.bin/.npy
 # open http://localhost:8080
 ```
 
-- **Click** an object → it is segmented and **only then** its name appears (instant 3D name, then VLM-verified name). **Shift-click** refines the selection; tick *keep previous objects* to collect several.
-- **Show segments** → colours every SNAP segment (no names); click a segment to name it.
-- **Open-vocabulary labels** → type any class list, colour the scene.
-- **Text query** → e.g. "something to sit on", highlights best-matching objects.
-
-Options: `--vlm Qwen/Qwen2.5-VL-7B-Instruct`, `--vlm ''` (no VLM), `--openscene_ckpt ''` (SNAP only, e.g. outdoor LiDAR with `--domain Outdoor`).
-Screenshots are produced by `scripts/capture_demo.py` (headless Chromium via Playwright).
+- **Click** an object → mask, instant 3D name, then the VLM-verified name; **shift-click** refines; *keep previous objects* collects several.
+- **Text query** → the text decoder's mask for the phrase (or ranked proposals when `--text_ckpt ''`).
+- **Open-vocabulary labels** → type any class list. **Show segments** → colour all segments, click one to name it.
+- Options: `--vlm Qwen/Qwen2.5-VL-7B-Instruct`, `--vlm ''`, `--text_ckpt ''`, `--openscene_ckpt ''` with `--domain Outdoor` for LiDAR (SNAP only).
 
 ## Python API
 
@@ -129,40 +124,57 @@ Screenshots are produced by `scripts/capture_demo.py` (headless Chromium via Pla
 from opensnap.snap_model import SnapModel
 from opensnap.openscene_model import OpenSceneModel
 from opensnap.text import TextEncoder
+from opensnap.text_decoder import TextDecoder
 from opensnap.core import OpenSNAP
 from opensnap.namer import VLMNamer
-from opensnap.data import snap_train_vocab
+from opensnap.data import prior_vocab, snap_train_vocab
+from opensnap.query.catalog import materialize
+from opensnap.query.engine import Engine
 
 clip = TextEncoder("ViT-B/32")
-m = OpenSNAP(SnapModel("../downloads/ckpt/SNAP_C.pth"), clip,
-             OpenSceneModel("../downloads/ckpt/scannet_lseg.pth.tar"), clip, anchors=snap_train_vocab())
-m.encode(coord, color)                       # (N,3), (N,3) in 0-255
-obj = m.click([point_index])                 # one object from click(s)
-name, ranked, _ = VLMNamer().name_choose(m, obj, 0, coord, color, snap_train_vocab())
-props = m.propose()                          # segment everything
-labels = m.semantic(props, ["chair", "lamp", "guitar"]).argmax(1)
+dense = OpenSceneModel("../downloads/ckpt/matterport_openseg.pth.tar", "openseg")
+m = OpenSNAP(SnapModel("../downloads/ckpt/SNAP_C.pth"), clip, dense, TextEncoder(dense.clip_name),
+             anchors=snap_train_vocab(),
+             text_decoder=TextDecoder("../downloads/checkpoints/opensnap_text_v4.pth", clip))
+m.encode(coord)                                   # (N, 3) XYZ
+obj = m.click([point_index])                      # object from a click
+name, ranked, vlm_pick, _ = VLMNamer().name_choose(m, obj, 0, coord, color, prior_vocab("snap+lvis"))
+mask, source, conf = m.text_segment("wicker chair")          # text -> voxel mask
+table = materialize(m)                                       # object relation
+answers, stats = Engine(m, table).run("SELECT WHERE IS('chair') AND NEAR(IS('table'), 0.5) LIMIT 5")
 ```
 
-## Evaluation
+## Reproduce
 
 ```bash
-../env/bin/python scripts/eval_semseg.py --dataset scannet --split val --gpus 0,1
-../env/bin/python scripts/eval_semseg.py --dataset matterport160 --split test \
-    --openscene_ckpt ../downloads/ckpt/matterport_openseg.pth.tar --feature openseg
-../env/bin/python scripts/eval_naming.py --dataset matterport160 --split test \
-    --openscene_ckpt ../downloads/ckpt/matterport_openseg.pth.tar --feature openseg --stride 8
+python scripts/eval_semseg.py --dataset scannet --split val                       # T1/T2/T15
+python scripts/eval_queries.py --dataset s3dis [--keep_all 1 --proposals c2f]      # T3/T4
+python scripts/eval_interactive.py --model snap                                   # T5
+python scripts/eval_naming.py --dataset matterport160 --split test --prior snap+lvis --feature openseg \
+       --openscene_ckpt ../downloads/ckpt/matterport_openseg.pth.tar [--unseen_only] # T6/T7
+python scripts/eval_text.py --dataset scannet --method trained --ckpt ../downloads/checkpoints/opensnap_text_v4.pth  # T8
+python scripts/eval_proposals.py; python scripts/eval_systems.py; python scripts/eval_building.py                 # T10-T16
+python scripts/train.py --dataset scannet --arch v4 --num_masks 0 --text_classes 12 --steps 16000                 # text decoder
+python scripts/capture_demo.py ...; python scripts/make_gallery.py; python scripts/building_hits.py              # visuals
+python scripts/make_tables.py                                                                                     # results/TABLES.md
 ```
 
-`--gpus` takes physical GPU ids or MIG UUIDs; each worker is pinned with `CUDA_VISIBLE_DEVICES`.
+`--gpus` accepts physical GPU ids or MIG UUIDs; each worker is pinned with `CUDA_VISIBLE_DEVICES`.
 
-## Notes / limitations
+## Limitations
 
-- ScanNet is in SNAP's and OpenScene-LSeg's training data; Matterport3D is not in SNAP's training data.
-- OpenScene numbers are our reproduction with a single test run (paper uses 5 repeats), so they differ slightly from the paper.
-- OpenScene's own code overwrites the 159th Matterport-160 prompt with "other"; we use the plain class names for all methods.
-- Click-to-name uses CLIP text similarity as the name→label judge, which can be lenient/strict for near-synonyms.
-- The SNAP checkpoint contains extra heads (`merge_text`, `confidence_head`) that the released code does not use; they are ignored.
+- **Segmentation itself is SNAP's.** Fine-tuning SNAP's decoder on ScanNet alone loses its multi-dataset generalisation,
+  so OpenSNAP keeps SNAP frozen; click segmentation is identical to SNAP-C (T5, T9).
+- **Flat objects on walls/floors** (paintings, whiteboards, rugs, maps) are hard: geometry cannot separate them from the wall.
+- **Truly novel concepts** (vase, sculpture) remain hard; most unseen-class gains come from near-synonyms of seen classes.
+- **Semantic cracking** with the training-free refiner costs instance AP (T12, T13); with the trained text decoder as
+  refiner the cost is ≈0.2 AP50 (T12b, T12c).
+- SNAP's published S3DIS open-vocabulary AP (16.1) uses its own evaluation; under one shared protocol OpenSNAP is 15.4 vs 10.5.
+- Click-to-name maps free-form names to labels with CLIP text similarity; run-to-run noise is about ±3 points.
 
 ## Acknowledgements
 
-Built on [SNAP](https://github.com/neu-vi/SNAP), [OpenScene](https://github.com/pengsongyou/openscene), [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL), [CLIP](https://github.com/openai/CLIP), [MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine) and [viser](https://github.com/nerfstudio-project/viser).
+Built on [SNAP](https://github.com/neu-vi/SNAP), [OpenScene](https://github.com/pengsongyou/openscene),
+[Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL), [CLIP](https://github.com/openai/CLIP),
+[Pointcept](https://github.com/Pointcept/Pointcept), [MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine),
+[viser](https://github.com/nerfstudio-project/viser) and [Manim](https://www.manim.community/).

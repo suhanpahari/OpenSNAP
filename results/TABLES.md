@@ -57,6 +57,27 @@ _Source: s3dis_queries_allclasses.json (one-shot proposals), s3dis_queries_allcl
 
 Published numbers use the authors' own evaluation; ours use one protocol for all engines.
 
+### T12b · Query-time refiner: click oracle vs trained text decoder (S3DIS Area 5 queries)
+
+_Source: s3dis_queries_v4.json_
+
+| engine | IS AP | IS AP50 | NEAR AP | refined/room | IS ms |
+|---|---|---|---|---|---|
+| OpenSNAP (no cracking) | 11.6 | 17.8 | 14.5 | 0.00 | 3.8 |
+| cracking, click-oracle refiner | 11.7 | 18.2 | 13.8 | 0.93 | 32.1 |
+| **cracking, v4 text-decoder refiner (dedup 0.5)** | 11.6 | 17.8 | 14.4 | 0.47 | 16.1 |
+| cracking, v4 refiner, no dedup | 11.6 | 17.8 | 14.0 | 0.54 | 15.0 |
+
+### T12c · Cracking workload with the v4 text-decoder refiner (S3DIS, 34 rooms)
+
+_Source: systems_s3dis_v4.json_
+
+| mode | mean ms | 2nd-pass ms | AP50 | synonym AP50 |
+|---|---|---|---|---|
+| no_refine | 3.0 | 2.9 | 38.9 | 38.3 |
+| refine_discard | 27.2 | 26.8 | 39.0 | 38.3 |
+| cracking | 12.5 | 3.7 | 38.7 | 37.9 |
+
 ### T5 · Interactive segmentation, S3DIS Area 5 (zero-shot)
 
 _Source: s3dis_interactive_*.json, aux/*_
@@ -116,6 +137,15 @@ _Source: aux/text_*.json (104 scenes)_
 | trained v4, 16k | 18.2 | 32.8 | 13.8 | 2.7 |
 
 Tail classes are held out of text training.
+
+### T8b · Text-prompted segmentation on S3DIS Area 5 (zero-shot dataset, per class IoU)
+
+_Source: text_s3dis_oracle.json, text_s3dis_v4.json_
+
+| method | mIoU | beam | board | bookcase | chair | column | door | sofa | table | window |
+|---|---|---|---|---|---|---|---|---|---|---|
+| training-free: language as click oracle | 20.0 | 0.0 | 0.0 | 16.6 | 33.4 | 0.1 | 46.0 | 47.2 | 23.0 | 13.6 |
+| **trained v4 text decoder (16k)** | 27.2 | 0.0 | 0.0 | 20.5 | 79.0 | 0.0 | 28.1 | 40.0 | 51.4 | 25.5 |
 
 ### T9 · Single-click candidate selection (ScanNet val)
 

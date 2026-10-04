@@ -233,10 +233,7 @@ class App:
         with self.lock:
             order, rel = self.m.query(props, q)
             best = rel[0].item()
-            if self.m.text_decoder is not None:
-                m, src, conf = self.m.text_segment(q)
-                masks, tag, best = [m[inv].cpu().numpy()], f"decoder {conf:.2f}", max(best, 0.3)
-            elif best >= 0.3:
+            if best >= 0.3:
                 keep = [i for i, r in zip(order.tolist(), rel.tolist()) if r >= 0.6 * best][:8]
                 masks = [(props.logits[i] > 0)[inv].cpu().numpy() for i in keep]
                 tag = f"{best:.2f}"
