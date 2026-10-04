@@ -32,6 +32,9 @@ class SNAPPlus(nn.Module):
                                             + 0.02 * torch.randn(num_masks, D, device=snap.mask_token.weight.device))
         self.iou_mlp = nn.Sequential(nn.Linear(2 * D, D), nn.ReLU(), nn.Linear(D, 1))
         self.text_type = nn.Parameter(torch.zeros(1, D))
+        if arch == "v4":
+            self.text_merge = copy.deepcopy(snap.merge)
+            self.text_mask_head = copy.deepcopy(snap.mask_head)
 
     @property
     def n_out(self):
@@ -52,6 +55,8 @@ class SNAPPlus(nn.Module):
 
     def decode(self, point, coord, clicks=None, text=None):
         """clicks: (M, P, 3) or None; text: (M, 512) -> logits (M, n_out, N), iou (M, n_out), label token (M, 512)."""
+        if self.arch == "v4":
+            return self.decode_v4(point, coord, clicks, text)
         s = self.snap
         feat = point.feat
         M = (clicks if clicks is not None else text).shape[0]
@@ -91,9 +96,32 @@ class SNAPPlus(nn.Module):
         pts_out, tok_out = s.merge([tokens], [pts], [s.point_pos_embeddings_module(coord)[None].expand(M, -1, -1)])
         return torch.einsum("mnd,md->mn", pts_out[0], s.mask_head(tok_out[0][:, 1]))[:, None]
 
+    def decode_v4(self, point, coord, clicks, text):
+        """v4: clicks -> exact frozen SNAP decoder; text -> its own trainable decoder with semantic attention keys."""
+        s = self.snap
+        feat = point.feat
+        pe = s.point_pos_embeddings_module(coord)
+        if clicks is not None:
+            M, P = clicks.shape[:2]
+            enc = s.prompt_encoder(clicks)
+            idx = torch.cdist(point.coord, clicks.reshape(-1, 3)).argmin(0)
+            tok = enc.view(-1, feat.shape[1]).add(feat[idx]).view(M, P, -1)
+            logits = self.snap_exact(point, coord, clicks, pe, feat[None].expand(M, -1, -1), tok)
+            return logits, torch.ones(M, 1, device=logits.device), None
+        M = text.shape[0]
+        if "sem_key" in point.keys():
+            pe = pe + point.sem_key
+        base = torch.cat([s.iou_token.weight, s.mask_token.weight, s.text_token.weight], 0)
+        tokens = torch.cat([base[None].expand(M, -1, -1), (s.text_prompt_encoder(text) + self.text_type)[:, None]], 1)
+        pts_out, tok_out = self.text_merge([tokens], [feat[None].expand(M, -1, -1)], [pe[None].expand(M, -1, -1)])
+        pts_out, tok_out = pts_out[0], tok_out[0]
+        logits = torch.einsum("mnd,md->mn", pts_out, self.text_mask_head(tok_out[:, 1]))[:, None]
+        iou = torch.sigmoid(self.iou_mlp(torch.cat([tok_out[:, 0], tok_out[:, 1]], -1)))
+        return logits, iou, s.text_head(tok_out[:, 2])
+
     def select(self, logits, iou, n_clicks):
         """v2: multi-click -> whole-object token; single click / text -> IoU-head choice among all tokens."""
-        if self.arch in ("v2", "v3") and n_clicks > 1:
+        if self.arch in ("v2", "v3", "v4") and (n_clicks > 1 or logits.shape[1] == 1):
             return logits[:, 0]
         return logits[torch.arange(len(logits)), iou.argmax(1)]
 

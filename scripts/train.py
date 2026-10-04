@@ -114,6 +114,8 @@ def objective(model, point, coord, target, clicks=None, text=None, label_emb=Non
     lm = mask_loss(logits, target)
     if model.arch == "v1":
         loss = lm.min(1).values.mean()
+    elif model.arch == "v4":
+        loss = lm[:, 0].mean()
     elif model.arch == "v3":
         single = clicks is None or clicks.shape[1] == 1
         if not single:
@@ -137,7 +139,7 @@ def main():
     ap.add_argument("--use_sem", type=int, default=1)
     ap.add_argument("--use_text", type=int, default=1)
     ap.add_argument("--num_masks", type=int, default=3)
-    ap.add_argument("--arch", default="v3", choices=["v1", "v2", "v3"])
+    ap.add_argument("--arch", default="v3", choices=["v1", "v2", "v3", "v4"])
     ap.add_argument("--holdout", nargs="*", default=None)
     ap.add_argument("--steps", type=int, default=6000)
     ap.add_argument("--lr", type=float, default=1e-4)
@@ -159,11 +161,11 @@ def main():
 
     model = SNAPPlus(load_snap(args.snap_ckpt), sem_dim=768 if args.feature == "openseg" else 512,
                      num_masks=args.num_masks, use_sem=bool(args.use_sem), use_text=bool(args.use_text), arch=args.arch).to(dev)
-    frozen = model.snap.parameters() if args.arch == "v3" else \
+    frozen = model.snap.parameters() if args.arch in ("v3", "v4") else \
         list(model.snap.backbone.parameters()) + list(model.snap.input_encoder.parameters())
     for p in frozen:
         p.requires_grad = False
-    if args.arch == "v3":
+    if args.arch in ("v3", "v4"):
         for p in model.snap.text_prompt_encoder.parameters():
             p.requires_grad = True
     params = [p for p in model.parameters() if p.requires_grad]
@@ -202,7 +204,7 @@ def main():
         ids = ids[counts >= 50]
         loss = torch.zeros((), device=dev)
         with torch.autocast("cuda", dtype=torch.float16):
-            if len(ids):
+            if len(ids) and args.arch != "v4":
                 ids = ids[torch.randperm(len(ids), device=dev)[:args.objects]]
                 target = ins[None] == ids[:, None]
                 n = random.randint(1, args.max_clicks)

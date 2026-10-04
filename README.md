@@ -1,4 +1,18 @@
-# OpenSNAP: Open-Vocabulary Segment-Anything for Point Clouds
+# OpenSNAP: Open-Vocabulary Querying over 3D Point Clouds
+
+<p align="center">
+  <img src="assets/video/opensnap_explainer.gif" width="90%" alt="OpenSNAP system explainer"><br>
+  <em>System explainer (60 s) — full-resolution video: <a href="assets/video/opensnap_explainer.mp4">assets/video/opensnap_explainer.mp4</a></em>
+</p>
+
+<p align="center">
+  <img src="assets/gallery.png" width="90%" alt="Interactive viewer: click to name, text queries, open-vocabulary labels"><br>
+  <em>Interactive viewer: click an object to get its mask and name, text queries, open-vocabulary labels.</em>
+</p>
+
+**OpenSNAP materialises a point cloud into a queryable object relation with open-vocabulary, probabilistic semantics,
+and answers declarative queries (OVQL) over it — text, clicks and spatial predicates — refining the relation on demand
+when a query mentions something the stored objects cannot explain (semantic cracking).**
 
 OpenSNAP turns [SNAP](https://github.com/neu-vi/SNAP) (promptable point-cloud segmentation, closed-vocabulary text head) into an **open-vocabulary** model: click an object in any point cloud, get its mask **and its name** — no training.
 

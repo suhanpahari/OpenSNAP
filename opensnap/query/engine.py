@@ -57,9 +57,12 @@ class Engine:
     def plan(self, node):
         """Phase 1: refine the relation for IS predicates no stored object explains, before any scoring."""
         if node.op == "IS":
-            p = self.is_prob(node.args[0])
+            text = node.args[0]
+            if text in self.t.cracked:
+                return
+            p = self.is_prob(text)
             if len(p) == 0 or p.max() < self.refine_below:
-                self.refine_is(node.args[0])
+                self.t.cracked[text] = self.refine_is(text)
             return
         for a in node.args:
             if hasattr(a, "op"):

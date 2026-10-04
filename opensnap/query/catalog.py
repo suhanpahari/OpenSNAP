@@ -17,6 +17,7 @@ class ObjectTable:
     pooled: torch.Tensor              # (M, D) mask-pooled dense CLIP feature (or empty)
     provenance: list = field(default_factory=list)
     build_sec: float = 0.0
+    cracked: dict = field(default_factory=dict)  # text -> oid created by query-time refinement (or None)
 
     def __len__(self):
         return len(self.points)
