@@ -78,17 +78,19 @@ voxel; each further click goes to the most relevant voxel inside the target regi
 the mask; we keep the click set with the best mask/relevance agreement. This turns a click-only segmenter into a
 text-promptable one without training.
 
-## 7. Trained decoder (SNAP+)
+## 7. Trained decoders (SNAP+)
 
-Backbone frozen; decoder side trained on ScanNet200 (S3DIS and Matterport kept zero-shot).
+Backbone and SNAP decoder frozen in the final system; ScanNet200 train only (S3DIS, Matterport, Replica stay zero-shot).
 
-* **Semantic keys, geometric values (v2).** Per-voxel 3D CLIP features enter only the attention keys (positional
-  branch), not the point embeddings that form masks. *v1 added them to the embeddings; this blurred instances of the
-  same class and degraded multi-click IoU (diagnosed with oracle selection).*
-* **Role-aware mask tokens.** The segmenter's original mask token is the whole-object / multi-click path; `K=3`
-  extra tokens are used only for ambiguous single clicks (min-loss), selected by a per-token IoU head.
-* **Native text prompts.** A CLIP text embedding is a prompt token; trained on ScanNet200 head+common classes, the 66
-  tail classes are held out for zero-shot evaluation.
+* **v1/v2 (rejected).** Fine-tuning SNAP's decoder on ScanNet alone loses its 7-dataset generalisation (control run:
+  IoU@5 71.0 vs 72.8 on S3DIS). v1 also blurred same-class instances by adding semantics to the mask embeddings.
+* **v3 (click parity).** SNAP frozen; extra single-click tokens run in a separate pass so the multi-click mask is
+  exactly SNAP's. Oracle headroom of the extra tokens is only +2.0 (ScanNet) / +3.0 (S3DIS) and the IoU head cannot
+  realise it, so v3 is kept only as a parity reference.
+* **v4 (text decoder, shipped).** Clicks → exact frozen SNAP. Text → a trainable copy of SNAP's two-way decoder and
+  mask head; per-voxel 3D CLIP features enter only its attention keys; a CLIP text embedding is the prompt token.
+  Trained on head+common classes (66 tail classes held out). Used for "segment the X", as the fallback of the viewer's
+  text query, and as the query-time refiner of semantic cracking (where it removes cracking's accuracy cost).
 
 ## 8. Experimental protocol
 
@@ -100,26 +102,13 @@ Backbone frozen; decoder side trained on ScanNet200 (S3DIS and Matterport kept z
 * **Open-vocabulary naming**: click-to-name accuracy on Matterport3D-160 (seen/unseen classes).
 * **Text prompts**: ScanNet200 val head/common/tail mIoU; S3DIS zero-shot.
 
-## 9. Results so far (from `results/`)
+## 9. Results
 
-| experiment | result |
-|---|---|
-| S3DIS interactive, released SNAP-C | IoU@1/3/5/10 = 53.3 / 69.1 / 74.0 / 77.4 |
-| S3DIS interactive, decoder fine-tuned (control) | 54.1 / 69.2 / 73.4 / 76.8 (4k steps) |
-| S3DIS interactive, SNAP+ v1 | 52.6 / 63.7 / 66.4 / 69.2 (regression, see Sec. 7) |
-| S3DIS interactive, SNAP+ v2 (subset, 4k) | 52.3 / 65.4 / 69.5 / 72.3; control 51.8 / 66.5 / 71.0 / 74.0 — fine-tuning on ScanNet alone loses cross-dataset generalisation |
-| S3DIS interactive, SNAP+ v3 frozen (subset, 4k) | 51.6 / 68.2 / 73.0 / 76.3 vs SNAP 52.4 / 68.0 / 72.8 / 75.6 (parity by construction); oracle single-click 55.4 |
-| Single-click selection (ScanNet val, 1050 obj.) | SNAP token 68.0, oracle 70.0, IoU-head selection never beats SNAP token |
-| Text prompts, ScanNet val mIoU (head/common/tail) | training-free language-oracle clicks 11.8 (22.2/7.5/2.7); trained v3 text token 1.1 (does not learn through a frozen decoder) |
-| Open-vocab semseg ScanNet val (XYZ fix) | OpenScene 52.0, segmenter token 41.5, OpenSNAP **58.2** mIoU |
-| Open-vocab semseg Matterport-160 (XYZ fix) | OpenScene 9.5, segmenter token 6.9, OpenSNAP **11.6** mIoU; unseen 5.5 → 5.7 |
-| S3DIS queries `IS(c)` AP/AP50/AP25 | segmenter token only 9.8/16.7/25.1 → OpenSNAP 11.6/17.8/26.1 → + cracking 11.6/18.2/26.5 |
-| S3DIS queries `IS∧NEAR` AP | 12.2 → 14.5 |
-| Relation size vs raw XYZ | 2.1 MB vs 13.9 MB per room; 8 ms/query; 11 s ingest |
-| Proposal recall@0.5 (S3DIS, 6 rooms) | FPS-400 64.9%, FPS-800 69.2%, coarse-to-fine 68.5% |
-| Matterport-160 unseen-class naming (536 clicks) | segmenter token 8.0% → OpenSNAP 15.5% (mAcc 1.9 → 8.9) |
-
-Semantic-segmentation numbers above are re-run with the XYZ-only input fix; naming numbers still predate it.
+All results, with their source files, are generated into [`results/TABLES.md`](../results/TABLES.md) by
+`scripts/make_tables.py` (17 tables: semantic segmentation and ablation, query workloads, SNAP-protocol instance AP,
+interactive segmentation and its diagnosis, click-to-name with two VLM sizes, text prompts on ScanNet200 and S3DIS,
+single-click selection, proposal recall, systems, cracking and its refiners, calibration sweeps, dense-feature source,
+building-level catalog).
 
 ## 10. References (to cite in the paper)
 

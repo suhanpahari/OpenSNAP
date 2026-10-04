@@ -37,6 +37,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scene", required=True)
     ap.add_argument("--clicks", nargs="*", type=int, default=[])
+    ap.add_argument("--random_objects", type=int, default=0)
     ap.add_argument("--queries", nargs="*", default=[])
     ap.add_argument("--out", default="assets/demo")
     ap.add_argument("--port", type=int, default=8099)
@@ -50,6 +51,9 @@ def main():
                                  alpha=0.7, text_ckpt=a.text_ckpt, normals=0, point_size=0.012, host="127.0.0.1", port=a.port, demo=False)
     app = A.App(args)
     app.ensure_props()
+    if a.random_objects:
+        from capture_demo import random_clicks
+        a.clicks = random_clicks(app, a.random_objects, 0, 300, 20000)
     tmp = a.out + "_raw"
     os.makedirs(tmp, exist_ok=True)
     with sync_playwright() as p:

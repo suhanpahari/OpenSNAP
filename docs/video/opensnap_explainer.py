@@ -196,10 +196,10 @@ class OpenSNAPExplainer(Scene):
         bars.arrange(DOWN, aligned_edge=LEFT, buff=0.3).next_to(title, DOWN, 0.35).align_to(title, LEFT)
         self.play(FadeIn(title), LaggedStart(*[FadeIn(b, shift=RIGHT * 0.3) for b in bars], lag_ratio=0.3))
         stats = VGroup(
-            T("query on stored relation", 20, MUTED), T("~3 ms", 40, GREEN, weight=BOLD),
-            T("vs re-processing the scan", 20, MUTED), T("~9 s", 40, RED, weight=BOLD),
-            T("relation vs raw XYZ", 20, MUTED), T("6.7× smaller", 34, BLUE, weight=BOLD),
-            T("unseen-class naming vs segmenter", 20, MUTED), T("≈2× accuracy", 34, ORANGE, weight=BOLD),
+            T("query on stored relation", 20, MUTED), T("0.8 ms", 40, GREEN, weight=BOLD),
+            T("vs re-processing the scan", 20, MUTED), T("8.8 s", 40, RED, weight=BOLD),
+            T("68-room catalog vs raw XYZ", 20, MUTED), T("171 MB vs 945 MB", 30, BLUE, weight=BOLD),
+            T("unseen-class naming vs segmenter", 20, MUTED), T("17.2% vs 12.2%", 30, ORANGE, weight=BOLD),
         ).arrange(DOWN, buff=0.12).move_to(RIGHT * 3.6 + DOWN * 0.2)
         self.play(LaggedStart(*[FadeIn(s) for s in stats], lag_ratio=0.12), run_time=2.2)
         self.wait(2.0)
