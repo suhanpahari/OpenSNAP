@@ -18,6 +18,7 @@ class ObjectTable:
     provenance: list = field(default_factory=list)
     build_sec: float = 0.0
     cracked: dict = field(default_factory=dict)  # text -> oid created by query-time refinement (or None)
+    room: torch.Tensor | None = None  # (M,) scene id when several scenes share one relation
 
     def __len__(self):
         return len(self.points)
@@ -62,3 +63,26 @@ def materialize(opensnap, props=None):
     torch.cuda.synchronize()
     table.build_sec = time.time() - t0
     return table
+
+
+def save(table, path):
+    t = {k: getattr(table, k) for k in ("bbox_min", "bbox_max", "centroid", "conf", "room")}
+    t.update(token=table.token.half(), pooled=table.pooled.half(), provenance=table.provenance,
+             points=table.points, cracked=table.cracked)
+    torch.save(t, path)
+
+
+def load(path, device="cuda"):
+    t = torch.load(path, map_location=device, weights_only=False)
+    return ObjectTable(points=t["points"], bbox_min=t["bbox_min"], bbox_max=t["bbox_max"], centroid=t["centroid"],
+                       conf=t["conf"], token=t["token"].float(), pooled=t["pooled"].float(), provenance=t["provenance"],
+                       cracked=t["cracked"], room=t["room"])
+
+
+def concat(tables):
+    """One relation over many scenes; spatial predicates stay within a scene via the room column."""
+    cat = lambda k: torch.cat([getattr(t, k) for t in tables], 0)
+    room = torch.cat([torch.full((len(t),), i, device=t.conf.device) for i, t in enumerate(tables)])
+    return ObjectTable(points=[p for t in tables for p in t.points], bbox_min=cat("bbox_min"), bbox_max=cat("bbox_max"),
+                       centroid=cat("centroid"), conf=cat("conf"), token=cat("token"), pooled=cat("pooled"),
+                       provenance=[p for t in tables for p in t.provenance], room=room)

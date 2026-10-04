@@ -1,6 +1,8 @@
 """Probabilistic execution of OVQL over a materialised ObjectTable, with query-driven refinement."""
 import time
 
+import numpy as np
+
 import torch
 import torch.nn.functional as F
 
@@ -11,8 +13,8 @@ BACKGROUND = ("wall", "floor", "ceiling", "object")
 
 
 class Engine:
-    def __init__(self, opensnap, table, refine=True, refine_below=0.3, background=BACKGROUND, gamma=0.0):
-        self.m, self.t = opensnap, table
+    def __init__(self, opensnap, table, refine=True, refine_below=0.3, background=BACKGROUND, gamma=0.0, dedup=0.5):
+        self.m, self.t, self.dedup = opensnap, table, dedup
         self.refine, self.refine_below, self.background, self.gamma = refine, refine_below, background, gamma
         self.stats = dict(refined=0, is_calls=0)
 
@@ -49,6 +51,14 @@ class Engine:
             token, source, conf = torch.zeros_like(props.tokens[0]), "query-dense", torch.tensor(agree, device=props.scores.device)
         if mask.sum() == 0:
             return None
+        if self.dedup and len(self.t):
+            ids = torch.nonzero(mask)[:, 0].cpu().numpy()
+            inter = torch.tensor([len(np.intersect1d(p, ids, assume_unique=True)) for p in self.t.points], dtype=torch.float)
+            sizes = torch.tensor([len(p) for p in self.t.points], dtype=torch.float)
+            iou = inter / (sizes + len(ids) - inter).clamp(min=1)
+            if iou.max() > self.dedup:
+                self.stats["dedup"] = self.stats.get("dedup", 0) + 1
+                return int(iou.argmax())
         pooled = F.normalize(dense[mask].mean(0), dim=-1) if dense is not None else None
         oid = self.t.append(torch.nonzero(mask)[:, 0], vc, conf, token, pooled, f"{source}:{text}")
         self.stats["refined"] += 1
@@ -97,8 +107,10 @@ class Engine:
         lo, hi, c = self.t.bbox_min, self.t.bbox_max, self.t.centroid
         gap = (torch.maximum(lo[:, None] - hi[None], lo[None] - hi[:, None]).clamp(min=0)).norm(dim=-1)
         xy = ((torch.minimum(hi[:, None, :2], hi[None, :, :2]) - torch.maximum(lo[:, None, :2], lo[None, :, :2])) > 0).all(-1)
+        same = (self.t.room[:, None] == self.t.room[None]) if self.t.room is not None else torch.ones_like(xy)
+        xy = xy & same
         if op == "NEAR":
-            return (gap <= dist).float()
+            return ((gap <= dist) & same).float()
         if op == "ABOVE":
             return (xy & (c[:, None, 2] > hi[None, :, 2])).float()
         if op == "BELOW":

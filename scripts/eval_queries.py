@@ -24,6 +24,11 @@ VARIANTS = {
 EXTRA = {}
 
 
+def sweep_variants():
+    return {f"dedup{d}_t{t}": dict(dense=True, relay=0.8, refine=True, theta=t, dedup=d)
+            for d in (0.3, 0.5, 0.7) for t in (0.1, 0.2, 0.3)}
+
+
 def classes_for(dataset):
     if dataset == "s3dis":
         return S3DIS
@@ -64,6 +69,8 @@ def gap(a, b):
 
 def worker(rank, gpu, files, args, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+    if args.sweep:
+        EXTRA.update(sweep_variants())
     import dataclasses
     from opensnap.core import Config, OpenSNAP
     from opensnap.data import snap_train_vocab
@@ -90,7 +97,8 @@ def worker(rank, gpu, files, args, queue):
         base = materialize(m)
         vc = m.scene["vcoord"].cpu().numpy()
         inv = m.scene["inverse"].cpu().numpy()
-        objs = [(c, mk, (vc[mk].min(0), vc[mk].max(0))) for c, mk in gt_objects(ins, seg, inv, len(vc), classes, SKIP[args.dataset])]
+        skip = set() if args.keep_all else SKIP[args.dataset]
+        objs = [(c, mk, (vc[mk].min(0), vc[mk].max(0))) for c, mk in gt_objects(ins, seg, inv, len(vc), classes, skip)]
         present = sorted({c for c, _, _ in objs})
         queries = [("IS", c, None) for c in present]
         rng = np.random.default_rng(abs(hash(os.path.basename(f))) % 2 ** 31)
@@ -105,7 +113,8 @@ def worker(rank, gpu, files, args, queue):
             if not v["dense"]:
                 table.pooled = torch.zeros(len(table), 0, device=table.token.device)
             m.cfg = dataclasses.replace(Config(), relay_weight=v["relay"])
-            eng = Engine(m, table, refine=v["refine"], gamma=v.get("gamma", 0.0), refine_below=v.get("theta", 0.3))
+            eng = Engine(m, table, refine=v["refine"], gamma=v.get("gamma", 0.0), refine_below=v.get("theta", 0.3),
+                         dedup=v.get("dedup", 0.0))
             out = []
             for kind, a, b in queries:
                 q = f"SELECT WHERE IS('{a}')" if kind == "IS" else f"SELECT WHERE IS('{a}') AND NEAR(IS('{b}'), {args.near})"
@@ -193,11 +202,10 @@ def main():
     ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--out", default="results/queries.json")
     ap.add_argument("--sweep", type=int, default=0)
+    ap.add_argument("--keep_all", type=int, default=0)
     ap.add_argument("--split_override", default="")
     args = ap.parse_args()
-    if args.sweep:
-        EXTRA.update({f"g{g}_t{t}": dict(dense=True, relay=0.8, refine=t > 0, gamma=g, theta=t)
-                      for g in (0.0, 1.0, 2.0) for t in (0.0, 0.1, 0.2, 0.3)})
+
     root, splits, _ = DATA[args.dataset]
     if args.split_override:
         splits = [args.split_override]
