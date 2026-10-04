@@ -101,6 +101,7 @@ _Source: aux/text_*.json (104 scenes)_
 | training-free: language as click oracle | 11.8 | 22.2 | 7.5 | 2.7 |
 | trained v3 (frozen decoder), 4k | 1.1 | 2.7 | 0.2 | 0.0 |
 | trained v4 (own text decoder), 4k | 10.9 | 20.7 | 8.2 | 0.4 |
+| trained v4, 8k | 15.9 | 28.1 | 12.1 | 3.4 |
 
 Tail classes are held out of text training.
 
@@ -124,13 +125,13 @@ _Source: aux/single_click_scannet_4k.json (1050 objects)_
 
 ### T10 · Proposal recall vs prompting scheme (S3DIS Area 5)
 
-_Source: aux/proposals_s3dis_6rooms.json (pilot, 6 rooms)_
+_Source: proposals_s3dis_area5.json_
 
 | scheme | recall@0.5 | recall@0.25 | proposals/room | s/room |
 |---|---|---|---|---|
-| fps400 | 64.9 | 79.2 | 60 | 14.9 |
-| fps800 | 69.2 | 82.5 | 76 | 29.7 |
-| c2f | 68.5 | 82.6 | 69 | 30.5 |
+| fps400 | 65.2 | 81.8 | 76 | 6.9 |
+| fps800 | 69.5 | 86.9 | 103 | 13.7 |
+| c2f | 69.7 | 87.3 | 112 | 10.8 |
 
 ### T11 · Systems: ingest, latency, storage (S3DIS Area 5, 34 rooms)
 
