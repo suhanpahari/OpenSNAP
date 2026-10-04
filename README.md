@@ -6,6 +6,13 @@
 </p>
 
 <p align="center">
+  <img src="assets/video/viewer_demo.gif" width="90%" alt="Viewer demo on Replica room0"><br>
+  <em>Real viewer session on Replica room0 (held out from training): 5 random objects clicked and named, then text queries
+  — full video: <a href="assets/video/viewer_demo.mp4">assets/video/viewer_demo.mp4</a>. Demo clicks skip walls/floors;
+  the gallery below is unfiltered.</em>
+</p>
+
+<p align="center">
   <img src="assets/gallery.png" width="90%" alt="Interactive viewer"><br>
   <em>Viewer: click an object → mask + name; type a phrase → its objects; type a class list → open-vocabulary labels.</em>
 </p>

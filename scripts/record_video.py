@@ -33,6 +33,25 @@ def orbit(app, seconds, start=0.0, sweep=90.0, fps=15):
     return a
 
 
+STRUCTURE = {"wall", "floor", "ceiling", "closet wall", "doorframe", "door", "window", "picture", "structure", "shower wall", "blinds"}
+
+
+def object_clicks(app, n, seed=0, min_pts=500, max_pts=20000):
+    """Random clicks on segments the system itself does not name as room structure (demo only)."""
+    props = app.ensure_props()
+    inv = app.m.scene["inverse"].cpu().numpy()
+    vc = app.m.scene["vcoord"].cpu().numpy()
+    sizes = (props.logits > 0)[:, app.m.scene["inverse"]].sum(1).cpu().numpy()
+    ok = [i for i in range(len(sizes)) if min_pts <= sizes[i] <= max_pts and app.name_fast(props, i)[0] not in STRUCTURE]
+    pick = np.random.default_rng(seed).choice(ok, size=min(n, len(ok)), replace=False)
+    out = []
+    for i in pick:
+        j = int(np.argmin(np.linalg.norm(vc - props.prompts[i, 0].cpu().numpy(), axis=1)))
+        out.append(int(np.nonzero(inv == j)[0][0]))
+    print("object clicks:", out, [app.name_fast(props, i)[0] for i in pick])
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scene", required=True)
@@ -52,8 +71,7 @@ def main():
     app = A.App(args)
     app.ensure_props()
     if a.random_objects:
-        from capture_demo import random_clicks
-        a.clicks = random_clicks(app, a.random_objects, 0, 300, 20000)
+        a.clicks = object_clicks(app, a.random_objects)
     tmp = a.out + "_raw"
     os.makedirs(tmp, exist_ok=True)
     with sync_playwright() as p:
