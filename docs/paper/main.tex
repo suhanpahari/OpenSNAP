@@ -1,0 +1,188 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{url}
+\newcommand{\TBD}[1]{\textcolor{red}{[TBD: #1]}}
+\newcommand{\sys}{\textsc{OpenSNAP}}
+\newcommand{\ovql}{\textsc{OVQL}}
+\lstset{basicstyle=\ttfamily\footnotesize,columns=fullflexible,keepspaces=true}
+
+\begin{document}
+\title{OpenSNAP: Open-Vocabulary Querying over 3D Point Clouds}
+\author{\IEEEauthorblockN{\TBD{authors}}\IEEEauthorblockA{\TBD{affiliations}}}
+\maketitle
+
+\begin{abstract}
+3D point clouds are produced at scale by indoor scanners and LiDAR, yet they are stored and exchanged as raw
+coordinates: answering even simple questions such as \emph{``where are the fire extinguishers?''} or
+\emph{``which chairs are next to a table?''} requires a bespoke perception pipeline per question and per vocabulary.
+We present \sys{}, a system that materialises a point cloud into an \emph{object relation} with open-vocabulary,
+probabilistic semantics and answers declarative queries over it. Objects are tuples carrying geometry, a quality
+estimate and two language-aligned embeddings; no label column is stored, and the probability that an object matches
+an arbitrary phrase is computed at query time and calibrated against a background vocabulary. \ovql{}, a small query
+language, combines open-vocabulary predicates, pointing (click) predicates and spatial predicates under
+tuple-independence semantics. When a query mentions something no stored object explains, \sys{} \emph{refines the
+relation at query time}: it uses the query text as the click oracle of a promptable segmenter, materialises the missing
+object and persists it --- database cracking applied to semantics. On ScanNet, \sys{} improves open-vocabulary 3D
+semantic segmentation from 52.0 to 58.2 mIoU over the strongest point-only baseline, answers queries in milliseconds
+over a relation several times smaller than the raw scan, and \TBD{cracking / workload result}.
+\end{abstract}
+
+\section{Introduction}
+Point clouds are a first-class data type in robotics, construction, facility management and autonomous driving, but
+data systems treat them as opaque arrays. The perception community has recently produced two complementary families of
+models: \emph{promptable segmenters} that return the mask of an object from a few clicks~\cite{snap,agile3d,pointsam},
+and \emph{3D vision--language models} that attach language-aligned features to every point~\cite{openscene}. Neither is
+a query system: promptable segmenters only answer ``what is under this click'', and dense language features only answer
+``how similar is each point to this phrase''. Users, however, ask for \emph{objects} that satisfy \emph{predicates}.
+
+\sys{} closes this gap with three contributions.
+\begin{itemize}
+\item \textbf{A probabilistic, open-vocabulary data model for 3D scenes} (Sec.~\ref{sec:model}). A scene is
+materialised once into a relation of object tuples. Semantics are not a fixed label column but a calibrated
+conditional probability $P(t\mid o)$ computed for any text $t$ at query time from two embeddings per object.
+\item \textbf{\ovql{}, a query language with probabilistic semantics} (Sec.~\ref{sec:lang}) combining text, pointing and
+spatial predicates with tuple-independence composition, so answers are ranked by probability.
+\item \textbf{Query-driven refinement (semantic cracking)} (Sec.~\ref{sec:proc}). The ingest-time object set is
+necessarily incomplete (flat objects on walls, rare concepts). The planner detects predicates no stored object
+explains and materialises the missing object by turning the query text into clicks for the promptable segmenter; the
+new tuple is persisted with provenance, so the relation adapts to the workload.
+\end{itemize}
+We also report negative findings that inform the design: fine-tuning the promptable segmenter on a single dataset
+loses the cross-dataset generalisation of its multi-dataset training, and multi-mask outputs give little benefit
+when selected by a learned quality head (Sec.~\ref{sec:exp}).
+
+\section{Background and Related Work}
+\textbf{Promptable 3D segmentation.} Interactive point-cloud segmenters~\cite{interobject3d,agile3d,interactive4d}
+return a mask from user clicks; SNAP~\cite{snap} extends this to any domain (indoor, outdoor, aerial) with a single
+model and a language-aligned output token. We use SNAP frozen as the geometric expert.
+\textbf{Open-vocabulary 3D understanding.} OpenScene~\cite{openscene} distils 2D vision--language features into a 3D
+network that runs on points alone; OpenMask3D~\cite{openmask3d} and related work pool image features into class-agnostic
+3D masks. These systems produce features or per-scene predictions, not a queryable representation.
+\textbf{Data management.} Our probabilistic semantics follow tuple-independent probabilistic databases~\cite{suciu};
+query-driven refinement is inspired by database cracking~\cite{cracking}, which reorganises physical data as a
+side-effect of queries; vector search~\cite{vectordb} and spatial query processing provide the execution primitives.
+\TBD{expand: multimedia/video query systems, LLM-based data systems, spatial DB references}.
+
+\section{Data Model}\label{sec:model}
+A scene is voxelised at 2\,cm into $N$ voxels and materialised into
+\[
+\textsf{Objects}(oid,\; V\subseteq\{1..N\},\; bbox,\; c,\; conf,\; e\in\mathbb{R}^{512},\; p\in\mathbb{R}^{D},\; prov).
+\]
+$V$ is the object's voxel set, $bbox$ and centroid $c$ support spatial predicates, $conf$ is the segmenter's predicted
+mask IoU, $e$ is the segmenter's language token and $p=\mathrm{norm}(\sum_{i\in V} w_i d_i)$ pools the dense 3D
+vision--language features $d_i$ inside the mask (mask-anchored pooling). $prov\in\{\texttt{auto},\texttt{click},
+\texttt{query:}t\}$ records how the tuple was created. For a phrase $t$ and a background vocabulary $B$,
+\[
+\log P(t\mid o) \propto \alpha \log \sigma_\tau\!\big(p^\top T_d(t,B)\big) + (1-\alpha)\log P_{e}(t\mid e),
+\]
+a product of experts in which $P_e$ reads the segmenter token \emph{through its training vocabulary} (vocabulary
+relay): the posterior over training anchors is combined with anchor--query text similarity. Ingest runs the frozen
+backbone and dense network once, generates automatic prompts, decodes and deduplicates masks.
+
+\section{The \ovql{} Language}\label{sec:lang}
+\begin{lstlisting}
+SELECT [WHERE expr] [LIMIT k] [THRESHOLD tau]
+expr   := term (OR term)*      term := factor (AND factor)*
+factor := NOT factor | (expr) | pred
+pred   := IS('text') | CONTAINS(x,y,z) | NEAR(expr, d)
+        | ABOVE(expr) | BELOW(expr) | ON(expr[, d])
+\end{lstlisting}
+Every predicate maps an object to a probability. $\textsf{IS}(t)(o)=P(t\mid o)$;
+$\textsf{CONTAINS}(x)(o)=conf_o\cdot[x\in V_o]$; for a spatial relation $R$,
+$R(E)(o)=\max_{o'\neq o} R(o,o')\,E(o')$ over bounding-box relations; $\textsf{AND}$ is the product, $\textsf{OR}$ the
+noisy-or and $\textsf{NOT}$ the complement. Example:
+\texttt{SELECT WHERE IS('chair') AND NEAR(IS('table'), 0.5) LIMIT 5}.
+
+\section{Query Processing}\label{sec:proc}
+\textbf{Two-tier execution.} The backbone and dense features are computed once per scene; every query touches only
+the small decoder (for refinement) and vector arithmetic over $|\textsf{Objects}|$ rows.
+\textbf{Phase 1: coverage and semantic cracking.} For each $\textsf{IS}(t)$ in the plan, if $\max_o P(t\mid o)<\theta$
+no stored object explains $t$. Promptable segmenters are trained to follow simulated users who click in the error region
+of the current mask; we replace the user with the text relevance map $r_t$: the first click is the densest
+high-relevance voxel and each further click is the most relevant voxel inside the target region not yet covered. If
+geometry cannot separate the object (low mask--relevance agreement, typical of flat objects on walls), the relevance
+region itself is used. The tuple is appended with $prov=\texttt{query:}t$ and the decision is recorded (including
+negative outcomes), so repeated or related queries do not pay again.
+\textbf{Phase 2: probabilistic evaluation} over the now fixed relation, ranking by probability.
+\textbf{Verification.} Optionally, a name is accepted only if \textsf{IS}(name) re-segments the same object.
+
+\section{Implementation}
+\sys{} uses SNAP-C~\cite{snap} as the frozen promptable segmenter (XYZ-only input, as in its training), the 3D
+distilled OpenScene network~\cite{openscene} for dense features, CLIP~\cite{clip} text encoders, and an optional small
+vision--language model (Qwen2.5-VL-3B) that chooses among 3D-proposed names from object renders for interactive naming.
+\TBD{code size, interactive viewer, artifact link}.
+
+\section{Evaluation}\label{sec:exp}
+\textbf{Setup.} ScanNet~\cite{scannet} val (312 scenes, 20 classes) and ScanNet200 splits; S3DIS~\cite{s3dis} Area~5
+(zero-shot); Matterport3D~\cite{matterport} 160-class test (406 regions). Evaluation code and protocols are released.
+
+\begin{table}[t]\centering\caption{Open-vocabulary 3D semantic segmentation (mIoU).}\label{tab:semseg}
+\begin{tabular}{lccc}\toprule
+method & ScanNet & MP-160 & MP-160 unseen \\\midrule
+segmenter text head & 41.5 & 6.9 & 1.9 \\
+OpenScene 3D (reproduced) & 52.0 & 9.5 & 5.5 \\
+\sys{} & \textbf{58.2} & \textbf{11.6} & \textbf{5.7} \\\bottomrule
+\end{tabular}\end{table}
+
+\textbf{Open-vocabulary semantics (Table~\ref{tab:semseg}).} Mask-anchored pooling and expert fusion improve over the
+point-wise dense baseline by 6.2 mIoU on ScanNet and 2.1 on Matterport-160; on the 63 Matterport classes absent from the
+segmenter's training vocabulary \sys{} is on par with the dense baseline (5.7 vs 5.5).
+
+\begin{table}[t]\centering\caption{\ovql{} workloads: instance AP of concept (\textsf{IS}) and relational
+(\textsf{IS}$\wedge$\textsf{NEAR}) queries.}\label{tab:queries}
+\begin{tabular}{lcccc}\toprule
+ & \multicolumn{2}{c}{S3DIS A5} & \multicolumn{2}{c}{ScanNet200 val} \\
+engine & IS & NEAR & IS & NEAR \\\midrule
+segmenter token only & 9.8 & 12.2 & 8.2 & 29.2 \\
+\sys{} & 11.6 & 14.5 & 9.7 & 29.1 \\
+\sys{} + cracking & 11.6 & 13.8 & 8.4 & 27.0 \\
+\sys{} + cracking (calibrated) & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\\bottomrule
+\end{tabular}\end{table}
+
+\textbf{Query workloads (Table~\ref{tab:queries}).} Answer sets are derived from instance annotations; AP is averaged
+over IoU 0.50:0.95. On ScanNet200 the segmenter was trained on all 200 classes, so its token is supervised in-domain;
+\sys{} improves head classes by 4.7 AP but trails on tail classes (2.5 vs 4.4). Uncalibrated cracking adds false
+positives; \TBD{calibrated cracking result}.
+
+\textbf{Interactive segmentation.} With our protocol the released segmenter reproduces its published S3DIS full-room
+result (IoU@1/3/5: 53.3/69.1/74.0 vs 53.6/71.1/77.6). Decoder fine-tuning on ScanNet alone degrades zero-shot
+multi-click IoU (IoU@5 71.0 vs 72.8 on a held-out subset), and a frozen segmenter with additive single-click tokens has
+an oracle headroom of only +2.0 IoU on ScanNet and +3.0 on S3DIS that a learned quality head does not capture; \sys{}
+therefore keeps the segmenter frozen.
+
+\textbf{Systems.} \TBD{ingest time vs scene size; query latency on the stored relation ($\approx$2--4\,ms in pilot rooms)
+vs re-processing per query ($\approx$6--13\,s); storage; cracking amortisation over a workload with synonyms and absent
+terms}.
+
+\textbf{Interactive naming.} \TBD{click-to-name accuracy on Matterport-160 (re-run with XYZ-only input)}.
+
+\section{Conclusion}
+\sys{} treats a 3D scan as a relation of objects with open-vocabulary probabilistic semantics, makes it queryable with
+a small declarative language, and lets the workload refine the relation. \TBD{limitations and future work: multi-scene
+indexes, outdoor domains, learned calibration}.
+
+\section*{Acknowledgment}
+\TBD{AI-generated content disclosure as required by ICDE 2027: system(s) used, sections affected, extent.}
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{99}
+\bibitem{snap} A.~Gupta \emph{et al.}, ``SNAP: Towards segmenting anything in any point cloud,'' in \emph{3DV}, 2026, arXiv:2510.11565.
+\bibitem{agile3d} Y.~Yue \emph{et al.}, ``AGILE3D: Attention guided interactive multi-object 3D segmentation,'' in \emph{ICLR}, 2024.
+\bibitem{pointsam} Y.~Zhou \emph{et al.}, ``Point-SAM: Promptable 3D segmentation model for point clouds,'' 2024.
+\bibitem{interobject3d} T.~Kontogianni \emph{et al.}, ``Interactive object segmentation in 3D point clouds,'' in \emph{ICRA}, 2023.
+\bibitem{interactive4d} I.~Fradlin \emph{et al.}, ``Interactive4D: Interactive 4D LiDAR segmentation,'' 2024.
+\bibitem{openscene} S.~Peng \emph{et al.}, ``OpenScene: 3D scene understanding with open vocabularies,'' in \emph{CVPR}, 2023.
+\bibitem{openmask3d} A.~Takmaz \emph{et al.}, ``OpenMask3D: Open-vocabulary 3D instance segmentation,'' in \emph{NeurIPS}, 2023.
+\bibitem{clip} A.~Radford \emph{et al.}, ``Learning transferable visual models from natural language supervision,'' in \emph{ICML}, 2021.
+\bibitem{suciu} D.~Suciu, D.~Olteanu, C.~R\'e, and C.~Koch, \emph{Probabilistic Databases}. Morgan \& Claypool, 2011.
+\bibitem{cracking} S.~Idreos, M.~L.~Kersten, and S.~Manegold, ``Database cracking,'' in \emph{CIDR}, 2007.
+\bibitem{vectordb} \TBD{vector database reference}.
+\bibitem{scannet} A.~Dai \emph{et al.}, ``ScanNet: Richly-annotated 3D reconstructions of indoor scenes,'' in \emph{CVPR}, 2017.
+\bibitem{s3dis} I.~Armeni \emph{et al.}, ``3D semantic parsing of large-scale indoor spaces,'' in \emph{CVPR}, 2016.
+\bibitem{matterport} A.~Chang \emph{et al.}, ``Matterport3D: Learning from RGB-D data in indoor environments,'' in \emph{3DV}, 2017.
+\end{thebibliography}
+\end{document}

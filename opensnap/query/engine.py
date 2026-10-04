@@ -11,9 +11,9 @@ BACKGROUND = ("wall", "floor", "ceiling", "object")
 
 
 class Engine:
-    def __init__(self, opensnap, table, refine=True, refine_below=0.3, background=BACKGROUND):
+    def __init__(self, opensnap, table, refine=True, refine_below=0.3, background=BACKGROUND, gamma=0.0):
         self.m, self.t = opensnap, table
-        self.refine, self.refine_below, self.background = refine, refine_below, background
+        self.refine, self.refine_below, self.background, self.gamma = refine, refine_below, background, gamma
         self.stats = dict(refined=0, is_calls=0)
 
     def is_prob(self, text, idx=None):
@@ -43,14 +43,14 @@ class Engine:
         props, agree = m.text_click(text)
         vc, dense = m.scene["vcoord"], m.scene["dense"]
         if agree >= 0.3:
-            mask, token, source = props.logits[0] > 0, props.tokens[0], "query-snap"
+            mask, token, source, conf = props.logits[0] > 0, props.tokens[0], "query-snap", props.scores[0] * agree
         else:
             mask, _, _ = m.text_segment(text)
-            token, source = torch.zeros_like(props.tokens[0]), "query-dense"
+            token, source, conf = torch.zeros_like(props.tokens[0]), "query-dense", torch.tensor(agree, device=props.scores.device)
         if mask.sum() == 0:
             return None
         pooled = F.normalize(dense[mask].mean(0), dim=-1) if dense is not None else None
-        oid = self.t.append(torch.nonzero(mask)[:, 0], vc, props.scores[0], token, pooled, f"{source}:{text}")
+        oid = self.t.append(torch.nonzero(mask)[:, 0], vc, conf, token, pooled, f"{source}:{text}")
         self.stats["refined"] += 1
         return oid
 
@@ -71,7 +71,8 @@ class Engine:
     def eval(self, node):
         op, a = node.op, node.args
         if op == "IS":
-            return self.is_prob(a[0])
+            p = self.is_prob(a[0])
+            return p * self.t.conf.clamp(min=1e-3) ** self.gamma if self.gamma else p
         if op == "AND":
             return self.eval(a[0]) * self.eval(a[1])
         if op == "OR":

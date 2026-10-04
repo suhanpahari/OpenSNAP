@@ -21,6 +21,7 @@ VARIANTS = {
     "opensnap": dict(dense=True, relay=0.8, refine=False),
     "opensnap_refine": dict(dense=True, relay=0.8, refine=True),
 }
+EXTRA = {}
 
 
 def classes_for(dataset):
@@ -98,13 +99,13 @@ def worker(rank, gpu, files, args, queue):
             queries.append(("NEAR", *pairs[k]))
         rec = dict(scene=os.path.basename(f), n_gt=len(objs), encode_s=enc, build_s=base.build_sec,
                    nbytes=base.nbytes()["total"], raw_bytes=int(coord.nbytes), n_objects=len(base), results={})
-        for vname, v in VARIANTS.items():
+        for vname, v in {**VARIANTS, **EXTRA}.items():
             import copy
             table = copy.deepcopy(base)
             if not v["dense"]:
                 table.pooled = torch.zeros(len(table), 0, device=table.token.device)
             m.cfg = dataclasses.replace(Config(), relay_weight=v["relay"])
-            eng = Engine(m, table, refine=v["refine"])
+            eng = Engine(m, table, refine=v["refine"], gamma=v.get("gamma", 0.0), refine_below=v.get("theta", 0.3))
             out = []
             for kind, a, b in queries:
                 q = f"SELECT WHERE IS('{a}')" if kind == "IS" else f"SELECT WHERE IS('{a}') AND NEAR(IS('{b}'), {args.near})"
@@ -149,7 +150,7 @@ def average_precision(items, thr):
 
 def summarize(recs, splits=None):
     out = {}
-    for v in VARIANTS:
+    for v in recs[0]["results"]:
         for kind in ("IS", "NEAR"):
             per_class = {}
             for r in recs:
@@ -173,6 +174,8 @@ def summarize(recs, splits=None):
                           objects=float(np.mean([r["n_objects"] for r in recs])),
                           relation_MB=float(np.mean([r["nbytes"] for r in recs]) / 1e6), raw_xyz_MB=float(np.mean([r["raw_bytes"] for r in recs]) / 1e6),
                           refined_per_scene=float(np.mean([r["results"]["opensnap_refine"]["refined"] for r in recs])))
+    for v in recs[0]["results"]:
+        out.setdefault(f"{v}/IS", {})["refined"] = float(np.mean([r["results"][v]["refined"] for r in recs]))
     return out
 
 
@@ -189,8 +192,15 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--out", default="results/queries.json")
+    ap.add_argument("--sweep", type=int, default=0)
+    ap.add_argument("--split_override", default="")
     args = ap.parse_args()
+    if args.sweep:
+        EXTRA.update({f"g{g}_t{t}": dict(dense=True, relay=0.8, refine=t > 0, gamma=g, theta=t)
+                      for g in (0.0, 1.0, 2.0) for t in (0.0, 0.1, 0.2, 0.3)})
     root, splits, _ = DATA[args.dataset]
+    if args.split_override:
+        splits = [args.split_override]
     files = sorted(f for s in splits for f in glob.glob(os.path.join(paths.DOWNLOADS, "data", root, s, "*")))[::args.stride]
     files = files[:args.limit] if args.limit else files
     gpus = [g for g in args.gpus.split(",") for _ in range(args.procs_per_gpu)]
