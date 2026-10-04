@@ -18,9 +18,19 @@ _Source: scannet_val_xyz.json (312 scenes), matterport160_test_xyz.json (406 reg
 
 Unseen = the 63 Matterport-160 classes absent from the segmenter's training vocabulary. XYZ-only segmenter input.
 
-### T15 · Dense-feature source
+### T15 · Dense-feature source (ScanNet val mIoU)
 
-**Pending:** scannet_val_xyz_openseg.json
+_Source: scannet_val_xyz.json vs scannet_val_xyz_openseg.json_
+
+| method | LSeg (ScanNet-trained) | OpenSeg (Matterport-trained) |
+|---|---|---|
+| OpenScene 3D (point-wise) | 52.0 | 37.3 |
+| Segmenter text token | 41.5 | 40.6 |
+| + vocabulary relay | 40.7 | 39.8 |
+| Mask-anchored pooling | 57.2 | 40.4 |
+| + dense blend | 57.2 | 40.6 |
+| OpenSNAP w/o relay | 56.2 | 48.1 |
+| **OpenSNAP (full)** | 58.2 | 47.6 |
 
 ### T3 · OVQL query workloads (instance AP, IoU 0.5:0.95)
 
