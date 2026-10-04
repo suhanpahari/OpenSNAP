@@ -58,8 +58,9 @@ class SnapModel:
     def decode(self, prompts):
         """prompts: (M, P, 3) in the encoded (voxel) frame -> logits (M, N), text (M, 512), iou (M,)"""
         logits, texts, ious = [], [], []
-        for s in range(0, len(prompts), self.chunk):
-            p = prompts[s:s + self.chunk].to(self.device).float()
+        chunk = max(1, min(self.chunk, int(2.5e6 / max(len(self.data["coord"]), 1))))
+        for s in range(0, len(prompts), chunk):
+            p = prompts[s:s + chunk].to(self.device).float()
             d = dict(self.data)
             d["point"], d["point_offset"] = p, [len(p)]
             with torch.autocast("cuda", dtype=torch.float16):

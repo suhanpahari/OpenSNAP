@@ -54,14 +54,21 @@ class Engine:
         self.stats["refined"] += 1
         return oid
 
+    def plan(self, node):
+        """Phase 1: refine the relation for IS predicates no stored object explains, before any scoring."""
+        if node.op == "IS":
+            p = self.is_prob(node.args[0])
+            if len(p) == 0 or p.max() < self.refine_below:
+                self.refine_is(node.args[0])
+            return
+        for a in node.args:
+            if hasattr(a, "op"):
+                self.plan(a)
+
     def eval(self, node):
         op, a = node.op, node.args
         if op == "IS":
-            p = self.is_prob(a[0])
-            if self.refine and (len(p) == 0 or p.max() < self.refine_below):
-                if self.refine_is(a[0]) is not None:
-                    p = self.is_prob(a[0])
-            return p
+            return self.is_prob(a[0])
         if op == "AND":
             return self.eval(a[0]) * self.eval(a[1])
         if op == "OR":
@@ -97,6 +104,8 @@ class Engine:
     def run(self, text):
         t0 = time.time()
         q = parse(text) if isinstance(text, str) else text
+        if self.refine and q.where is not None:
+            self.plan(q.where)
         score = self.eval(q.where) if q.where is not None else self.t.conf.clone()
         order = score.argsort(descending=True)
         order = order[score[order] > q.threshold]

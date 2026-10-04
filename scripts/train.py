@@ -112,8 +112,11 @@ def objective(model, point, coord, target, clicks=None, text=None, label_emb=Non
     logits, iou, tok = model.decode(point, coord, clicks=clicks, text=text)
     logits = logits.float()
     lm = mask_loss(logits, target)
-    best = lm.argmin(1)
-    loss = lm.gather(1, best[:, None]).mean()
+    if model.arch == "v1":
+        loss = lm.min(1).values.mean()
+    else:
+        single = clicks is None or clicks.shape[1] == 1
+        loss = lm[:, 0].mean() + (lm[:, 1:].min(1).values.mean() if single and lm.shape[1] > 1 else 0)
     loss = loss + F.mse_loss(iou.float(), mask_iou(logits, target).detach())
     if label_emb is not None:
         loss = loss + F.cross_entropy(F.normalize(tok.float(), dim=-1) @ label_emb.T, label_idx)
@@ -129,6 +132,7 @@ def main():
     ap.add_argument("--use_sem", type=int, default=1)
     ap.add_argument("--use_text", type=int, default=1)
     ap.add_argument("--num_masks", type=int, default=3)
+    ap.add_argument("--arch", default="v2", choices=["v1", "v2"])
     ap.add_argument("--holdout", nargs="*", default=None)
     ap.add_argument("--steps", type=int, default=6000)
     ap.add_argument("--lr", type=float, default=1e-4)
@@ -147,7 +151,7 @@ def main():
     dev = torch.device("cuda")
 
     model = SNAPPlus(load_snap(args.snap_ckpt), sem_dim=768 if args.feature == "openseg" else 512,
-                     num_masks=args.num_masks, use_sem=bool(args.use_sem), use_text=bool(args.use_text)).to(dev)
+                     num_masks=args.num_masks, use_sem=bool(args.use_sem), use_text=bool(args.use_text), arch=args.arch).to(dev)
     for p in list(model.snap.backbone.parameters()) + list(model.snap.input_encoder.parameters()):
         p.requires_grad = False
     params = [p for p in model.parameters() if p.requires_grad]
@@ -180,10 +184,8 @@ def main():
         with torch.no_grad():
             sem = sem_model(coord.cpu().numpy()) if sem_model is not None else None
             point, _ = model.snap.run_backbone(model.snap.run_input_encoder(d))
-        feat = point.feat.float()
-        if sem_model is not None:
-            feat = feat + model.sem_adapter(sem)
-        point.feat = feat
+        point.feat = point.feat.float()
+        point = model.add_semantics(point, sem)
         ids, counts = torch.unique(ins[ins >= 0], return_counts=True)
         ids = ids[counts >= 50]
         loss = torch.zeros((), device=dev)
@@ -196,7 +198,7 @@ def main():
                 for _ in range(n - 1):
                     with torch.no_grad():
                         lg, iou, _ = model.decode(point, coord, clicks=clicks)
-                        pred = lg[torch.arange(len(ids)), iou.argmax(1)] > 0
+                        pred = model.select(lg, iou, clicks.shape[1]) > 0
                     err = target & ~pred
                     src = torch.where(err.any(1, keepdim=True), err, target)
                     new = coord[torch.multinomial(src.float(), 1)[:, 0]]
@@ -228,7 +230,8 @@ def main():
         if (step + 1) % 2000 == 0 or step + 1 == args.steps:
             cfg = dict(snap_ckpt=os.path.abspath(args.snap_ckpt), openscene_ckpt=os.path.abspath(args.openscene_ckpt),
                        feature=args.feature, sem_dim=768 if args.feature == "openseg" else 512, num_masks=args.num_masks,
-                       use_sem=bool(args.use_sem), use_text=bool(args.use_text), classes=classes, holdout=args.holdout)
+                       use_sem=bool(args.use_sem), use_text=bool(args.use_text), classes=classes, holdout=args.holdout,
+                       arch=args.arch)
             torch.save(dict(model={k: v for k, v in model.state_dict().items() if not k.startswith("snap.backbone")},
                             cfg=cfg, step=step + 1), os.path.join(args.out, "last.pth"))
     json.dump(dict(args=vars(args), loss=log), open(os.path.join(args.out, "train_log.json"), "w"))

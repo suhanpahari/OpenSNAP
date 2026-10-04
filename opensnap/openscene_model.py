@@ -26,6 +26,22 @@ class OpenSceneModel:
         self.model.eval()
 
     @torch.no_grad()
+    def voxel_features(self, coord, target_inverse, n_target, chunk=500000):
+        """Mean feature per target voxel without materialising per-point features."""
+        vox = np.floor(coord / self.voxel_size)
+        vox -= vox.min(0)
+        _, idx, inv = np.unique(vox, axis=0, return_index=True, return_inverse=True)
+        c = torch.from_numpy(vox[idx]).int()
+        c = torch.cat([torch.zeros(len(c), 1, dtype=torch.int), c], 1).to(self.device)
+        feat = F.normalize(self.model(self.ME.SparseTensor(torch.ones(len(c), 3, device=self.device), c)).float(), dim=-1)
+        inv = torch.from_numpy(inv.reshape(-1)).to(self.device)
+        tgt = target_inverse.to(self.device)
+        out = torch.zeros(n_target, feat.shape[1], device=self.device)
+        for s in range(0, len(inv), chunk):
+            out.index_add_(0, tgt[s:s + chunk], feat[inv[s:s + chunk]])
+        return F.normalize(out, dim=-1)
+
+    @torch.no_grad()
     def __call__(self, coord):
         vox = np.floor(coord / self.voxel_size)
         vox -= vox.min(0)

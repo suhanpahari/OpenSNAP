@@ -44,9 +44,40 @@ class OpenSNAP:
         vcoord, inverse = self.snap.encode(coord, color, normal, strength)
         dense = None
         if self.openscene is not None:
-            dense = F.normalize(scatter_mean(self.openscene(coord), inverse, dim=0, dim_size=len(vcoord)), dim=-1)
+            dense = self.openscene.voxel_features(coord, inverse, len(vcoord))
         self.scene = dict(vcoord=vcoord, inverse=inverse, dense=dense)
         return self.scene
+
+    @torch.no_grad()
+    def propose_c2f(self, v0=0.8, levels=3, cover=0.5):
+        """Coarse-to-fine auto prompting: grid-centre prompts, then finer grids only in still-uncovered regions."""
+        c, vc = self.cfg, self.scene["vcoord"]
+        covered = torch.zeros(len(vc), dtype=torch.bool, device=vc.device)
+        L, T, S, P = [], [], [], []
+        for k in range(levels):
+            v = v0 / 2 ** k
+            cand = torch.nonzero(~covered)[:, 0]
+            if len(cand) == 0:
+                break
+            key = torch.floor(vc[cand] / v).long()
+            key = key - key.min(0).values
+            h = (key[:, 0] * 1000003 + key[:, 1]) * 1000003 + key[:, 2]
+            _, inv = torch.unique(h, return_inverse=True)
+            centre = torch.zeros(int(inv.max()) + 1, 3, device=vc.device).index_add_(0, inv, vc[cand])
+            centre /= torch.bincount(inv).float()[:, None]
+            near = torch.cdist(centre, vc[cand]).argmin(1)
+            prompts = vc[cand[near]][:, None]
+            logits, tokens, scores = self.snap.decode(prompts)
+            ok = scores > c.iou_thresh
+            L.append(logits[ok]); T.append(tokens[ok]); S.append(scores[ok]); P.append(prompts[ok])
+            covered |= ((logits[ok] > 0).float().sum(0) > 0) if ok.any() else covered
+        logits, tokens, scores, prompts = torch.cat(L), torch.cat(T), torch.cat(S), torch.cat(P)
+        stability = (logits > 1).sum(1).float() / (logits > -1).sum(1).clamp(min=1).float()
+        size = (logits > 0).sum(1)
+        keep = (stability > c.stability_thresh) & (size >= c.min_points)
+        idx = keep.nonzero().squeeze(1)
+        idx = idx[mask_nms(logits[idx] > 0, (scores * stability)[idx], c.nms_thresh)]
+        return Proposals(logits[idx], tokens[idx], scores[idx], prompts[idx])
 
     @torch.no_grad()
     def propose(self, prompts=None):

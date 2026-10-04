@@ -66,7 +66,10 @@ def worker(rank, gpu, files, args, queue):
                     ious += [ious[-1]] * (args.max_clicks - k)
                     break
                 clicks.append(c)
-                pred = snap.decode_clicks(vcoord[torch.stack(clicks)])
+                if args.model == "plus":
+                    pred = snap.decode_clicks(vcoord[torch.stack(clicks)], select=args.select, gt=gt)
+                else:
+                    pred = snap.decode_clicks(vcoord[torch.stack(clicks)])
                 ious.append(float((pred & gt).sum() / (pred | gt).sum()))
             queue.put(dict(scene=os.path.basename(f), obj=int(i), size=int(gt.sum()), seg=int(np.bincount(seg[ins == i]).argmax()), ious=ious))
     queue.put(None)
@@ -77,7 +80,7 @@ def build_model(args):
     if args.model == "snap":
         return SnapModel(args.ckpt, chunk=1)
     from opensnap.snap_plus import SnapPlusModel
-    return SnapPlusModel(args.ckpt)
+    return SnapPlusModel(args.ckpt, use_sem=bool(args.use_sem))
 
 
 def summarize(recs, max_clicks):
@@ -97,6 +100,9 @@ def main():
     ap.add_argument("--model", default="snap", choices=["snap", "plus"])
     ap.add_argument("--ckpt", default="../downloads/ckpt/SNAP_C.pth")
     ap.add_argument("--max_clicks", type=int, default=10)
+    ap.add_argument("--select", default="iou", choices=["iou", "first", "oracle"])
+    ap.add_argument("--use_sem", type=int, default=1)
+    ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--min_points", type=int, default=100)
     ap.add_argument("--skip_structure", type=int, default=0)
     ap.add_argument("--color", type=int, default=1)
@@ -108,6 +114,7 @@ def main():
     args = ap.parse_args()
     root, splits = DATA[args.dataset]
     files = sorted(f for s in splits for f in glob.glob(os.path.join(paths.DOWNLOADS, "data", root, s, "*")))
+    files = files[::args.stride]
     files = files[:args.limit] if args.limit else files
     gpus = [g for g in args.gpus.split(",") for _ in range(args.procs_per_gpu)]
     ctx = mp.get_context("spawn")
