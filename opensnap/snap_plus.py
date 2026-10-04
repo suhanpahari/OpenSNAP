@@ -126,7 +126,14 @@ class SNAPPlus(nn.Module):
         return logits[torch.arange(len(logits)), iou.argmax(1)]
 
 
+def resolve(path):
+    """Checkpoint configs store absolute paths; fall back to downloads/ckpt/<name> on other machines."""
+    import os
+    return path if os.path.exists(path) else os.path.join(paths.DOWNLOADS, "ckpt", os.path.basename(path))
+
+
 def load_snap(ckpt, device="cuda"):
+    ckpt = resolve(ckpt)
     snap = SNAP(num_points=1, num_merge_blocks=1, use_pdnorm=True, return_mid_points=True)
     sd = torch.load(ckpt, map_location="cpu")
     sd = {k.replace("module.", ""): v for k, v in sd.get("model", sd).items()}
@@ -151,7 +158,7 @@ class SnapPlusModel:
         assert not unexpected and all(k.startswith("snap.backbone") for k in missing), (missing[:5], unexpected[:5])
         self.model.eval()
         self.transform = build_transform(domain, GRID[domain])
-        self.sem = OpenSceneModel(openscene_ckpt or cfg["openscene_ckpt"], cfg["feature"]) if cfg["use_sem"] and use_sem else None
+        self.sem = OpenSceneModel(resolve(openscene_ckpt or cfg["openscene_ckpt"]), cfg["feature"]) if cfg["use_sem"] and use_sem else None
 
     @torch.no_grad()
     def encode(self, coord, color=None, normal=None, strength=None):

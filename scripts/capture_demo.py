@@ -38,19 +38,22 @@ def main():
     ap.add_argument("--port", type=int, default=8095)
     ap.add_argument("--tag", default="")
     ap.add_argument("--only_select", action="store_true")
+    ap.add_argument("--labels", default="")
+    ap.add_argument("--segments", type=int, default=0)
     ap.add_argument("--queries", nargs="*", default=[])
     ap.add_argument("--min_pts", type=int, default=800)
     ap.add_argument("--max_pts", type=int, default=60000)
     ap.add_argument("--vlm", default="Qwen/Qwen2.5-VL-3B-Instruct")
+    ap.add_argument("--text_ckpt", default="../downloads/checkpoints/opensnap_text_v4.pth")
     ap.add_argument("--prior", default="snap+lvis")
     ap.add_argument("--random_objects", type=int, default=0)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/scannet_lseg.pth.tar")
-    ap.add_argument("--feature", default="lseg")
+    ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/matterport_openseg.pth.tar")
+    ap.add_argument("--feature", default="openseg")
     a = ap.parse_args()
     args = types.SimpleNamespace(scene=a.scene, domain="Indoor", snap_ckpt="../downloads/ckpt/SNAP_C.pth",
                                  openscene_ckpt=a.openscene_ckpt, feature=a.feature, vlm=a.vlm, prior=a.prior,
-                                 alpha=0.7, normals=0, point_size=0.015, host="127.0.0.1", port=a.port, demo=False)
+                                 alpha=0.7, text_ckpt=a.text_ckpt, normals=0, point_size=0.015, host="127.0.0.1", port=a.port, demo=False)
     app = A.App(args)
     if a.random_objects:
         a.clicks = random_clicks(app, a.random_objects, a.seed, a.min_pts, a.max_pts)
@@ -83,6 +86,14 @@ def main():
         for n, idx in enumerate(a.clicks):
             select(idx)
             shot(f"{a.tag}1_select_{n}")
+        if a.labels:
+            app.vocab_box.value = a.labels
+            app.label_scene()
+            shot(f"{a.tag}2_labels")
+        if a.segments:
+            app.clear()
+            app.segment_everything()
+            shot(f"{a.tag}3_segments")
         if a.only_select:
             b.close()
             return

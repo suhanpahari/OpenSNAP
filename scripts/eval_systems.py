@@ -41,6 +41,7 @@ def main():
     ap.add_argument("--stride", type=int, default=2)
     ap.add_argument("--reprocess_queries", type=int, default=3)
     ap.add_argument("--out", default="results/systems_s3dis.json")
+    ap.add_argument("--text_ckpt", default="")
     a = ap.parse_args()
     from opensnap.core import Config, OpenSNAP
     from opensnap.data import snap_train_vocab
@@ -52,6 +53,9 @@ def main():
     dense = OpenSceneModel("../downloads/ckpt/matterport_openseg.pth.tar", "openseg")
     m = OpenSNAP(SnapModel("../downloads/ckpt/SNAP_C.pth"), TextEncoder(), dense, TextEncoder(dense.clip_name), Config(),
                  anchors=snap_train_vocab())
+    if a.text_ckpt:
+        from opensnap.text_decoder import TextDecoder
+        m.text_decoder = TextDecoder(a.text_ckpt, m.clip_snap)
     files = sorted(glob.glob(os.path.join(paths.DOWNLOADS, "data", a.split, "*")))[::a.stride]
     rows = []
     for f in files:

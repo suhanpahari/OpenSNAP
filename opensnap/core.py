@@ -34,8 +34,8 @@ class Proposals:
 class OpenSNAP:
     """Open-vocabulary SNAP: promptable masks + mask-anchored CLIP evidence."""
 
-    def __init__(self, snap, clip_snap, openscene=None, clip_dense=None, cfg=Config(), anchors=None):
-        self.snap, self.clip_snap = snap, clip_snap
+    def __init__(self, snap, clip_snap, openscene=None, clip_dense=None, cfg=Config(), anchors=None, text_decoder=None):
+        self.snap, self.clip_snap, self.text_decoder = snap, clip_snap, text_decoder
         self.openscene, self.clip_dense = openscene, clip_dense
         self.cfg = cfg
         self.anchor_emb = clip_snap(anchors, SNAP_TEMPLATES) if anchors else None
@@ -132,7 +132,10 @@ class OpenSNAP:
 
     @torch.no_grad()
     def text_segment(self, text, min_agree=0.3, tau=0.5, radius=1.0):
-        """Text -> object mask (voxels). SNAP mask via language clicks; relevance region when geometry cannot separate it."""
+        """Text -> object mask (voxels): trained text decoder if available, else language-as-oracle clicks."""
+        if self.text_decoder is not None:
+            mask, iou = self.text_decoder(self.snap, self.scene["dense"], text)
+            return mask, "decoder", iou
         props, agree = self.text_click(text, tau=tau, radius=radius)
         if agree >= min_agree:
             return props.logits[0] > 0, "snap", agree

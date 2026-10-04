@@ -42,13 +42,21 @@ class Engine:
     def refine_is(self, text):
         """No stored object explains `text`: materialise one at query time (language as the click oracle)."""
         m = self.m
-        props, agree = m.text_click(text)
         vc, dense = m.scene["vcoord"], m.scene["dense"]
+        if m.text_decoder is not None:
+            mask, iou = m.text_decoder(m.snap, dense, text)
+            return self.add_refined(mask, torch.tensor(iou, device=vc.device), torch.zeros(512, device=vc.device), f"query-decoder:{text}")
+        props, agree = m.text_click(text)
         if agree >= 0.3:
             mask, token, source, conf = props.logits[0] > 0, props.tokens[0], "query-snap", props.scores[0] * agree
         else:
             mask, _, _ = m.text_segment(text)
             token, source, conf = torch.zeros_like(props.tokens[0]), "query-dense", torch.tensor(agree, device=props.scores.device)
+        return self.add_refined(mask, conf, token, f"{source}:{text}")
+
+    def add_refined(self, mask, conf, token, source):
+        m = self.m
+        vc, dense = m.scene["vcoord"], m.scene["dense"]
         if mask.sum() == 0:
             return None
         if self.dedup and len(self.t):
@@ -60,7 +68,7 @@ class Engine:
                 self.stats["dedup"] = self.stats.get("dedup", 0) + 1
                 return int(iou.argmax())
         pooled = F.normalize(dense[mask].mean(0), dim=-1) if dense is not None else None
-        oid = self.t.append(torch.nonzero(mask)[:, 0], vc, conf, token, pooled, f"{source}:{text}")
+        oid = self.t.append(torch.nonzero(mask)[:, 0], vc, conf, token, pooled, source)
         self.stats["refined"] += 1
         return oid
 

@@ -32,8 +32,15 @@ class App:
             dense = OpenSceneModel(args.openscene_ckpt, args.feature)
             clip_dense = clip_snap if dense.clip_name == "ViT-B/32" else TextEncoder(dense.clip_name)
         self.vocab = prior_vocab(args.prior)
+        text_decoder = None
+        if getattr(args, "text_ckpt", "") and os.path.exists(args.text_ckpt) and dense is not None:
+            from opensnap.text_decoder import TextDecoder
+            text_decoder = TextDecoder(args.text_ckpt, clip_snap)
+            if text_decoder.sem_dim != (768 if args.feature == "openseg" else 512):
+                print(f"text decoder needs {text_decoder.feature} features; disabled")
+                text_decoder = None
         self.m = OpenSNAP(SnapModel(args.snap_ckpt, domain=args.domain), clip_snap, dense, clip_dense,
-                          Config(alpha=args.alpha), anchors=snap_train_vocab())
+                          Config(alpha=args.alpha), anchors=snap_train_vocab(), text_decoder=text_decoder)
         self.namer = None
         if args.vlm:
             from opensnap.namer import VLMNamer
@@ -226,7 +233,10 @@ class App:
         with self.lock:
             order, rel = self.m.query(props, q)
             best = rel[0].item()
-            if best >= 0.3:
+            if self.m.text_decoder is not None:
+                m, src, conf = self.m.text_segment(q)
+                masks, tag, best = [m[inv].cpu().numpy()], f"decoder {conf:.2f}", max(best, 0.3)
+            elif best >= 0.3:
                 keep = [i for i, r in zip(order.tolist(), rel.tolist()) if r >= 0.6 * best][:8]
                 masks = [(props.logits[i] > 0)[inv].cpu().numpy() for i in keep]
                 tag = f"{best:.2f}"
@@ -251,8 +261,9 @@ def main():
     ap.add_argument("--scene", required=True)
     ap.add_argument("--domain", default="Indoor", choices=["Indoor", "Outdoor", "Aerial"])
     ap.add_argument("--snap_ckpt", default="../downloads/ckpt/SNAP_C.pth")
-    ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/scannet_lseg.pth.tar")
-    ap.add_argument("--feature", default="lseg")
+    ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/matterport_openseg.pth.tar")
+    ap.add_argument("--feature", default="openseg")
+    ap.add_argument("--text_ckpt", default="../downloads/checkpoints/opensnap_text_v4.pth", help="'' to use training-free text queries")
     ap.add_argument("--vlm", default="Qwen/Qwen2.5-VL-3B-Instruct", help="'' to disable")
     ap.add_argument("--alpha", type=float, default=0.7)
     ap.add_argument("--prior", default="snap+lvis", choices=["snap", "snap+lvis"], help="name-proposal vocabulary")

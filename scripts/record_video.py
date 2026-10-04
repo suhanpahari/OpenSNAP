@@ -43,10 +43,11 @@ def main():
     ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/matterport_openseg.pth.tar")
     ap.add_argument("--feature", default="openseg")
     ap.add_argument("--vlm", default="Qwen/Qwen2.5-VL-3B-Instruct")
+    ap.add_argument("--text_ckpt", default="../downloads/checkpoints/opensnap_text_v4.pth")
     a = ap.parse_args()
     args = types.SimpleNamespace(scene=a.scene, domain="Indoor", snap_ckpt="../downloads/ckpt/SNAP_C.pth",
                                  openscene_ckpt=a.openscene_ckpt, feature=a.feature, vlm=a.vlm, prior="snap+lvis",
-                                 alpha=0.7, normals=0, point_size=0.012, host="127.0.0.1", port=a.port, demo=False)
+                                 alpha=0.7, text_ckpt=a.text_ckpt, normals=0, point_size=0.012, host="127.0.0.1", port=a.port, demo=False)
     app = A.App(args)
     app.ensure_props()
     tmp = a.out + "_raw"

@@ -22,6 +22,8 @@ VARIANTS = {
     "opensnap_refine": dict(dense=True, relay=0.8, refine=True),
 }
 EXTRA = {}
+DECODER_VARIANTS = {"opensnap_refine_v4": dict(dense=True, relay=0.8, refine=True, decoder=True, dedup=0.5),
+                    "opensnap_refine_v4_nodedup": dict(dense=True, relay=0.8, refine=True, decoder=True, dedup=0.0)}
 
 
 def sweep_variants():
@@ -71,6 +73,9 @@ def worker(rank, gpu, files, args, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
     if args.sweep:
         EXTRA.update(sweep_variants())
+    decoder = None
+    if args.text_ckpt:
+        EXTRA.update(DECODER_VARIANTS)
     import dataclasses
     from opensnap.core import Config, OpenSNAP
     from opensnap.data import snap_train_vocab
@@ -83,6 +88,9 @@ def worker(rank, gpu, files, args, queue):
     dense = OpenSceneModel(args.openscene_ckpt, args.feature)
     clip_dense = TextEncoder(dense.clip_name) if dense.clip_name != "ViT-B/32" else clip_snap
     m = OpenSNAP(SnapModel(args.snap_ckpt), clip_snap, dense, clip_dense, Config(), anchors=snap_train_vocab())
+    if args.text_ckpt:
+        from opensnap.text_decoder import TextDecoder
+        decoder = TextDecoder(args.text_ckpt, clip_snap)
     classes = classes_for(args.dataset)
     root, _, segf = DATA[args.dataset]
     for f in files:
@@ -113,6 +121,7 @@ def worker(rank, gpu, files, args, queue):
             if not v["dense"]:
                 table.pooled = torch.zeros(len(table), 0, device=table.token.device)
             m.cfg = dataclasses.replace(Config(), relay_weight=v["relay"])
+            m.text_decoder = decoder if v.get("decoder") else None
             eng = Engine(m, table, refine=v["refine"], gamma=v.get("gamma", 0.0), refine_below=v.get("theta", 0.3),
                          dedup=v.get("dedup", 0.0))
             out = []
@@ -204,6 +213,7 @@ def main():
     ap.add_argument("--sweep", type=int, default=0)
     ap.add_argument("--keep_all", type=int, default=0)
     ap.add_argument("--proposals", default="fps", choices=["fps", "c2f"])
+    ap.add_argument("--text_ckpt", default="")
     ap.add_argument("--split_override", default="")
     args = ap.parse_args()
 

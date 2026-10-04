@@ -8,7 +8,8 @@ conda create -y -p $E python=3.10
 $E/bin/pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu124
 $E/bin/pip install torch-scatter torch-cluster -f https://data.pyg.org/whl/torch-2.4.0+cu124.html
 $E/bin/pip install spconv-cu120 fire timm addict einops scipy plyfile h5py pyyaml tensorboardx hdbscan pandas ftfy regex tqdm \
-  gdown open3d torch-geometric python-dateutil ninja nuscenes-devkit viser "transformers>=4.49,<4.57" accelerate qwen-vl-utils
+  gdown open3d torch-geometric python-dateutil ninja nuscenes-devkit viser "transformers>=4.49,<4.57" accelerate qwen-vl-utils \
+  imageio-ffmpeg pypdf
 $E/bin/pip install git+https://github.com/openai/CLIP.git
 $E/bin/pip install https://github.com/Dao-AILab/flash-attention/releases/download/v2.6.3/flash_attn-2.6.3+cu123torch2.4cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
 conda install -y -p $E -c conda-forge openblas
@@ -21,3 +22,9 @@ CC=$G/x86_64-conda-linux-gnu-gcc CXX=$G/x86_64-conda-linux-gnu-g++ NVCC_PREPEND_
 CUDA_HOME=${CUDA_HOME:-/usr/local/cuda} TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-8.0} MAX_JOBS=16 \
 LIBRARY_PATH=$E/lib LDFLAGS="-L$E/lib -Wl,-rpath,$E/lib" \
 $E/bin/python setup.py install --blas=openblas --blas_include_dirs=$E/include --blas_library_dirs=$E/lib --force_cuda
+
+# Optional: screenshots / demo video of the viewer (headless Chromium), and the Manim explainer video
+if [ "${WITH_MEDIA:-0}" = "1" ]; then
+  $E/bin/pip install playwright && PLAYWRIGHT_BROWSERS_PATH=$ROOT/downloads/playwright $E/bin/python -m playwright install chromium
+  conda create -y -p $ROOT/downloads/manim_env -c conda-forge python=3.11 manim
+fi
