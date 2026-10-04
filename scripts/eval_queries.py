@@ -94,7 +94,7 @@ def worker(rank, gpu, files, args, queue):
         t0 = time.time()
         m.encode(coord)
         enc = time.time() - t0
-        base = materialize(m)
+        base = materialize(m, m.propose_c2f() if args.proposals == "c2f" else None)
         vc = m.scene["vcoord"].cpu().numpy()
         inv = m.scene["inverse"].cpu().numpy()
         skip = set() if args.keep_all else SKIP[args.dataset]
@@ -203,6 +203,7 @@ def main():
     ap.add_argument("--out", default="results/queries.json")
     ap.add_argument("--sweep", type=int, default=0)
     ap.add_argument("--keep_all", type=int, default=0)
+    ap.add_argument("--proposals", default="fps", choices=["fps", "c2f"])
     ap.add_argument("--split_override", default="")
     args = ap.parse_args()
 
