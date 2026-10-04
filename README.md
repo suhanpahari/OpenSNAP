@@ -27,22 +27,22 @@ All numbers produced by the scripts in this repo on this machine. Hyper-paramete
 
 | method | mIoU | mAcc | allAcc |
 |---|---|---|---|
-| OpenScene 3D-distill (reproduced) | 52.0 | 63.1 | 80.2 |
-| SNAP text token (masks + token) | 38.5 | 51.9 | 76.3 |
-| + Mask-Anchored Pooling | 55.5 | 65.1 | 82.9 |
-| Dual-Expert w/o relay | 54.4 | 64.0 | 83.1 |
-| **OpenSNAP (full)** | **55.9** | **65.2** | **83.5** |
+| OpenScene 3D-distill (reproduced) | 52.0 | 63.1 | 80.3 |
+| SNAP text token (masks + token) | 41.5 | 59.7 | 77.9 |
+| + Mask-Anchored Pooling | 57.2 | 66.8 | 83.7 |
+| Dual-Expert w/o relay | 56.2 | 67.1 | 84.0 |
+| **OpenSNAP (full)** | **58.2** | **68.0** | **84.6** |
 
 **Matterport3D test, 160 classes (406 regions, OpenSeg 3D features)** — *unseen* = the 63 classes not in SNAP's training vocabulary
 
 | method | mIoU | mAcc | allAcc | mIoU seen | mIoU unseen |
 |---|---|---|---|---|---|
 | OpenScene 3D-distill (reproduced) | 9.5 | 15.4 | 53.6 | 12.0 | 5.5 |
-| SNAP text token | 6.5 | 10.2 | 65.0 | 9.5 | 1.8 |
-| + Mask-Anchored Pooling | 9.9 | 15.2 | 57.4 | 12.6 | 5.5 |
-| **OpenSNAP (full)** | **11.1** | **16.2** | **69.0** | **14.9** | 5.2 |
+| SNAP text token | 6.9 | 11.9 | 65.8 | 10.2 | 1.9 |
+| + Mask-Anchored Pooling | 10.0 | 15.6 | 57.6 | 12.9 | 5.5 |
+| **OpenSNAP (full)** | **11.6** | **17.1** | **69.4** | **15.4** | **5.7** |
 
-OpenSNAP improves OpenScene by **+3.9 mIoU** on ScanNet and **+1.6 mIoU / +15.4 allAcc** on Matterport-160. Gains come from seen classes; on unseen Matterport classes the method is on par with OpenScene (not better).
+OpenSNAP improves OpenScene by **+6.2 mIoU** on ScanNet and **+2.1 mIoU / +15.8 allAcc** on Matterport-160. Gains come mostly from seen classes; on unseen Matterport classes it is roughly on par with OpenScene (5.7 vs 5.5). All numbers use the segmenter's XYZ-only input encoding (colour/normals zeroed), as in its training.
 
 ### Click-to-name (single simulated click → SNAP mask → free-form name)
 

@@ -114,6 +114,11 @@ def objective(model, point, coord, target, clicks=None, text=None, label_emb=Non
     lm = mask_loss(logits, target)
     if model.arch == "v1":
         loss = lm.min(1).values.mean()
+    elif model.arch == "v3":
+        single = clicks is None or clicks.shape[1] == 1
+        if not single:
+            return None, logits
+        loss = lm.min(1).values.mean()
     else:
         single = clicks is None or clicks.shape[1] == 1
         loss = lm[:, 0].mean() + (lm[:, 1:].min(1).values.mean() if single and lm.shape[1] > 1 else 0)
@@ -132,7 +137,7 @@ def main():
     ap.add_argument("--use_sem", type=int, default=1)
     ap.add_argument("--use_text", type=int, default=1)
     ap.add_argument("--num_masks", type=int, default=3)
-    ap.add_argument("--arch", default="v2", choices=["v1", "v2"])
+    ap.add_argument("--arch", default="v3", choices=["v1", "v2", "v3"])
     ap.add_argument("--holdout", nargs="*", default=None)
     ap.add_argument("--steps", type=int, default=6000)
     ap.add_argument("--lr", type=float, default=1e-4)
@@ -144,6 +149,8 @@ def main():
     ap.add_argument("--out", default="../downloads/runs/plus")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
+    if args.arch == "v3":
+        args.max_clicks = 1
     torch.manual_seed(args.seed)
     random.seed(args.seed)
     np.random.seed(args.seed)
@@ -152,8 +159,13 @@ def main():
 
     model = SNAPPlus(load_snap(args.snap_ckpt), sem_dim=768 if args.feature == "openseg" else 512,
                      num_masks=args.num_masks, use_sem=bool(args.use_sem), use_text=bool(args.use_text), arch=args.arch).to(dev)
-    for p in list(model.snap.backbone.parameters()) + list(model.snap.input_encoder.parameters()):
+    frozen = model.snap.parameters() if args.arch == "v3" else \
+        list(model.snap.backbone.parameters()) + list(model.snap.input_encoder.parameters())
+    for p in frozen:
         p.requires_grad = False
+    if args.arch == "v3":
+        for p in model.snap.text_prompt_encoder.parameters():
+            p.requires_grad = True
     params = [p for p in model.parameters() if p.requires_grad]
     print("trainable params", sum(p.numel() for p in params))
     opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=0.01)
@@ -206,8 +218,10 @@ def main():
                 lab = torch.stack([torch.bincount(seg[t].clamp(min=0), minlength=len(classes)).argmax() for t in target])
                 keep = torch.stack([(seg[t] >= 0).any() for t in target])
                 target, clicks, lab = target[keep], clicks[keep], lab[keep]
-                l_click, _ = objective(model, point, coord, target, clicks=clicks.float(), label_emb=label_emb, label_idx=lab)
-                loss = loss + l_click
+                l_click, _ = objective(model, point, coord, target, clicks=clicks.float(),
+                                       label_emb=None if args.arch == "v3" else label_emb, label_idx=lab)
+                if l_click is not None:
+                    loss = loss + l_click
             if args.use_text:
                 present = [c for c in torch.unique(seg).tolist() if c in text_ok and (seg == c).sum() >= 50]
                 random.shuffle(present)

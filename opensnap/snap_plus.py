@@ -63,13 +63,13 @@ class SNAPPlus(nn.Module):
             prompts.append(enc.view(-1, feat.shape[1]).add(feat[idx]).view(M, P, -1))
         if text is not None and self.use_text:
             prompts.append((s.text_prompt_encoder(text) + self.text_type)[:, None])
-        masks = [] if self.arch == "v1" else [s.mask_token.weight]
+        masks = [] if self.arch == "v1" else [s.mask_token.weight]  # v2/v3: SNAP's token is the whole-object path
         if self.K:
             masks.append(self.mask_tokens)
         out_tokens = torch.cat([s.iou_token.weight, *masks, s.text_token.weight], 0)
         tokens = torch.cat([out_tokens[None].expand(M, -1, -1), *prompts], 1)
         pe = s.point_pos_embeddings_module(coord)
-        if "sem_key" in point.keys():
+        if "sem_key" in point.keys() and (self.arch != "v3" or clicks is None):
             pe = pe + point.sem_key
         pts = feat[None].expand(M, -1, -1)
         pts_out, tok_out = s.merge([tokens], [pts], [pe[None].expand(M, -1, -1)])
@@ -78,11 +78,22 @@ class SNAPPlus(nn.Module):
         iou_t, mask_t, txt_t = tok_out[:, 0], tok_out[:, 1:1 + n], tok_out[:, 1 + n]
         logits = torch.einsum("mnd,mkd->mkn", pts_out, s.mask_head(mask_t))
         iou = torch.sigmoid(self.iou_mlp(torch.cat([iou_t[:, None].expand(-1, n, -1), mask_t], -1))).squeeze(-1)
+        if self.arch == "v3" and clicks is not None:
+            logits = torch.cat([self.snap_exact(point, coord, clicks, pe, pts, prompts[0]), logits[:, 1:]], 1)
         return logits, iou, s.text_head(txt_t)
+
+    def snap_exact(self, point, coord, clicks, pe, pts, click_tokens):
+        """SNAP's own token context (no extra tokens): the whole-object mask is exactly the frozen SNAP output."""
+        s = self.snap
+        M = clicks.shape[0]
+        base = torch.cat([s.iou_token.weight, s.mask_token.weight, s.text_token.weight], 0)
+        tokens = torch.cat([base[None].expand(M, -1, -1), click_tokens], 1)
+        pts_out, tok_out = s.merge([tokens], [pts], [s.point_pos_embeddings_module(coord)[None].expand(M, -1, -1)])
+        return torch.einsum("mnd,md->mn", pts_out[0], s.mask_head(tok_out[0][:, 1]))[:, None]
 
     def select(self, logits, iou, n_clicks):
         """v2: multi-click -> whole-object token; single click / text -> IoU-head choice among all tokens."""
-        if self.arch == "v2" and n_clicks > 1:
+        if self.arch in ("v2", "v3") and n_clicks > 1:
             return logits[:, 0]
         return logits[torch.arange(len(logits)), iou.argmax(1)]
 
@@ -149,4 +160,4 @@ class SnapPlusModel:
     def decode_text(self, text_emb):
         with torch.autocast("cuda", dtype=torch.float16):
             logits, iou, _ = self.model.decode(self.point, self.coord, text=text_emb[None].float())
-        return self.model.select(logits, iou, 1)[0] > 0
+        return logits[0, 0] > 0  # a text query names a concept: whole-object token

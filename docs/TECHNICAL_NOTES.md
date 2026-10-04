@@ -107,15 +107,19 @@ Backbone frozen; decoder side trained on ScanNet200 (S3DIS and Matterport kept z
 | S3DIS interactive, released SNAP-C | IoU@1/3/5/10 = 53.3 / 69.1 / 74.0 / 77.4 |
 | S3DIS interactive, decoder fine-tuned (control) | 54.1 / 69.2 / 73.4 / 76.8 (4k steps) |
 | S3DIS interactive, SNAP+ v1 | 52.6 / 63.7 / 66.4 / 69.2 (regression, see Sec. 7) |
-| S3DIS interactive, SNAP+ v2 | **TBD** |
+| S3DIS interactive, SNAP+ v2 (subset, 4k) | 52.3 / 65.4 / 69.5 / 72.3; control 51.8 / 66.5 / 71.0 / 74.0 — fine-tuning on ScanNet alone loses cross-dataset generalisation |
+| S3DIS interactive, SNAP+ v3 frozen (subset, 4k) | 51.6 / 68.2 / 73.0 / 76.3 vs SNAP 52.4 / 68.0 / 72.8 / 75.6 (parity by construction); oracle single-click 55.4 |
+| Single-click selection (ScanNet val, 1050 obj.) | SNAP token 68.0, oracle 70.0, IoU-head selection never beats SNAP token |
+| Text prompts, ScanNet val mIoU (head/common/tail) | training-free language-oracle clicks 11.8 (22.2/7.5/2.7); trained v3 text token 1.1 (does not learn through a frozen decoder) |
+| Open-vocab semseg ScanNet val (XYZ fix) | OpenScene 52.0, segmenter token 41.5, OpenSNAP **58.2** mIoU |
+| Open-vocab semseg Matterport-160 (XYZ fix) | OpenScene 9.5, segmenter token 6.9, OpenSNAP **11.6** mIoU; unseen 5.5 → 5.7 |
 | S3DIS queries `IS(c)` AP/AP50/AP25 | segmenter token only 9.8/16.7/25.1 → OpenSNAP 11.6/17.8/26.1 → + cracking 11.6/18.2/26.5 |
 | S3DIS queries `IS∧NEAR` AP | 12.2 → 14.5 |
 | Relation size vs raw XYZ | 2.1 MB vs 13.9 MB per room; 8 ms/query; 11 s ingest |
 | Proposal recall@0.5 (S3DIS, 6 rooms) | FPS-400 64.9%, FPS-800 69.2%, coarse-to-fine 68.5% |
 | Matterport-160 unseen-class naming (536 clicks) | segmenter token 8.0% → OpenSNAP 15.5% (mAcc 1.9 → 8.9) |
 
-Earlier ScanNet/Matterport semantic-segmentation numbers in the README were produced before the XYZ-only input fix and
-must be re-run before reporting.
+Semantic-segmentation numbers above are re-run with the XYZ-only input fix; naming numbers still predate it.
 
 ## 10. References (to cite in the paper)
 

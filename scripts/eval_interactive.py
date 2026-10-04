@@ -18,7 +18,9 @@ STRUCT = {"s3dis": {0, 1, 2}, "scannet": set()}
 
 
 def load(path, use_color):
-    d = {k: np.load(os.path.join(path, f"{k}.npy")) for k in ("coord", "color", "normal", "instance", "segment")}
+    d = {k: np.load(os.path.join(path, f"{k}.npy")) for k in ("coord", "color", "normal", "instance")}
+    seg_file = "segment.npy" if os.path.exists(os.path.join(path, "segment.npy")) else "segment200.npy"
+    d["segment"] = np.load(os.path.join(path, seg_file))
     ins = d["instance"].reshape(-1).astype(np.int64)
     seg = d["segment"].reshape(-1).astype(np.int64)
     color = d["color"].astype(np.float32) if use_color else None
