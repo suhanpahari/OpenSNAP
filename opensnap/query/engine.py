@@ -97,25 +97,48 @@ class Engine:
             return hit * self.t.conf
         if op in ("NEAR", "ABOVE", "BELOW", "ON"):
             pa = self.eval(a[0])
-            rel = self.relation(op, a[1])
-            rel.fill_diagonal_(0)
-            return (rel * pa[None]).max(1).values
+            if self.t.room is None:
+                rel = self.relation(op, a[1])
+                rel.fill_diagonal_(0)
+                return (rel * pa[None]).max(1).values
+            pad = self.padded()                                   # (R, P) row ids, -1 = padding
+            valid = pad >= 0
+            ids = pad.clamp(min=0)
+            rel = self.relation(op, a[1], ids) * (valid[:, :, None] & valid[:, None, :])
+            rel = rel * (1 - torch.eye(pad.shape[1], device=rel.device))[None]
+            sub = (rel * pa[ids][:, None, :]).max(2).values       # (R, P)
+            out = torch.zeros_like(pa)
+            out[pad[valid]] = sub[valid]
+            return out
         raise ValueError(op)
 
-    def relation(self, op, dist):
-        """(M, M) boolean relation between objects i (subject) and j (reference)."""
-        lo, hi, c = self.t.bbox_min, self.t.bbox_max, self.t.centroid
-        gap = (torch.maximum(lo[:, None] - hi[None], lo[None] - hi[:, None]).clamp(min=0)).norm(dim=-1)
-        xy = ((torch.minimum(hi[:, None, :2], hi[None, :, :2]) - torch.maximum(lo[:, None, :2], lo[None, :, :2])) > 0).all(-1)
-        same = (self.t.room[:, None] == self.t.room[None]) if self.t.room is not None else torch.ones_like(xy)
-        xy = xy & same
+    def padded(self):
+        """(R, P) object ids per scene, padded with -1 (cached): spatial joins never cross scenes."""
+        if getattr(self, "_pad", None) is None or int((self._pad >= 0).sum()) != len(self.t):
+            r = self.t.room
+            order = torch.argsort(r)
+            counts = torch.bincount(r[order])
+            P, R = int(counts.max()), len(counts)
+            pos = torch.arange(len(r), device=r.device) - torch.repeat_interleave(torch.cumsum(counts, 0) - counts, counts)
+            pad = torch.full((R, P), -1, dtype=torch.long, device=r.device)
+            pad[r[order], pos] = order
+            self._pad = pad
+        return self._pad
+
+    def relation(self, op, dist, idx=None):
+        """Relation between subject i and reference j: (M, M), or batched (R, P, P) for padded scene blocks."""
+        lo, hi, c = (self.t.bbox_min, self.t.bbox_max, self.t.centroid) if idx is None else \
+            (self.t.bbox_min[idx], self.t.bbox_max[idx], self.t.centroid[idx])
+        li, hi_, lj, hj = lo[..., :, None, :], hi[..., :, None, :], lo[..., None, :, :], hi[..., None, :, :]
+        gap = torch.maximum(li - hj, lj - hi_).clamp(min=0).norm(dim=-1)
+        xy = ((torch.minimum(hi_[..., :2], hj[..., :2]) - torch.maximum(li[..., :2], lj[..., :2])) > 0).all(-1)
         if op == "NEAR":
-            return ((gap <= dist) & same).float()
+            return (gap <= dist).float()
         if op == "ABOVE":
-            return (xy & (c[:, None, 2] > hi[None, :, 2])).float()
+            return (xy & (c[..., :, None, 2] > hj[..., 2])).float()
         if op == "BELOW":
-            return (xy & (c[:, None, 2] < lo[None, :, 2])).float()
-        return (xy & ((lo[:, None, 2] - hi[None, :, 2]).abs() < max(dist, 0.1))).float()
+            return (xy & (c[..., :, None, 2] < lj[..., 2])).float()
+        return (xy & ((li[..., 2] - hj[..., 2]).abs() < max(dist, 0.1))).float()
 
     def run(self, text):
         t0 = time.time()
@@ -127,5 +150,5 @@ class Engine:
         order = order[score[order] > q.threshold]
         if q.limit:
             order = order[: q.limit]
-        torch.cuda.synchronize()
-        return [(int(i), float(score[i])) for i in order], dict(ms=1000 * (time.time() - t0), **self.stats)
+        idx, val = order.cpu().numpy(), score[order].cpu().numpy()
+        return list(zip(idx.tolist(), val.tolist())), dict(ms=1000 * (time.time() - t0), **self.stats)
