@@ -149,11 +149,11 @@ _Source: systems_s3dis.json_
 
 | metric | value |
 |---|---|
-| encode per room (s) | 2.37 |
-| materialise per room (s) | 6.59 |
-| query on stored relation (ms) | 3.7 |
-| re-process scan per query (ms) | 8915 |
-| speed-up | 2425× |
+| encode per room (s) | 2.32 |
+| materialise per room (s) | 6.56 |
+| query on stored relation (ms) | 0.8 |
+| re-process scan per query (ms) | 8788 |
+| speed-up | 10936× |
 | relation (MB) | 1.98 |
 | raw XYZ (MB) | 13.31 |
 | compression | 6.7× |
@@ -164,9 +164,9 @@ _Source: systems_s3dis.json_
 
 | mode | mean ms | 2nd-pass ms | AP50 | synonym AP50 |
 |---|---|---|---|---|
-| no_refine | 5.0 | 4.7 | 38.9 | 38.3 |
-| refine_discard | 38.4 | 37.6 | 38.0 | 37.2 |
-| cracking | 20.4 | 5.3 | 35.0 | 33.9 |
+| no_refine | 1.6 | 1.3 | 38.9 | 38.3 |
+| refine_discard | 38.6 | 37.1 | 38.1 | 37.3 |
+| cracking | 18.1 | 1.7 | 35.2 | 34.1 |
 
 ### T13 · Cracking calibration ablation (ScanNet train, 61 scenes)
 
