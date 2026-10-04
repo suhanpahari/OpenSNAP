@@ -50,9 +50,9 @@ _Source: s3dis_queries_allclasses.json (one-shot proposals), s3dis_queries_allcl
 
 | engine | AP (FPS) | AP50 (FPS) | AP25 (FPS) | AP (c2f) | AP50 (c2f) | AP25 (c2f) |
 |---|---|---|---|---|---|---|
-| Segmenter token only | 11.3 | 18.1 | 24.9 | – | – | – |
-| **OpenSNAP** | 14.3 | 21.0 | 28.6 | – | – | – |
-| OpenSNAP + cracking | 14.3 | 21.2 | 28.8 | – | – | – |
+| Segmenter token only | 11.3 | 18.1 | 24.9 | 10.5 | 17.2 | 23.9 |
+| **OpenSNAP** | 14.3 | 21.0 | 28.6 | 15.4 | 23.4 | 29.2 |
+| OpenSNAP + cracking | 14.3 | 21.2 | 28.8 | 15.5 | 23.6 | 29.3 |
 | SNAP-C@auto (published, Table 4) | 16.1 | 23.8 | 30.9 |  |  |  |
 
 Published numbers use the authors' own evaluation; ours use one protocol for all engines.
