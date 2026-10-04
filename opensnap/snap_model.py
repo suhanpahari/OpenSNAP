@@ -44,8 +44,8 @@ class SnapModel:
     def encode(self, coord, color=None, normal=None, strength=None):
         n = len(coord)
         d = dict(coord=coord.astype(np.float32),
-                 color=np.ones((n, 3), np.float32) * 255 if color is None else color.astype(np.float32),
-                 normal=np.zeros((n, 3), np.float32) if normal is None else normal.astype(np.float32),
+                 color=np.zeros((n, 3), np.float32),  # SNAP is trained XYZ-only: colour/normals zeroed before normalisation
+                 normal=np.zeros((n, 3), np.float32),
                  strength=np.zeros((n, 1), np.float32) if strength is None else strength.reshape(n, 1).astype(np.float32))
         d = self.transform(d)
         d = {k: v.to(self.device) if torch.is_tensor(v) else v for k, v in d.items()}
@@ -68,3 +68,9 @@ class SnapModel:
             texts.append(F.normalize(txt[0].float(), dim=-1))
             ious.append(iou[0].float().squeeze(-1))
         return torch.cat(logits), torch.cat(texts), torch.cat(ious)
+
+    @torch.no_grad()
+    def decode_clicks(self, clicks):
+        """clicks: (P, 3) positive clicks on one object -> boolean voxel mask."""
+        logits, _, _ = self.decode(clicks[None])
+        return logits[0] > 0

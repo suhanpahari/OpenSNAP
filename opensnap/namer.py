@@ -49,19 +49,25 @@ class VLMNamer:
         ids = [self.processor.tokenizer.encode(l, add_special_tokens=False)[0] for l in letters]
         return logits[ids].log_softmax(-1).cpu().numpy()
 
-    def name_choose(self, opensnap, props, idx, coord, color, prior_vocab, k=5, weight=0.5):
-        """3D proposes top-k names from an open prior vocabulary, the VLM chooses; log-linear fusion."""
-        mask = (props.logits[idx] > 0)[opensnap.scene["inverse"]].cpu().numpy()
+    def name_choose(self, opensnap, props, idx, coord, color, prior_vocab, k=5, weight=0.5, cycle=1.0, use_vlm=True):
+        """3D proposes top-k names, the VLM chooses, and each name must re-segment the clicked object (cycle)."""
+        inv = opensnap.scene["inverse"]
+        m0 = props.logits[idx] > 0
         sub = type(props)(props.logits[idx:idx + 1], props.tokens[idx:idx + 1], props.scores[idx:idx + 1], props.prompts[idx:idx + 1])
         p3d = opensnap.mask_probs(sub, prior_vocab, use_dense=opensnap.scene["dense"] is not None)[0]
         top = p3d.topk(k)
         options = [prior_vocab[i] for i in top.indices.tolist()]
-        lp3d = torch.log_softmax(top.values.clamp(min=1e-8).log(), -1).cpu().numpy()
-        lvlm = self.choose(render_object(coord, color, mask, style=self.style), options)
-        score = (1 - weight) * lp3d + weight * lvlm
+        parts = {"lp3d": torch.log_softmax(top.values.clamp(min=1e-8).log(), -1).cpu().numpy()}
+        if use_vlm:
+            parts["lvlm"] = self.choose(render_object(coord, color, m0[inv].cpu().numpy(), style=self.style), options)
+        if cycle:
+            click = int((opensnap.scene["vcoord"] - props.prompts[idx, 0]).norm(dim=1).argmin())
+            parts["iou"], parts["contain"] = cycle_ious(opensnap, m0, options, click)
+        score = fuse(parts, weight, cycle)
         order = np.argsort(-score)
         ranked = [(options[i], float(np.exp(score[i] - np.logaddexp.reduce(score)))) for i in order]
-        return ranked[0][0], ranked, options[int(lvlm.argmax())]
+        pick = options[int(parts["lvlm"].argmax())] if use_vlm else options[0]
+        return ranked[0][0], ranked, pick, dict(options=options, **{k: v.tolist() for k, v in parts.items()})
 
     def name(self, opensnap, props, idx, coord, color, prior_vocab=None, n_3d=3, gamma=1.0, eps=0.05):
         """Name proposal `idx` from VLM candidates + top 3D-evidence names of `prior_vocab`."""
@@ -91,3 +97,27 @@ def parse(reply):
         if n and n not in STOP and n not in names and len(n) < 40:
             names.append(n)
     return names
+
+
+def cycle_ious(opensnap, m0, options, click=None, margin=0.5):
+    """Per candidate name: IoU of its text-driven mask with the clicked mask, and whether it contains the click."""
+    vc = opensnap.scene["vcoord"]
+    pts = vc[m0] if m0.any() else vc[click][None]
+    lo, hi = pts.min(0).values - margin, pts.max(0).values + margin
+    region = ((vc >= lo) & (vc <= hi)).all(1).float()
+    iou, contain = [], []
+    for name in options:
+        p, _ = opensnap.text_click(name, region=region)
+        m = p.logits[0] > 0
+        iou.append(float((m & m0).sum() / (m | m0).sum().clamp(min=1)))
+        contain.append(float(p.logits[0, click].sigmoid()) if click is not None else 0.0)
+    return np.array(iou), np.array(contain)
+
+
+def fuse(parts, weight=0.5, cycle=1.0, eps=0.05, mode="contain"):
+    score = parts["lp3d"] * (1 - weight if "lvlm" in parts else 1.0)
+    if "lvlm" in parts:
+        score = score + weight * parts["lvlm"]
+    if cycle and mode in parts:
+        score = score + cycle * np.log(np.asarray(parts[mode]) + eps)
+    return score

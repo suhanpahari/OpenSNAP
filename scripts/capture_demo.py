@@ -38,6 +38,9 @@ def main():
     ap.add_argument("--port", type=int, default=8095)
     ap.add_argument("--tag", default="")
     ap.add_argument("--only_select", action="store_true")
+    ap.add_argument("--queries", nargs="*", default=[])
+    ap.add_argument("--min_pts", type=int, default=800)
+    ap.add_argument("--max_pts", type=int, default=60000)
     ap.add_argument("--vlm", default="Qwen/Qwen2.5-VL-3B-Instruct")
     ap.add_argument("--prior", default="snap+lvis")
     ap.add_argument("--random_objects", type=int, default=0)
@@ -50,12 +53,13 @@ def main():
                                  alpha=0.7, normals=0, point_size=0.015, host="127.0.0.1", port=a.port, demo=False)
     app = A.App(args)
     if a.random_objects:
-        a.clicks = random_clicks(app, a.random_objects, a.seed)
+        a.clicks = random_clicks(app, a.random_objects, a.seed, a.min_pts, a.max_pts)
     os.makedirs(a.out, exist_ok=True)
     with sync_playwright() as p:
         b = p.chromium.launch(args=["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
         pg = b.new_page(viewport={"width": 1600, "height": 950})
         pg.goto(f"http://127.0.0.1:{a.port}")
+        pg.add_style_tag(content=".mantine-Notifications-root, .mantine-Notification-root { display: none !important; }")
         time.sleep(15)
 
         def shot(name):
@@ -69,6 +73,13 @@ def main():
             app.update_current()
 
         shot(f"{a.tag}0_scene")
+        for n, q in enumerate(a.queries):
+            app.query_box.value = q
+            app.find()
+            shot(f"{a.tag}q{n}_" + q.replace(" ", "_"))
+        if a.queries:
+            app.remove_objects()
+            app.draw_base()
         for n, idx in enumerate(a.clicks):
             select(idx)
             shot(f"{a.tag}1_select_{n}")

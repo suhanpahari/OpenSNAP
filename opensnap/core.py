@@ -70,6 +70,46 @@ class OpenSNAP:
         logits, tokens, scores = self.snap.decode(prompts)
         return Proposals(logits, tokens, scores, prompts)
 
+    @torch.no_grad()
+    def relevance(self, text, bg=("wall", "floor", "ceiling", "object")):
+        return self.dense_probs([text, *[b for b in bg if b != text]])[:, 0]
+
+    @torch.no_grad()
+    def text_click(self, text, region=None, max_clicks=3, tau=0.5, radius=1.0, knn_r=0.1):
+        """Language as the click oracle: clicks go where text relevance is high but the SNAP mask is missing."""
+        vc = self.scene["vcoord"]
+        rel = self.relevance(text)
+        if region is not None:
+            rel = rel * region
+        cand = rel.topk(min(2000, len(rel))).indices
+        d = torch.cdist(vc[cand], vc[cand])
+        density = ((d < knn_r).float() * rel[cand][None]).sum(1)
+        seed = cand[density.argmax()]
+        target = (rel > tau * rel[seed]) & ((vc - vc[seed]).norm(dim=1) < radius)
+        clicks, best = [seed], None
+        for _ in range(max_clicks):
+            logits, tokens, scores = self.snap.decode(vc[torch.stack(clicks)][None])
+            m = logits[0] > 0
+            agree = (m & target).sum() / (m | target).sum().clamp(min=1)
+            if best is None or agree > best[0]:
+                best = (agree, Proposals(logits, tokens, scores, vc[torch.stack(clicks)][None]))
+            missing = target & ~m
+            if missing.sum() < 0.1 * target.sum():
+                break
+            clicks.append(torch.where(missing, rel, torch.zeros_like(rel)).argmax())
+        return best[1], float(best[0])
+
+    @torch.no_grad()
+    def text_segment(self, text, min_agree=0.3, tau=0.5, radius=1.0):
+        """Text -> object mask (voxels). SNAP mask via language clicks; relevance region when geometry cannot separate it."""
+        props, agree = self.text_click(text, tau=tau, radius=radius)
+        if agree >= min_agree:
+            return props.logits[0] > 0, "snap", agree
+        vc, rel = self.scene["vcoord"], self.relevance(text)
+        seed = props.prompts[0, 0]
+        m = (rel > tau * rel.max()) & ((vc - seed).norm(dim=1) < radius)
+        return m, "dense", agree
+
     def snap_probs(self, tokens, labels):
         c = self.cfg
         text = self.clip_snap(labels, SNAP_TEMPLATES)

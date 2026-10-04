@@ -5,3 +5,4 @@ results/tmp_*
 results/*.log
 *.pth
 *.pth.tar
+.env

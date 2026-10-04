@@ -90,7 +90,8 @@ class App:
         lo, hi = self.coord.min(0), self.coord.max(0)
         mid = (lo + hi) / 2
         self.server.initial_camera.look_at = tuple(mid)
-        self.server.initial_camera.position = tuple(mid + np.array([0.35, -0.75, 0.75]) * (hi - lo).max())
+        ext = hi - lo
+        self.server.initial_camera.position = tuple(mid + np.array([0.15 * ext[0], -0.55 * ext[1], 0.3 * ext[:2].max() + ext[2]]))
         self.say(f"{os.path.basename(path.rstrip('/'))}: {len(self.coord):,} points, encoded in {time.time() - t:.1f}s")
 
     def draw_base(self, rgb=None):
@@ -143,7 +144,7 @@ class App:
 
     def vlm_name(self, props, i):
         if self.vlm_mode.value == "choose":
-            return self.namer.name_choose(self.m, props, i, self.coord, self.color, self.vocab)
+            return self.namer.name_choose(self.m, props, i, self.coord, self.color, self.vocab)[:3]
         return self.namer.name(self.m, props, i, self.coord, self.color, prior_vocab=self.vocab)
 
     def name_fast(self, props, i):
@@ -220,17 +221,29 @@ class App:
 
     def find(self):
         props = self.ensure_props()
+        q = self.query_box.value
+        inv = self.m.scene["inverse"]
         with self.lock:
-            order, rel = self.m.query(props, self.query_box.value)
-            inv = self.m.scene["inverse"]
-            heat = np.zeros(len(self.coord), np.float32)
-            for i, r in zip(order[:5].tolist(), rel[:5].tolist()):
-                mk = (props.logits[i] > 0)[inv].cpu().numpy()
-                heat[mk] = np.maximum(heat[mk], r / max(rel[0].item(), 1e-6))
+            order, rel = self.m.query(props, q)
+            best = rel[0].item()
+            if best >= 0.3:
+                keep = [i for i, r in zip(order.tolist(), rel.tolist()) if r >= 0.6 * best][:8]
+                masks = [(props.logits[i] > 0)[inv].cpu().numpy() for i in keep]
+                tag = f"{best:.2f}"
+            else:
+                m, src, agree = self.m.text_segment(q)
+                masks = [m[inv].cpu().numpy()]
+                tag = f"{src}"
+        self.remove_objects()
         rgb = self.base_rgb * 0.35 + 255 * 0.3
-        rgb[heat > 0] = (np.array([255, 60, 30]) * heat[heat > 0, None] + rgb[heat > 0] * (1 - heat[heat > 0, None]))
+        for j, mk in enumerate(masks[::-1]):
+            rgb[mk] = (255, 40, 30) if j == len(masks) - 1 else (255, 170, 60)
         self.draw_base(rgb.astype(np.uint8))
-        self.say(f"query “{self.query_box.value}”: best mask score {rel[0]:.2f}")
+        if masks[0].any():
+            pts = self.coord[masks[0]]
+            top = np.array([*np.median(pts[:, :2], 0), pts[:, 2].max() + 0.1])
+            self.nodes["query"] = [self.server.scene.add_label("/objects/query/label", f"{q} ({tag})", position=top)]
+        self.say(f"query “{q}”: {len(masks)} match(es), best score {best:.2f}" + ("" if best >= 0.3 else f" → {tag} fallback"))
 
 
 def main():

@@ -14,7 +14,7 @@ from opensnap.core import SNAP_TEMPLATES, Config, Proposals  # noqa: E402
 from opensnap.data import LABELSETS, load_scene, prior_vocab, scene_files, snap_train_vocab  # noqa: E402
 
 STRUCTURE = {"wall", "floor", "ceiling", "other", "otherfurniture", "objects", "misc", "void", "unlabeled"}
-OPEN_METHODS = ["snap", "opensnap_3d", "vlm", "rav", "vlm_choose", "choose"]
+OPEN_METHODS = ["snap", "opensnap_3d", "vlm", "rav", "vlm_choose", "choose", "3d_cycle_iou", "3d_cycle_contain", "choose_cycle_iou", "choose_cycle_contain"]
 CLOSED_METHODS = ["openscene_point", "opensnap_closed"]
 
 
@@ -72,10 +72,27 @@ def worker(rank, gpu, files, args, queue):
                 from opensnap.namer import parse
                 vlm = parse(reply)
                 rec.update(vlm=vlm[0] if vlm else "object", rav=best, vlm_reply=reply, vlm_sec=time.time() - t)
-                best, _, vlm_pick = namer.name_choose(model, props, 0, coord, color, prior)
-                rec.update(vlm_choose=vlm_pick, choose=best)
+                best, _, vlm_pick, parts = namer.name_choose(model, props, 0, coord, color, prior, cycle=args.cycle)
+                from opensnap.namer import fuse
+                opts = parts["options"]
+                arr = {k: np.array(v) for k, v in parts.items() if k != "options"}
+                rec.update(vlm_choose=vlm_pick, choose=opts[int(np.argmax(fuse(arr, cycle=0)))], parts=parts)
+                if "iou" in arr:
+                    for mode in ("iou", "contain"):
+                        rec[f"choose_cycle_{mode}"] = opts[int(np.argmax(fuse(arr, cycle=args.cycle, mode=mode)))]
+                        rec[f"3d_cycle_{mode}"] = opts[int(np.argmax(fuse({"lp3d": arr["lp3d"], mode: arr[mode]}, cycle=args.cycle, mode=mode)))]
+                    vc = model.scene["vcoord"]
+                    pts = vc[props.logits[0] > 0] if (props.logits[0] > 0).any() else vc[model.scene["inverse"][idx]][None]
+                    region = ((vc >= pts.min(0).values - 0.5) & (vc <= pts.max(0).values + 0.5)).all(1).float()
+                    tp, _ = model.text_click(rec["choose_cycle_contain"], region=region)
+                    tm = (tp.logits[0] > 0)[model.scene["inverse"]].cpu().numpy()
+                    rec["refined_mask_iou"] = float((tm & (gt == c)).sum() / max((tm | (gt == c)).sum(), 1))
+                    rec["click_pred_iou"], rec["refined_pred_iou"] = float(props.scores[0]), float(tp.scores[0])
+                    use = rec["refined_pred_iou"] > rec["click_pred_iou"] and bool(tm[idx])
+                    rec["gated_mask_iou"] = rec["refined_mask_iou"] if use else rec["mask_iou"]
+                    rec["refined_contains_click"] = bool(tm[idx])
             for m in OPEN_METHODS:
-                if m in rec:
+                if m in rec and not m.endswith("_mapped"):
                     rec[m + "_mapped"] = labels[to_label(rec[m])]
             queue.put(rec)
     queue.put(None)
@@ -94,6 +111,7 @@ def main():
     ap.add_argument("--clicks", type=int, default=5)
     ap.add_argument("--prior", default="snap", choices=["snap", "snap+lvis"])
     ap.add_argument("--unseen_only", action="store_true")
+    ap.add_argument("--cycle", type=float, default=1.0)
     ap.add_argument("--gpus", default="0,1")
     ap.add_argument("--procs_per_gpu", type=int, default=2)
     ap.add_argument("--limit", type=int, default=0)
@@ -133,6 +151,10 @@ def main():
         rows[m] = dict(acc=float(hit.mean()), macc=float(np.mean(per_cls)),
                        acc_unseen=float(hit[uns].mean()) if uns.any() else float("nan"),
                        acc_seen=float(hit[~uns].mean()) if (~uns).any() else float("nan"))
+    if "refined_mask_iou" in recs[0]:
+        print(f"mask IoU: click {100 * np.mean([r['mask_iou'] for r in recs]):.1f} -> name-refined "
+              f"{100 * np.mean([r['refined_mask_iou'] for r in recs]):.1f} (contains click {100 * np.mean([r['refined_contains_click'] for r in recs]):.0f}%) "
+              f"-> IoU-gated {100 * np.mean([r['gated_mask_iou'] for r in recs]):.1f}")
     report = dict(args=vars(args), clicks=len(recs), mean_mask_iou=float(np.mean([r["mask_iou"] for r in recs])),
                   unseen_clicks=int(sum(r["gt"].lower() not in seen for r in recs)), results=rows, records=recs)
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
