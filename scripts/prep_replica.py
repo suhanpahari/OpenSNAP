@@ -26,7 +26,7 @@ def mesh_labels(raw, scene):
     pts = np.concatenate([v[idx].reshape(-1, 3), cent])
     lab = np.concatenate([np.repeat(oid, idx.shape[1]), oid])
     info = json.load(open(os.path.join(raw, scene, "habitat", "info_semantic.json")))
-    cls = {o["id"]: o["class_name"] for o in info["objects"]}
+    cls = {o["id"]: o["class_name"].replace("-", " ") for o in info["objects"]}
     return pts, lab, cls
 
 

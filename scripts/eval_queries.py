@@ -17,7 +17,8 @@ DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"], "segment"), "scannet": ("pointc
         "replica": ("pointcept/replica", ["all"], "segment")}
 S3DIS = ["ceiling", "floor", "wall", "beam", "column", "window", "door", "table", "chair", "sofa", "bookcase", "board", "clutter"]
 SKIP = {"s3dis": {"ceiling", "floor", "wall", "clutter"}, "scannet": {"wall", "floor", "ceiling"},
-        "replica": {"wall", "floor", "ceiling", "undefined", "wall-plug", "anonymize_text", "anonymize_picture"}}
+        "replica": {"wall", "floor", "ceiling", "undefined", "wall plug", "non plane", "other leaf", "anonymize_text",
+                    "anonymize_picture"}}
 VARIANTS = {
     "snap_native": dict(dense=False, relay=0.0, refine=False),
     "opensnap": dict(dense=True, relay=0.8, refine=False),

@@ -74,6 +74,18 @@ def queries():
               ["engine", "AP (FPS)", "AP50 (FPS)", "AP25 (FPS)", "AP (c2f)", "AP50 (c2f)", "AP25 (c2f)"], rows,
               "Published numbers use the authors' own evaluation; ours use one protocol for all engines.")
 
+    rf, rc = load("replica_queries.json"), load("replica_queries_c2f.json")
+    if rf:
+        names = {**eng, "opensnap_refine_v4": "OpenSNAP + cracking (v4 refiner)"}
+        cell = lambda d, k: [pct(d["results"][f"{k}/IS"][m]) for m in ("AP", "AP50", "AP25")] if d and f"{k}/IS" in d["results"] else ["–"] * 3
+        rows = [[n] + cell(rf, k) + cell(rc, k) for k, n in names.items()]
+        rows += [["SNAP-C@auto (published, Table 4)", "10.1", "11.7", "13.8", "", "", ""],
+                 ["OpenMask3D (published)", "13.1", "18.4", "24.2", "", "", ""]]
+        table("T4b · Open-vocabulary instance segmentation on Replica (8 scenes)", "replica_queries.json, replica_queries_c2f.json",
+              ["engine", "AP (FPS)", "AP50 (FPS)", "AP25 (FPS)", "AP (c2f)", "AP50 (c2f)", "AP25 (c2f)"], rows,
+              "Instances transferred from Replica habitat meshes (exact alignment); all object classes except structure/undefined. "
+              "Published numbers use the OpenMask3D 51-class protocol.")
+
 
 def refiner():
     q, sy = load("s3dis_queries_v4.json"), load("systems_s3dis_v4.json")

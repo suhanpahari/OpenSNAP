@@ -57,6 +57,21 @@ _Source: s3dis_queries_allclasses.json (one-shot proposals), s3dis_queries_allcl
 
 Published numbers use the authors' own evaluation; ours use one protocol for all engines.
 
+### T4b · Open-vocabulary instance segmentation on Replica (8 scenes)
+
+_Source: replica_queries.json, replica_queries_c2f.json_
+
+| engine | AP (FPS) | AP50 (FPS) | AP25 (FPS) | AP (c2f) | AP50 (c2f) | AP25 (c2f) |
+|---|---|---|---|---|---|---|
+| Segmenter token only | 16.1 | 20.4 | 23.7 | 14.8 | 19.7 | 22.3 |
+| **OpenSNAP** | 17.9 | 22.9 | 27.9 | 19.9 | 25.9 | 30.0 |
+| OpenSNAP + cracking | 18.0 | 23.3 | 26.7 | 18.9 | 24.3 | 27.6 |
+| OpenSNAP + cracking (v4 refiner) | 16.6 | 21.6 | 27.3 | 18.7 | 24.1 | 28.2 |
+| SNAP-C@auto (published, Table 4) | 10.1 | 11.7 | 13.8 |  |  |  |
+| OpenMask3D (published) | 13.1 | 18.4 | 24.2 |  |  |  |
+
+Instances transferred from Replica habitat meshes (exact alignment); all object classes except structure/undefined. Published numbers use the OpenMask3D 51-class protocol.
+
 ### T12b · Query-time refiner: click oracle vs trained text decoder (S3DIS Area 5 queries)
 
 _Source: s3dis_queries_v4.json_
