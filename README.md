@@ -96,7 +96,7 @@ text decoder's mask is shown instead. Failures are kept (e.g. `rug` → sofa, `s
 ![scannet_scene0568_00](assets/openvocab_gallery/scannet_scene0568_00.jpg)
 </details>
 
-<details open><summary><b>Outdoor LiDAR</b> (nuScenes val, zero-shot, XYZ-only)</summary>
+<details open><summary><b>Outdoor LiDAR</b> (nuScenes val, XYZ-only, free vocabulary)</summary>
 
 ![outdoor](assets/outdoor_gallery.jpg)
 
