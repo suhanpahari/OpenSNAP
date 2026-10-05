@@ -33,9 +33,10 @@ def worker(rank, gpu, files, args, queue):
     from opensnap.text import TextEncoder
     cfg = Config(**{k: getattr(args, k) for k in Config.__dataclass_fields__})
     clip_snap = TextEncoder("ViT-B/32")
-    dense = OpenSceneModel(args.openscene_ckpt, args.feature)
+    dense = OpenSceneModel(args.openscene_ckpt, args.feature, voxel_size=args.dense_voxel)
     clip_dense = clip_snap if dense.clip_name == "ViT-B/32" else TextEncoder(dense.clip_name)
-    model = OpenSNAP(SnapModel(args.snap_ckpt, chunk=args.chunk), clip_snap, dense, clip_dense, cfg, anchors=snap_train_vocab())
+    model = OpenSNAP(SnapModel(args.snap_ckpt, chunk=args.chunk, domain=args.domain), clip_snap, dense, clip_dense, cfg,
+                     anchors=snap_train_vocab())
     labels = LABELSETS[args.dataset]
     C = len(labels)
     for f in files:
@@ -91,6 +92,8 @@ def main():
     ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--chunk", type=int, default=16)
     ap.add_argument("--normals", type=int, default=0)
+    ap.add_argument("--domain", default="Indoor", choices=["Indoor", "Outdoor", "Aerial"])
+    ap.add_argument("--dense_voxel", type=float, default=0.02)
     ap.add_argument("--out", default="results/eval.json")
     for k, f in Config.__dataclass_fields__.items():
         ap.add_argument(f"--{k}", type=type(f.default), default=f.default)

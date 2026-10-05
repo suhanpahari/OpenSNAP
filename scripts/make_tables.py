@@ -116,6 +116,14 @@ def interactive():
     table("T5 · Interactive segmentation, S3DIS Area 5 (zero-shot)", "s3dis_interactive_*.json, aux/*",
           ["model", "rooms", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@90"], rows,
           "Subset = every 4th room (17 rooms). XYZ-only input; first click at object centre, then centre of the missed region.")
+    c = get("s3dis_interactive_crops.json")
+    if c:
+        rows = [["SNAP-C (released, our run)", pct(c["IoU@1"]), pct(c["IoU@3"]), pct(c["IoU@5"]), f"{c['NoC@90']:.2f}", c["objects"]],
+                ["SNAP-C (published)", "56.6", "73.8", "80.9", "–", "–"], ["AGILE3D (published)", "58.7", "77.4", "83.6", "–", "–"],
+                ["Point-SAM (published)", "45.9", "77.6", "84.6", "–", "–"]]
+        table("T5c · Interactive segmentation on S3DIS Area 5 object crops (SNAP Table 2 protocol)", "s3dis_interactive_crops.json",
+              ["model", "IoU@1", "IoU@3", "IoU@5", "NoC@90", "objects"], rows,
+              "±1.5 m crop around each object. OpenSNAP's click path is SNAP-exact, so its row equals the SNAP-C run.")
     diag = [("aux/diag_plus_iou.json", "IoU-head selection"), ("aux/diag_plus_oracle.json", "oracle best-of-K"),
             ("aux/diag_plus_first.json", "always token 0"), ("aux/diag_plus_nosem.json", "semantic features removed")]
     rows = [[l, pct(get(n)["IoU@1"]), pct(get(n)["IoU@3"]), pct(get(n)["IoU@5"]), pct(get(n)["IoU@10"])] for n, l in diag if get(n)]

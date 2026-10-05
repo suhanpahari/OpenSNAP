@@ -13,9 +13,11 @@ import torch.multiprocessing as mp
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap import paths  # noqa: E402
 
-DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"], "segment"), "scannet": ("pointcept/scannet", ["val"], "segment200")}
+DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"], "segment"), "scannet": ("pointcept/scannet", ["val"], "segment200"),
+        "replica": ("pointcept/replica", ["all"], "segment")}
 S3DIS = ["ceiling", "floor", "wall", "beam", "column", "window", "door", "table", "chair", "sofa", "bookcase", "board", "clutter"]
-SKIP = {"s3dis": {"ceiling", "floor", "wall", "clutter"}, "scannet": {"wall", "floor", "ceiling"}}
+SKIP = {"s3dis": {"ceiling", "floor", "wall", "clutter"}, "scannet": {"wall", "floor", "ceiling"},
+        "replica": {"wall", "floor", "ceiling", "undefined", "wall-plug", "anonymize_text", "anonymize_picture"}}
 VARIANTS = {
     "snap_native": dict(dense=False, relay=0.0, refine=False),
     "opensnap": dict(dense=True, relay=0.8, refine=False),
@@ -34,6 +36,8 @@ def sweep_variants():
 def classes_for(dataset):
     if dataset == "s3dis":
         return S3DIS
+    if dataset == "replica":
+        return json.load(open(os.path.join(paths.DOWNLOADS, "data", "pointcept", "replica", "classes.json")))
     paths.add(paths.SNAP_DIR)
     from datasets.demo import DemoDatset
     d = DemoDatset.__new__(DemoDatset)

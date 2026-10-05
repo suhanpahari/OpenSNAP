@@ -7,14 +7,15 @@ import torch
 from . import paths
 
 paths.add(paths.OPENSCENE_DIR)
-from dataset.label_constants import SCANNET_LABELS_20, MATTERPORT_LABELS_21, MATTERPORT_LABELS_160  # noqa: E402
+from dataset.label_constants import SCANNET_LABELS_20, MATTERPORT_LABELS_21, MATTERPORT_LABELS_160, NUSCENES_LABELS_16  # noqa: E402
 
 LABELSETS = {
     "scannet": [*SCANNET_LABELS_20[:-1], "other"],
     "matterport": list(MATTERPORT_LABELS_21),
     "matterport160": list(MATTERPORT_LABELS_160),
+    "nuscenes": list(NUSCENES_LABELS_16),
 }
-DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160"}
+DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160", "nuscenes": "nuscenes_3d"}
 
 
 def snap_train_vocab():

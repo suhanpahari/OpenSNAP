@@ -44,35 +44,45 @@ def centre(region, vcoord):
     return torch.nonzero(region)[d.argmax(), 0]
 
 
+def click_object(snap, vcoord, gt, args):
+    clicks, ious = [], []
+    pred = torch.zeros_like(gt)
+    for k in range(args.max_clicks):
+        c = next_click(pred, gt, vcoord)
+        if c is None:
+            ious += [ious[-1]] * (args.max_clicks - k)
+            break
+        clicks.append(c)
+        if args.model == "plus":
+            pred = snap.decode_clicks(vcoord[torch.stack(clicks)], select=args.select, gt=gt)
+        else:
+            pred = snap.decode_clicks(vcoord[torch.stack(clicks)])
+        ious.append(float((pred & gt).sum() / (pred | gt).sum()))
+    return ious
+
+
 def worker(rank, gpu, files, args, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
-    from opensnap.snap_model import SnapModel
     snap = build_model(args)
     struct = STRUCT[args.dataset]
     for f in files:
         coord, color, normal, ins, seg = load(f, args.color)
-        vcoord, inverse = snap.encode(coord, color, normal if args.normals else None)
-        inv = inverse
         ids = [i for i in np.unique(ins) if i >= 0 and (ins == i).sum() >= args.min_points
                and (not args.skip_structure or np.bincount(seg[ins == i]).argmax() not in struct)]
-        ins_t = torch.from_numpy(ins).to(vcoord.device)
+        if not args.crops:
+            vcoord, inv = snap.encode(coord, color, normal if args.normals else None)
+            ins_t = torch.from_numpy(ins).to(vcoord.device)
         for i in ids:
-            gt_full = ins_t == i
-            gt = torch.zeros(len(vcoord), dtype=torch.bool, device=vcoord.device)
-            gt[inv[gt_full]] = True
-            clicks, ious = [], []
-            pred = torch.zeros_like(gt)
-            for k in range(args.max_clicks):
-                c = next_click(pred, gt, vcoord)
-                if c is None:
-                    ious += [ious[-1]] * (args.max_clicks - k)
-                    break
-                clicks.append(c)
-                if args.model == "plus":
-                    pred = snap.decode_clicks(vcoord[torch.stack(clicks)], select=args.select, gt=gt)
-                else:
-                    pred = snap.decode_clicks(vcoord[torch.stack(clicks)])
-                ious.append(float((pred & gt).sum() / (pred | gt).sum()))
+            if args.crops:
+                c = coord[ins == i].mean(0)
+                sel = (np.abs(coord[:, 0] - c[0]) < args.crop_half) & (np.abs(coord[:, 1] - c[1]) < args.crop_half)
+                vcoord, inv = snap.encode(coord[sel], None if color is None else color[sel], normal[sel] if args.normals else None)
+                gt = torch.zeros(len(vcoord), dtype=torch.bool, device=vcoord.device)
+                gt[inv[torch.from_numpy(ins[sel] == i).to(vcoord.device)]] = True
+            else:
+                gt = torch.zeros(len(vcoord), dtype=torch.bool, device=vcoord.device)
+                gt[inv[ins_t == i]] = True
+            ious = click_object(snap, vcoord, gt, args)
             queue.put(dict(scene=os.path.basename(f), obj=int(i), size=int(gt.sum()), seg=int(np.bincount(seg[ins == i]).argmax()), ious=ious))
     queue.put(None)
 
@@ -103,6 +113,8 @@ def main():
     ap.add_argument("--ckpt", default="../downloads/ckpt/SNAP_C.pth")
     ap.add_argument("--max_clicks", type=int, default=10)
     ap.add_argument("--select", default="iou", choices=["iou", "first", "oracle"])
+    ap.add_argument("--crops", type=int, default=0)
+    ap.add_argument("--crop_half", type=float, default=1.5)
     ap.add_argument("--use_sem", type=int, default=1)
     ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--min_points", type=int, default=100)

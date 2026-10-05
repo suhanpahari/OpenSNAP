@@ -95,6 +95,19 @@ _Source: s3dis_interactive_*.json, aux/*_
 
 Subset = every 4th room (17 rooms). XYZ-only input; first click at object centre, then centre of the missed region.
 
+### T5c · Interactive segmentation on S3DIS Area 5 object crops (SNAP Table 2 protocol)
+
+_Source: s3dis_interactive_crops.json_
+
+| model | IoU@1 | IoU@3 | IoU@5 | NoC@90 | objects |
+|---|---|---|---|---|---|
+| SNAP-C (released, our run) | 56.1 | 72.0 | 76.8 | 6.18 | 2348 |
+| SNAP-C (published) | 56.6 | 73.8 | 80.9 | – | – |
+| AGILE3D (published) | 58.7 | 77.4 | 83.6 | – | – |
+| Point-SAM (published) | 45.9 | 77.6 | 84.6 | – | – |
+
+±1.5 m crop around each object. OpenSNAP's click path is SNAP-exact, so its row equals the SNAP-C run.
+
 ### T5b · Diagnosis of SNAP+ v1 regression (S3DIS subset, 4k)
 
 _Source: aux/diag_*.json_
