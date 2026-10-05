@@ -40,7 +40,9 @@ All numbers are produced by the scripts in this repo; every table, with its sour
 |---|---|---|---|---|
 | open-vocab 3D segmentation (mIoU) | ScanNet val | 41.5 | OpenScene 52.0 | **58.2** |
 | | Matterport-160 (unseen classes) | 6.9 (1.9) | OpenScene 9.5 (5.5) | **11.6 (5.7)** |
+| | nuScenes LiDAR val (outdoor, 16 classes) | 23.2 | OpenScene 31.1 | **34.2** |
 | open-vocab instance segmentation (AP, same protocol) | S3DIS Area 5, 13 classes | 10.5 | — | **15.4** |
+| | Replica, 8 scenes (AP / AP50) | 14.8 / 19.7 | OpenMask3D 13.1 / 18.4 (published) | **19.9 / 25.9** |
 | click → name (accuracy) | Matterport-160, 212 clicks | 30.7 | VLM alone 18.9 | **40.1** (7B VLM) |
 | | Matterport-160, unseen classes only | 12.2 | VLM alone 6.5 | **17.2** |
 | text → mask (mIoU) | ScanNet200 val (head/common/tail) | — | training-free 11.8 | **18.2** (32.8 / 13.8 / 2.7) |
@@ -50,6 +52,7 @@ All numbers are produced by the scripts in this repo; every table, with its sour
 | storage | 68-room catalog vs raw XYZ | — | 945 MB | **171 MB** |
 | semantic cracking (repeat queries / accuracy) | S3DIS workload, v4 refiner | — | refine every time 26.8 ms | **3.7 ms**, AP50 38.7 vs 38.9 |
 | interactive click segmentation | S3DIS, IoU@1/3/5 | 53.3 / 69.1 / 74.0 | — | identical (SNAP frozen) |
+| | S3DIS object crops (SNAP Table 2), IoU@1/3/5 | 56.1 / 72.0 / 76.8 | AGILE3D 58.7 / 77.4 / 83.6 (published) | identical (SNAP frozen) |
 
 ## Open-vocabulary gallery
 
@@ -93,6 +96,13 @@ text decoder's mask is shown instead. Failures are kept (e.g. `rug` → sofa, `s
 </details>
 
 <details><summary><b>Building-level search</b>: one query over all 68 rooms of S3DIS Area 5</summary>
+
+<details open><summary><b>Outdoor LiDAR</b> (nuScenes val, zero-shot, XYZ-only)</summary>
+
+![outdoor](assets/outdoor_gallery.jpg)
+
+Labelled with a free vocabulary: road, grass, tree, building, street light, fence, … (★) are not nuScenes class names.
+</details>
 
 ![building](assets/building_hits.png)
 
@@ -157,7 +167,10 @@ answers, stats = Engine(m, table).run("SELECT WHERE IS('chair') AND NEAR(IS('tab
 ```bash
 python scripts/eval_semseg.py --dataset scannet --split val                       # T1/T2/T15
 python scripts/eval_queries.py --dataset s3dis [--keep_all 1 --proposals c2f]      # T3/T4
-python scripts/eval_interactive.py --model snap                                   # T5
+python scripts/prep_replica.py; python scripts/eval_queries.py --dataset replica --proposals c2f   # T4b
+python scripts/eval_semseg.py --dataset nuscenes --domain Outdoor --dense_voxel 0.05 --feature openseg \
+       --openscene_ckpt ../downloads/ckpt/nuscenes_openseg.pth.tar --stride 6        # T2b
+python scripts/eval_interactive.py --model snap [--crops 1]                       # T5/T5c
 python scripts/eval_naming.py --dataset matterport160 --split test --prior snap+lvis --feature openseg \
        --openscene_ckpt ../downloads/ckpt/matterport_openseg.pth.tar [--unseen_only] # T6/T7
 python scripts/eval_text.py --dataset scannet --method trained --ckpt ../downloads/checkpoints/opensnap_text_v4.pth  # T8

@@ -49,6 +49,16 @@ def semseg():
     else:
         pending("T15 · Dense-feature source", "scannet_val_xyz_openseg.json")
 
+    nu = load("nuscenes_val_xyz.json")
+    if nu:
+        rows = [[n, pct(nu["results"][k]["mIoU"]), pct(nu["results"][k]["mAcc"])] for k, n in names.items() if k in nu["results"]]
+        rows.append(["OpenScene 3D distill (published)", "36.7", "–"])
+        rows.append(["OpenScene 2D-3D ensemble (published)", "42.1", "–"])
+        table(f"T2b · Open-vocabulary LiDAR semantic segmentation, nuScenes val (16 classes, {nu['num_scenes']} sweeps)", "nuscenes_val_xyz.json",
+              ["method", "mIoU", "mAcc"], rows,
+              "Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Every 6th val sweep. "
+              "Our re-run of the released OpenScene model gives 31.1 under this protocol vs the published 36.7 (all sweeps, authors' script).")
+
 
 def queries():
     eng = {"snap_native": "Segmenter token only", "opensnap": "**OpenSNAP**", "opensnap_refine": "OpenSNAP + cracking"}

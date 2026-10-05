@@ -32,6 +32,24 @@ _Source: scannet_val_xyz.json vs scannet_val_xyz_openseg.json_
 | OpenSNAP w/o relay | 56.2 | 48.1 |
 | **OpenSNAP (full)** | 58.2 | 47.6 |
 
+### T2b · Open-vocabulary LiDAR semantic segmentation, nuScenes val (16 classes, 1003 sweeps)
+
+_Source: nuscenes_val_xyz.json_
+
+| method | mIoU | mAcc |
+|---|---|---|
+| OpenScene 3D (point-wise) | 31.1 | 48.8 |
+| Segmenter text token | 23.2 | 40.9 |
+| + vocabulary relay | 23.6 | 41.7 |
+| Mask-anchored pooling | 31.7 | 48.9 |
+| + dense blend | 32.1 | 49.3 |
+| OpenSNAP w/o relay | 33.0 | 49.6 |
+| **OpenSNAP (full)** | 34.2 | 50.7 |
+| OpenScene 3D distill (published) | 36.7 | – |
+| OpenScene 2D-3D ensemble (published) | 42.1 | – |
+
+Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Every 6th val sweep.
+
 ### T3 · OVQL query workloads (instance AP, IoU 0.5:0.95)
 
 _Source: s3dis_queries.json (68 rooms, object classes), scannet_queries.json (156 val scenes)_
