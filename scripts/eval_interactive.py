@@ -13,17 +13,23 @@ import torch.multiprocessing as mp
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap import paths  # noqa: E402
 
-DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"]), "scannet": ("pointcept/scannet", ["val"])}
-STRUCT = {"s3dis": {0, 1, 2}, "scannet": set()}
+DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"]), "scannet": ("pointcept/scannet", ["val"]),
+        "nuscenes": ("pointcept/nuscenes", ["val"])}
+STRUCT = {"s3dis": {0, 1, 2}, "scannet": set(), "nuscenes": set()}
 
 
-def load(path, use_color):
-    d = {k: np.load(os.path.join(path, f"{k}.npy")) for k in ("coord", "color", "normal", "instance")}
+def load(path, use_color, stuff=0):
+    d = {k: np.load(os.path.join(path, f"{k}.npy")) for k in ("coord", "instance")}
+    for k in ("color", "normal"):
+        f = os.path.join(path, f"{k}.npy")
+        d[k] = np.load(f) if os.path.exists(f) else np.zeros_like(d["coord"])
     seg_file = "segment.npy" if os.path.exists(os.path.join(path, "segment.npy")) else "segment200.npy"
     d["segment"] = np.load(os.path.join(path, seg_file))
     ins = d["instance"].reshape(-1).astype(np.int64)
     seg = d["segment"].reshape(-1).astype(np.int64)
     color = d["color"].astype(np.float32) if use_color else None
+    if stuff:
+        ins = np.where((ins < 0) & (seg >= stuff), 100000 + seg, ins)
     return d["coord"].astype(np.float32), color, d["normal"].astype(np.float32), ins, seg
 
 
@@ -66,7 +72,7 @@ def worker(rank, gpu, files, args, queue):
     snap = build_model(args)
     struct = STRUCT[args.dataset]
     for f in files:
-        coord, color, normal, ins, seg = load(f, args.color)
+        coord, color, normal, ins, seg = load(f, args.color, args.stuff)
         ids = [i for i in np.unique(ins) if i >= 0 and (ins == i).sum() >= args.min_points
                and (not args.skip_structure or np.bincount(seg[ins == i]).argmax() not in struct)]
         if not args.crops:
@@ -90,7 +96,7 @@ def worker(rank, gpu, files, args, queue):
 def build_model(args):
     from opensnap.snap_model import SnapModel
     if args.model == "snap":
-        return SnapModel(args.ckpt, chunk=1)
+        return SnapModel(args.ckpt, chunk=1, domain=args.domain)
     from opensnap.snap_plus import SnapPlusModel
     return SnapPlusModel(args.ckpt, use_sem=bool(args.use_sem))
 
@@ -118,6 +124,8 @@ def main():
     ap.add_argument("--use_sem", type=int, default=1)
     ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--min_points", type=int, default=100)
+    ap.add_argument("--domain", default="Indoor", choices=["Indoor", "Outdoor", "Aerial"])
+    ap.add_argument("--stuff", type=int, default=0, help="classes >= this id become one segment each (nuScenes: 10)")
     ap.add_argument("--skip_structure", type=int, default=0)
     ap.add_argument("--color", type=int, default=1)
     ap.add_argument("--normals", type=int, default=1)

@@ -32,23 +32,23 @@ _Source: scannet_val_xyz.json vs scannet_val_xyz_openseg.json_
 | OpenSNAP w/o relay | 56.2 | 48.1 |
 | **OpenSNAP (full)** | 58.2 | 47.6 |
 
-### T2b · Open-vocabulary LiDAR semantic segmentation, nuScenes val (16 classes, 1003 sweeps)
+### T2b · Open-vocabulary LiDAR semantic segmentation, nuScenes val (16 classes)
 
-_Source: nuscenes_val_xyz.json_
+_Source: nuscenes_official_val.json, nuscenes_val_xyz.json_
 
-| method | mIoU | mAcc |
-|---|---|---|
-| OpenScene 3D (point-wise) | 31.1 | 48.8 |
-| Segmenter text token | 23.2 | 40.9 |
-| + vocabulary relay | 23.6 | 41.7 |
-| Mask-anchored pooling | 31.7 | 48.9 |
-| + dense blend | 32.1 | 49.3 |
-| OpenSNAP w/o relay | 33.0 | 49.6 |
-| **OpenSNAP (full)** | 34.2 | 50.7 |
-| OpenScene 3D distill (published) | 36.7 | – |
-| OpenScene 2D-3D ensemble (published) | 42.1 | – |
+| method | mIoU (official, 6019 keyframes) | mAcc | mIoU (OpenScene-processed, 1003) | mAcc |
+|---|---|---|---|---|
+| OpenScene 3D (point-wise) | 26.9 | 43.3 | 31.1 | 48.8 |
+| Segmenter text token | 23.8 | 40.4 | 23.2 | 40.9 |
+| + vocabulary relay | 25.3 | 39.9 | 23.6 | 41.7 |
+| Mask-anchored pooling | 27.2 | 42.5 | 31.7 | 48.9 |
+| + dense blend | 27.5 | 43.0 | 32.1 | 49.3 |
+| OpenSNAP w/o relay | 31.4 | 46.1 | 33.0 | 49.6 |
+| **OpenSNAP (full)** | 32.0 | 46.3 | 34.2 | 50.7 |
+| OpenScene 3D distill (published) | 36.7 | – |  |  |
+| OpenScene 2D-3D ensemble (published) | 42.1 | – |  |  |
 
-Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Every 6th val sweep.
+Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Official = single LiDAR keyframes with lidarseg labels (SNAP's 16-class map); OpenScene-processed = every 6th sweep of OpenScene's release. Published OpenScene numbers use the authors' script.
 
 ### T3 · OVQL query workloads (instance AP, IoU 0.5:0.95)
 
@@ -89,6 +89,18 @@ _Source: replica_queries.json, replica_queries_c2f.json_
 | OpenMask3D (published) | 13.1 | 18.4 | 24.2 |  |  |  |
 
 Instances transferred from Replica habitat meshes (exact alignment); all object classes except structure/undefined. Published numbers use the OpenMask3D 51-class protocol.
+
+### T4c · Open-vocabulary instance segmentation on nuScenes LiDAR (10 thing classes)
+
+_Source: nuscenes_queries.json_
+
+| engine | AP | AP50 | AP25 | NEAR AP | ms/query |
+|---|---|---|---|---|---|
+| Segmenter token only | 7.9 | 12.1 | 14.1 | 13.3 | 0.6 |
+| **OpenSNAP** | 12.7 | 17.5 | 19.8 | 17.0 | 0.9 |
+| OpenSNAP + cracking | 13.9 | 18.8 | 21.3 | 17.0 | 2.3 |
+
+Instances = lidarseg points inside annotated 3D boxes of the same category (how nuScenes-panoptic is built); every 4th val keyframe; objects with >= 20 voxels.
 
 ### T12b · Query-time refiner: click oracle vs trained text decoder (S3DIS Area 5 queries)
 
@@ -140,6 +152,16 @@ _Source: s3dis_interactive_crops.json_
 | Point-SAM (published) | 45.9 | 77.6 | 84.6 | – | – |
 
 ±1.5 m crop around each object. OpenSNAP's click path is SNAP-exact, so its row equals the SNAP-C run.
+
+### T5d · Interactive segmentation on nuScenes LiDAR val (Outdoor)
+
+_Source: nuscenes_interactive.json_
+
+| model | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@80 | NoC@90 | objects |
+|---|---|---|---|---|---|---|---|
+| SNAP-C (released, our run) = OpenSNAP click path | 53.5 | 63.5 | 66.0 | 68.9 | 5.09 | 5.94 | 9095 |
+
+Every 10th val keyframe; things = box-derived instances (>= 10 points), stuff = one segment per class (as in nuScenes-panoptic).
 
 ### T5b · Diagnosis of SNAP+ v1 regression (S3DIS subset, 4k)
 

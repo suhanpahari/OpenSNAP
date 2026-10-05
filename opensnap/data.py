@@ -15,7 +15,7 @@ LABELSETS = {
     "matterport160": list(MATTERPORT_LABELS_160),
     "nuscenes": list(NUSCENES_LABELS_16),
 }
-DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160", "nuscenes": "nuscenes_3d"}
+DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160", "nuscenes": "nuscenes_official"}
 
 
 def snap_train_vocab():

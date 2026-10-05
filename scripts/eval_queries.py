@@ -14,11 +14,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap import paths  # noqa: E402
 
 DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"], "segment"), "scannet": ("pointcept/scannet", ["val"], "segment200"),
-        "replica": ("pointcept/replica", ["all"], "segment")}
+        "replica": ("pointcept/replica", ["all"], "segment"), "nuscenes": ("pointcept/nuscenes", ["val"], "segment")}
 S3DIS = ["ceiling", "floor", "wall", "beam", "column", "window", "door", "table", "chair", "sofa", "bookcase", "board", "clutter"]
 SKIP = {"s3dis": {"ceiling", "floor", "wall", "clutter"}, "scannet": {"wall", "floor", "ceiling"},
         "replica": {"wall", "floor", "ceiling", "undefined", "wall plug", "non plane", "other leaf", "anonymize_text",
-                    "anonymize_picture"}}
+                    "anonymize_picture"},
+        "nuscenes": {"drivable surface", "other flat", "sidewalk", "terrain", "manmade", "vegetation"}}
 VARIANTS = {
     "snap_native": dict(dense=False, relay=0.0, refine=False),
     "opensnap": dict(dense=True, relay=0.8, refine=False),
@@ -37,6 +38,9 @@ def sweep_variants():
 def classes_for(dataset):
     if dataset == "s3dis":
         return S3DIS
+    if dataset == "nuscenes":
+        from opensnap.data import LABELSETS
+        return LABELSETS["nuscenes"]
     if dataset == "replica":
         return json.load(open(os.path.join(paths.DOWNLOADS, "data", "pointcept", "replica", "classes.json")))
     paths.add(paths.SNAP_DIR)
@@ -90,9 +94,9 @@ def worker(rank, gpu, files, args, queue):
     from opensnap.snap_model import SnapModel
     from opensnap.text import TextEncoder
     clip_snap = TextEncoder("ViT-B/32")
-    dense = OpenSceneModel(args.openscene_ckpt, args.feature)
+    dense = OpenSceneModel(args.openscene_ckpt, args.feature, voxel_size=args.dense_voxel)
     clip_dense = TextEncoder(dense.clip_name) if dense.clip_name != "ViT-B/32" else clip_snap
-    m = OpenSNAP(SnapModel(args.snap_ckpt), clip_snap, dense, clip_dense, Config(), anchors=snap_train_vocab())
+    m = OpenSNAP(SnapModel(args.snap_ckpt, domain=args.domain), clip_snap, dense, clip_dense, Config(), anchors=snap_train_vocab())
     if args.text_ckpt:
         from opensnap.text_decoder import TextDecoder
         decoder = TextDecoder(args.text_ckpt, clip_snap)
@@ -209,6 +213,8 @@ def main():
     ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/matterport_openseg.pth.tar")
     ap.add_argument("--feature", default="openseg")
     ap.add_argument("--near", type=float, default=0.5)
+    ap.add_argument("--domain", default="Indoor", choices=["Indoor", "Outdoor", "Aerial"])
+    ap.add_argument("--dense_voxel", type=float, default=0.02)
     ap.add_argument("--rel_per_scene", type=int, default=5)
     ap.add_argument("--gpus", default="0")
     ap.add_argument("--procs_per_gpu", type=int, default=1)

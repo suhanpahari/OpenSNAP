@@ -49,15 +49,17 @@ def semseg():
     else:
         pending("T15 · Dense-feature source", "scannet_val_xyz_openseg.json")
 
-    nu = load("nuscenes_val_xyz.json")
-    if nu:
-        rows = [[n, pct(nu["results"][k]["mIoU"]), pct(nu["results"][k]["mAcc"])] for k, n in names.items() if k in nu["results"]]
-        rows.append(["OpenScene 3D distill (published)", "36.7", "–"])
-        rows.append(["OpenScene 2D-3D ensemble (published)", "42.1", "–"])
-        table(f"T2b · Open-vocabulary LiDAR semantic segmentation, nuScenes val (16 classes, {nu['num_scenes']} sweeps)", "nuscenes_val_xyz.json",
-              ["method", "mIoU", "mAcc"], rows,
-              "Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Every 6th val sweep. "
-              "Our re-run of the released OpenScene model gives 31.1 under this protocol vs the published 36.7 (all sweeps, authors' script).")
+    nu, nuo = load("nuscenes_val_xyz.json"), load("nuscenes_official_val.json")
+    if nu or nuo:
+        cell = lambda d, k: [pct(d["results"][k]["mIoU"]), pct(d["results"][k]["mAcc"])] if d and k in d["results"] else ["–", "–"]
+        rows = [[n] + cell(nuo, k) + cell(nu, k) for k, n in names.items()]
+        rows.append(["OpenScene 3D distill (published)", "36.7", "–", "", ""])
+        rows.append(["OpenScene 2D-3D ensemble (published)", "42.1", "–", "", ""])
+        table("T2b · Open-vocabulary LiDAR semantic segmentation, nuScenes val (16 classes)", "nuscenes_official_val.json, nuscenes_val_xyz.json",
+              ["method", "mIoU (official, 6019 keyframes)", "mAcc", "mIoU (OpenScene-processed, 1003)", "mAcc"], rows,
+              "Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Official = single "
+              "LiDAR keyframes with lidarseg labels (SNAP's 16-class map); OpenScene-processed = every 6th sweep of OpenScene's release. "
+              "Published OpenScene numbers use the authors' script.")
 
 
 def queries():
@@ -95,6 +97,16 @@ def queries():
               ["engine", "AP (FPS)", "AP50 (FPS)", "AP25 (FPS)", "AP (c2f)", "AP50 (c2f)", "AP25 (c2f)"], rows,
               "Instances transferred from Replica habitat meshes (exact alignment); all object classes except structure/undefined. "
               "Published numbers use the OpenMask3D 51-class protocol.")
+
+    nq = load("nuscenes_queries.json")
+    if nq:
+        r = nq["results"]
+        rows = [[n, pct(r[f"{k}/IS"]["AP"]), pct(r[f"{k}/IS"]["AP50"]), pct(r[f"{k}/IS"]["AP25"]), pct(r[f"{k}/NEAR"]["AP"]),
+                 f"{r[f'{k}/IS']['ms']:.1f}"] for k, n in eng.items() if f"{k}/IS" in r]
+        table("T4c · Open-vocabulary instance segmentation on nuScenes LiDAR (10 thing classes)", "nuscenes_queries.json",
+              ["engine", "AP", "AP50", "AP25", "NEAR AP", "ms/query"], rows,
+              "Instances = lidarseg points inside annotated 3D boxes of the same category (how nuScenes-panoptic is built); "
+              "every 4th val keyframe; objects with >= 20 voxels.")
 
 
 def refiner():
@@ -146,6 +158,13 @@ def interactive():
         table("T5c · Interactive segmentation on S3DIS Area 5 object crops (SNAP Table 2 protocol)", "s3dis_interactive_crops.json",
               ["model", "IoU@1", "IoU@3", "IoU@5", "NoC@90", "objects"], rows,
               "±1.5 m crop around each object. OpenSNAP's click path is SNAP-exact, so its row equals the SNAP-C run.")
+    n = get("nuscenes_interactive.json")
+    if n:
+        table("T5d · Interactive segmentation on nuScenes LiDAR val (Outdoor)", "nuscenes_interactive.json",
+              ["model", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@80", "NoC@90", "objects"],
+              [["SNAP-C (released, our run) = OpenSNAP click path", pct(n["IoU@1"]), pct(n["IoU@3"]), pct(n["IoU@5"]), pct(n["IoU@10"]),
+                f"{n['NoC@80']:.2f}", f"{n['NoC@90']:.2f}", n["objects"]]],
+              "Every 10th val keyframe; things = box-derived instances (>= 10 points), stuff = one segment per class (as in nuScenes-panoptic).")
     diag = [("aux/diag_plus_iou.json", "IoU-head selection"), ("aux/diag_plus_oracle.json", "oracle best-of-K"),
             ("aux/diag_plus_first.json", "always token 0"), ("aux/diag_plus_nosem.json", "semantic features removed")]
     rows = [[l, pct(get(n)["IoU@1"]), pct(get(n)["IoU@3"]), pct(get(n)["IoU@5"]), pct(get(n)["IoU@10"])] for n, l in diag if get(n)]
