@@ -95,14 +95,14 @@ text decoder's mask is shown instead. Failures are kept (e.g. `rug` → sofa, `s
 ![scannet_scene0568_00](assets/openvocab_gallery/scannet_scene0568_00.jpg)
 </details>
 
-<details><summary><b>Building-level search</b>: one query over all 68 rooms of S3DIS Area 5</summary>
-
 <details open><summary><b>Outdoor LiDAR</b> (nuScenes val, zero-shot, XYZ-only)</summary>
 
 ![outdoor](assets/outdoor_gallery.jpg)
 
 Labelled with a free vocabulary: road, grass, tree, building, street light, fence, … (★) are not nuScenes class names.
 </details>
+
+<details><summary><b>Building-level search</b>: one query over all 68 rooms of S3DIS Area 5</summary>
 
 ![building](assets/building_hits.png)
 
