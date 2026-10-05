@@ -61,6 +61,15 @@ def semseg():
               "LiDAR keyframes with lidarseg labels (SNAP's 16-class map); OpenScene-processed = every 6th sweep of OpenScene's release. "
               "Published OpenScene numbers use the authors' script.")
 
+    sk = load("semantickitti_val.json")
+    if sk:
+        rows = [[n, pct(sk["results"][k]["mIoU"]), pct(sk["results"][k]["mAcc"])] for k, n in names.items() if k in sk["results"]]
+        table(f"T2c · Open-vocabulary LiDAR semantic segmentation, SemanticKITTI seq 08 (19 classes, {sk['num_scenes']} scans)",
+              "semantickitti_val.json", ["method", "mIoU", "mAcc"], rows,
+              "Dense branch = OpenScene's nuScenes model applied cross-dataset (OpenScene has no KITTI model), so the dense "
+              "features are zero-shot here; the segmenter saw SemanticKITTI train. The weak cross-dataset dense branch (terrain 0.0, "
+              "parking 0.1 IoU) costs mIoU on stuff classes; OpenSNAP gains on objects (other vehicle 2.9 -> 11.9) and in mAcc.")
+
 
 def queries():
     eng = {"snap_native": "Segmenter token only", "opensnap": "**OpenSNAP**", "opensnap_refine": "OpenSNAP + cracking"}
@@ -107,6 +116,15 @@ def queries():
               ["engine", "AP", "AP50", "AP25", "NEAR AP", "ms/query"], rows,
               "Instances = lidarseg points inside annotated 3D boxes of the same category (how nuScenes-panoptic is built); "
               "every 4th val keyframe; objects with >= 20 voxels.")
+
+    kq = load("semantickitti_queries.json")
+    if kq:
+        r = kq["results"]
+        rows = [[n, pct(r[f"{k}/IS"]["AP"]), pct(r[f"{k}/IS"]["AP50"]), pct(r[f"{k}/IS"]["AP25"]), pct(r[f"{k}/NEAR"]["AP"]),
+                 f"{r[f'{k}/IS']['ms']:.1f}"] for k, n in eng.items() if f"{k}/IS" in r]
+        table("T4d · Open-vocabulary instance segmentation on SemanticKITTI seq 08 (8 thing classes)", "semantickitti_queries.json",
+              ["engine", "AP", "AP50", "AP25", "NEAR AP", "ms/query"], rows,
+              "Panoptic instance labels; every 4th scan; objects with >= 20 voxels.")
 
 
 def refiner():
@@ -165,6 +183,13 @@ def interactive():
               [["SNAP-C (released, our run) = OpenSNAP click path", pct(n["IoU@1"]), pct(n["IoU@3"]), pct(n["IoU@5"]), pct(n["IoU@10"]),
                 f"{n['NoC@80']:.2f}", f"{n['NoC@90']:.2f}", n["objects"]]],
               "Every 10th val keyframe; things = box-derived instances (>= 10 points), stuff = one segment per class (as in nuScenes-panoptic).")
+    k = get("semantickitti_interactive.json")
+    if k:
+        table("T5e · Interactive segmentation on SemanticKITTI seq 08 (Outdoor)", "semantickitti_interactive.json",
+              ["model", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@80", "NoC@90", "objects"],
+              [["SNAP-C (released, our run) = OpenSNAP click path", pct(k["IoU@1"]), pct(k["IoU@3"]), pct(k["IoU@5"]), pct(k["IoU@10"]),
+                f"{k['NoC@80']:.2f}", f"{k['NoC@90']:.2f}", k["objects"]]],
+              "Every 10th scan; things = panoptic instances (>= 10 points), stuff = one segment per class.")
     diag = [("aux/diag_plus_iou.json", "IoU-head selection"), ("aux/diag_plus_oracle.json", "oracle best-of-K"),
             ("aux/diag_plus_first.json", "always token 0"), ("aux/diag_plus_nosem.json", "semantic features removed")]
     rows = [[l, pct(get(n)["IoU@1"]), pct(get(n)["IoU@3"]), pct(get(n)["IoU@5"]), pct(get(n)["IoU@10"])] for n, l in diag if get(n)]

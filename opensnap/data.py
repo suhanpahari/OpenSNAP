@@ -14,8 +14,12 @@ LABELSETS = {
     "matterport": list(MATTERPORT_LABELS_21),
     "matterport160": list(MATTERPORT_LABELS_160),
     "nuscenes": list(NUSCENES_LABELS_16),
+    "semantickitti": ["car", "bicycle", "motorcycle", "truck", "other vehicle", "person", "bicyclist", "motorcyclist", "road",
+                      "parking", "sidewalk", "other ground", "building", "fence", "vegetation", "trunk", "terrain", "pole",
+                      "traffic sign"],
 }
-DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160", "nuscenes": "nuscenes_official"}
+DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport160": "matterport_3d_160", "nuscenes": "nuscenes_official",
+             "semantickitti": "semantickitti"}
 
 
 def snap_train_vocab():

@@ -14,8 +14,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap import paths  # noqa: E402
 
 DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"]), "scannet": ("pointcept/scannet", ["val"]),
-        "nuscenes": ("pointcept/nuscenes", ["val"])}
-STRUCT = {"s3dis": {0, 1, 2}, "scannet": set(), "nuscenes": set()}
+        "nuscenes": ("pointcept/nuscenes", ["val"]), "semantickitti": ("pointcept/semantickitti", ["val"])}
+STRUCT = {"s3dis": {0, 1, 2}, "scannet": set(), "nuscenes": set(), "semantickitti": set()}
 
 
 def load(path, use_color, stuff=0):

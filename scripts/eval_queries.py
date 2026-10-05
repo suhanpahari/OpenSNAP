@@ -14,12 +14,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap import paths  # noqa: E402
 
 DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"], "segment"), "scannet": ("pointcept/scannet", ["val"], "segment200"),
-        "replica": ("pointcept/replica", ["all"], "segment"), "nuscenes": ("pointcept/nuscenes", ["val"], "segment")}
+        "replica": ("pointcept/replica", ["all"], "segment"), "nuscenes": ("pointcept/nuscenes", ["val"], "segment"),
+        "semantickitti": ("pointcept/semantickitti", ["val"], "segment")}
 S3DIS = ["ceiling", "floor", "wall", "beam", "column", "window", "door", "table", "chair", "sofa", "bookcase", "board", "clutter"]
 SKIP = {"s3dis": {"ceiling", "floor", "wall", "clutter"}, "scannet": {"wall", "floor", "ceiling"},
         "replica": {"wall", "floor", "ceiling", "undefined", "wall plug", "non plane", "other leaf", "anonymize_text",
                     "anonymize_picture"},
-        "nuscenes": {"drivable surface", "other flat", "sidewalk", "terrain", "manmade", "vegetation"}}
+        "nuscenes": {"drivable surface", "other flat", "sidewalk", "terrain", "manmade", "vegetation"},
+        "semantickitti": {"road", "parking", "sidewalk", "other ground", "building", "fence", "vegetation", "trunk", "terrain",
+                          "pole", "traffic sign"}}
 VARIANTS = {
     "snap_native": dict(dense=False, relay=0.0, refine=False),
     "opensnap": dict(dense=True, relay=0.8, refine=False),
@@ -38,9 +41,9 @@ def sweep_variants():
 def classes_for(dataset):
     if dataset == "s3dis":
         return S3DIS
-    if dataset == "nuscenes":
+    if dataset in ("nuscenes", "semantickitti"):
         from opensnap.data import LABELSETS
-        return LABELSETS["nuscenes"]
+        return LABELSETS[dataset]
     if dataset == "replica":
         return json.load(open(os.path.join(paths.DOWNLOADS, "data", "pointcept", "replica", "classes.json")))
     paths.add(paths.SNAP_DIR)

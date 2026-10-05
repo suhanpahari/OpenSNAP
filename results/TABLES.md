@@ -50,6 +50,22 @@ _Source: nuscenes_official_val.json, nuscenes_val_xyz.json_
 
 Segmenter in Outdoor mode (XYZ-only, 5 cm grid); dense branch = OpenScene nuScenes OpenSeg 3D model. Official = single LiDAR keyframes with lidarseg labels (SNAP's 16-class map); OpenScene-processed = every 6th sweep of OpenScene's release. Published OpenScene numbers use the authors' script.
 
+### T2c · Open-vocabulary LiDAR semantic segmentation, SemanticKITTI seq 08 (19 classes, 4071 scans)
+
+_Source: semantickitti_val.json_
+
+| method | mIoU | mAcc |
+|---|---|---|
+| OpenScene 3D (point-wise) | 20.8 | 37.1 |
+| Segmenter text token | 32.8 | 43.7 |
+| + vocabulary relay | 31.5 | 43.8 |
+| Mask-anchored pooling | 21.5 | 38.0 |
+| + dense blend | 21.4 | 37.9 |
+| OpenSNAP w/o relay | 31.5 | 45.4 |
+| **OpenSNAP (full)** | 31.5 | 45.8 |
+
+Dense branch = OpenScene's nuScenes model applied cross-dataset (OpenScene has no KITTI model), so the dense features are zero-shot here; the segmenter saw SemanticKITTI train. The weak cross-dataset dense branch (terrain 0.0, parking 0.1 IoU) costs mIoU on stuff classes; OpenSNAP gains on objects (other vehicle 2.9 -> 11.9) and in mAcc.
+
 ### T3 · OVQL query workloads (instance AP, IoU 0.5:0.95)
 
 _Source: s3dis_queries.json (68 rooms, object classes), scannet_queries.json (156 val scenes)_
@@ -101,6 +117,18 @@ _Source: nuscenes_queries.json_
 | OpenSNAP + cracking | 13.9 | 18.8 | 21.3 | 17.0 | 2.3 |
 
 Instances = lidarseg points inside annotated 3D boxes of the same category (how nuScenes-panoptic is built); every 4th val keyframe; objects with >= 20 voxels.
+
+### T4d · Open-vocabulary instance segmentation on SemanticKITTI seq 08 (8 thing classes)
+
+_Source: semantickitti_queries.json_
+
+| engine | AP | AP50 | AP25 | NEAR AP | ms/query |
+|---|---|---|---|---|---|
+| Segmenter token only | 13.9 | 16.3 | 17.2 | 11.5 | 0.9 |
+| **OpenSNAP** | 18.0 | 20.2 | 20.7 | 12.1 | 1.3 |
+| OpenSNAP + cracking | 20.6 | 23.0 | 23.7 | 14.0 | 4.9 |
+
+Panoptic instance labels; every 4th scan; objects with >= 20 voxels.
 
 ### T12b · Query-time refiner: click oracle vs trained text decoder (S3DIS Area 5 queries)
 
@@ -162,6 +190,16 @@ _Source: nuscenes_interactive.json_
 | SNAP-C (released, our run) = OpenSNAP click path | 53.5 | 63.5 | 66.0 | 68.9 | 5.09 | 5.94 | 9095 |
 
 Every 10th val keyframe; things = box-derived instances (>= 10 points), stuff = one segment per class (as in nuScenes-panoptic).
+
+### T5e · Interactive segmentation on SemanticKITTI seq 08 (Outdoor)
+
+_Source: semantickitti_interactive.json_
+
+| model | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@80 | NoC@90 | objects |
+|---|---|---|---|---|---|---|---|
+| SNAP-C (released, our run) = OpenSNAP click path | 56.7 | 65.4 | 68.4 | 72.0 | 4.66 | 5.36 | 8921 |
+
+Every 10th scan; things = panoptic instances (>= 10 points), stuff = one segment per class.
 
 ### T5b · Diagnosis of SNAP+ v1 regression (S3DIS subset, 4k)
 

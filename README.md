@@ -41,9 +41,11 @@ All numbers are produced by the scripts in this repo; every table, with its sour
 | open-vocab 3D segmentation (mIoU) | ScanNet val | 41.5 | OpenScene 52.0 | **58.2** |
 | | Matterport-160 (unseen classes) | 6.9 (1.9) | OpenScene 9.5 (5.5) | **11.6 (5.7)** |
 | | nuScenes LiDAR val, 6019 keyframes (outdoor, 16 classes) | 23.8 | OpenScene 26.9 | **32.0** |
+| | SemanticKITTI seq 08, 19 classes (mIoU / mAcc) | **32.8** / 43.7 | OpenScene (nuScenes model) 20.8 / 37.1 | 31.5 / **45.8** |
 | open-vocab instance segmentation (AP, same protocol) | S3DIS Area 5, 13 classes | 10.5 | — | **15.4** |
 | | Replica, 8 scenes (AP / AP50) | 14.8 / 19.7 | OpenMask3D 13.1 / 18.4 (published) | **19.9 / 25.9** |
 | | nuScenes LiDAR, 10 thing classes (AP / AP50) | 7.9 / 12.1 | — | **13.9 / 18.8** |
+| | SemanticKITTI seq 08, 8 thing classes (AP / AP50) | 13.9 / 16.3 | — | **20.6 / 23.0** |
 | click → name (accuracy) | Matterport-160, 212 clicks | 30.7 | VLM alone 18.9 | **40.1** (7B VLM) |
 | | Matterport-160, unseen classes only | 12.2 | VLM alone 6.5 | **17.2** |
 | text → mask (mIoU) | ScanNet200 val (head/common/tail) | — | training-free 11.8 | **18.2** (32.8 / 13.8 / 2.7) |
@@ -175,6 +177,8 @@ python scripts/eval_semseg.py --dataset nuscenes --domain Outdoor --dense_voxel 
 python scripts/eval_queries.py --dataset nuscenes --domain Outdoor --dense_voxel 0.05 --stride 4 \
        --openscene_ckpt ../downloads/ckpt/nuscenes_openseg.pth.tar                 # T4c
 python scripts/eval_interactive.py --dataset nuscenes --domain Outdoor --stuff 10 --min_points 10 --stride 10   # T5d
+python scripts/prep_kitti.py --root <SemanticKITTI dataset/sequences>; then the same three scripts with
+       --dataset semantickitti (--stuff 8 for interactive)                                              # T2c/T4d/T5e
 python scripts/eval_interactive.py --model snap [--crops 1]                       # T5/T5c
 python scripts/eval_naming.py --dataset matterport160 --split test --prior snap+lvis --feature openseg \
        --openscene_ckpt ../downloads/ckpt/matterport_openseg.pth.tar [--unseen_only] # T6/T7
