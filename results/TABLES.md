@@ -226,6 +226,7 @@ _Source: aux/pn_*.json_
 | S3DIS rooms | **OpenSNAP: test-time token tuning** | 53.1 | 70.7 | 78.5 | 84.7 | 6.36 |
 | S3DIS rooms | OpenSNAP: corrective decoder (ScanNet-trained) | 53.0 | 69.1 | 75.2 | 80.4 | 6.47 |
 | S3DIS rooms | OpenSNAP: corrective decoder (multi-domain) | 53.4 | 69.5 | 75.7 | 80.7 | 6.44 |
+| S3DIS rooms | OpenSNAP: multi-domain decoder + token tuning | 52.9 | 70.6 | 77.5 | 83.5 | 6.35 |
 | Replica | SNAP, corrective protocol (negatives ignored) | 56.3 | 58.9 | 59.5 | 60.1 | 7.62 |
 | Replica | **OpenSNAP: test-time token tuning** | 55.7 | 67.9 | 74.8 | 81.9 | 6.74 |
 | Replica | OpenSNAP: corrective decoder (ScanNet-trained) | 55.9 | 65.2 | 71.1 | 75.8 | 6.81 |
