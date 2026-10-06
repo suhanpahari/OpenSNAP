@@ -201,6 +201,80 @@ _Source: semantickitti_interactive.json_
 
 Every 10th scan; things = panoptic instances (>= 10 points), stuff = one segment per class.
 
+### T5f · Corrective clicking with positive and negative clicks
+
+_Source: aux/pn_*.json_
+
+| dataset | method | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@90 |
+|---|---|---|---|---|---|---|
+| ScanNet val (dev subset) | SNAP, corrective protocol (negatives ignored) | 67.8 | 76.4 | 77.6 | 78.3 | 6.70 |
+| ScanNet val (dev subset) | **OpenSNAP: test-time token tuning** | 67.8 | 77.5 | 82.7 | 87.2 | 6.12 |
+| ScanNet val (dev subset) | OpenSNAP: corrective decoder (ScanNet-trained) | 67.7 | 79.8 | 83.5 | 87.1 | 5.95 |
+| ScanNet val (dev subset) | OpenSNAP: corrective decoder (multi-domain) | 67.6 | 79.7 | 83.6 | 87.5 | 6.01 |
+| S3DIS crops | SNAP, positive clicks only | 56.1 | 72.0 | 76.8 | 80.4 | 6.18 |
+| S3DIS crops | SNAP, corrective protocol (negatives ignored) | 56.1 | 70.2 | 73.1 | 74.6 | 6.68 |
+| S3DIS crops | + negative-mask subtraction | 56.2 | 70.8 | 75.3 | 77.4 | 6.16 |
+| S3DIS crops | **OpenSNAP: test-time token tuning** | 56.1 | 73.9 | 81.8 | 88.8 | 5.87 |
+| S3DIS crops | OpenSNAP: corrective decoder (ScanNet-trained) | 56.0 | 73.3 | 79.1 | 84.8 | 5.95 |
+| S3DIS crops | OpenSNAP: corrective decoder (multi-domain) | 56.3 | 72.9 | 79.3 | 85.1 | 5.95 |
+| S3DIS crops | OpenSNAP: ScanNet decoder + token tuning | 56.2 | 74.2 | 81.0 | 87.7 | 5.86 |
+| S3DIS crops | OpenSNAP: multi-domain decoder + token tuning | 56.0 | 74.0 | 81.3 | 87.8 | 5.85 |
+| S3DIS crops | AGILE3D (published) | 58.7 | 77.4 | 83.6 | – | – |
+| S3DIS crops | Point-SAM (published) | 45.9 | 77.6 | 84.6 | – | – |
+| S3DIS rooms | SNAP, positive clicks only | 53.3 | 69.1 | 74.0 | 77.4 | 6.58 |
+| S3DIS rooms | SNAP, corrective protocol (negatives ignored) | 53.0 | 66.5 | 69.0 | 70.5 | 7.17 |
+| S3DIS rooms | **OpenSNAP: test-time token tuning** | 53.1 | 70.7 | 78.5 | 84.7 | 6.36 |
+| S3DIS rooms | OpenSNAP: corrective decoder (ScanNet-trained) | 53.0 | 69.1 | 75.2 | 80.4 | 6.47 |
+| S3DIS rooms | OpenSNAP: corrective decoder (multi-domain) | 53.4 | 69.5 | 75.7 | 80.7 | 6.44 |
+| Replica | SNAP, corrective protocol (negatives ignored) | 56.3 | 58.9 | 59.5 | 60.1 | 7.62 |
+| Replica | **OpenSNAP: test-time token tuning** | 55.7 | 67.9 | 74.8 | 81.9 | 6.74 |
+| Replica | OpenSNAP: corrective decoder (ScanNet-trained) | 55.9 | 65.2 | 71.1 | 75.8 | 6.81 |
+| Replica | OpenSNAP: corrective decoder (multi-domain) | 56.1 | 66.7 | 71.4 | 76.8 | 6.84 |
+| Replica | OpenSNAP: multi-domain decoder + token tuning | 55.5 | 67.0 | 72.6 | 80.3 | 6.80 |
+| nuScenes | SNAP, positive clicks only | 53.5 | 63.5 | 66.0 | 68.9 | 5.94 |
+| nuScenes | SNAP, corrective protocol (negatives ignored) | 53.6 | 62.0 | 63.8 | 65.4 | 6.18 |
+| nuScenes | **OpenSNAP: test-time token tuning** | 53.6 | 66.3 | 72.3 | 78.4 | 4.89 |
+| nuScenes | OpenSNAP: corrective decoder (ScanNet-trained) | 53.6 | 64.1 | 68.0 | 72.4 | 5.36 |
+| nuScenes | OpenSNAP: corrective decoder (multi-domain) | 53.7 | 67.0 | 70.5 | 74.0 | 4.84 |
+| nuScenes | OpenSNAP: multi-domain decoder + token tuning | 53.7 | 68.0 | 73.4 | 79.2 | 4.78 |
+| SemanticKITTI | SNAP, positive clicks only | 56.7 | 65.4 | 68.4 | 72.0 | 5.36 |
+| SemanticKITTI | SNAP, corrective protocol (negatives ignored) | 56.9 | 64.9 | 67.6 | 70.4 | 5.46 |
+| SemanticKITTI | **OpenSNAP: test-time token tuning** | 56.9 | 65.9 | 71.0 | 76.5 | 4.78 |
+| SemanticKITTI | OpenSNAP: corrective decoder (ScanNet-trained) | 56.9 | 65.1 | 68.6 | 72.8 | 5.11 |
+| SemanticKITTI | OpenSNAP: corrective decoder (multi-domain) | 56.8 | 67.4 | 71.2 | 74.9 | 4.74 |
+| SemanticKITTI | OpenSNAP: multi-domain decoder + token tuning | 56.8 | 67.7 | 71.9 | 76.9 | 4.72 |
+
+Corrective protocol: every click goes to the centre of the larger error region (positive on misses, negative on false positives). SNAP cannot use negative clicks. Token tuning: 30 Adam steps on the mask token over SNAP's frozen voxel embeddings, hyper-parameters chosen on ScanNet val only (aux/sweep_ttt_scannet_*.json).
+
+### T5h · Per-click latency with negative clicks (S3DIS rooms, 267k voxels)
+
+_Source: aux/click_latency.json_
+
+| method | median ms | p90 ms | clicks |
+|---|---|---|---|
+| SNAP (negatives ignored) | 14 | 71 | 160 |
+| token tuning (30 steps) | 43 | 100 | 156 |
+| corrective decoder | 16 | 81 | 162 |
+
+Backbone encoding is done once per scene and excluded; shared MIG 3g.40gb slice.
+
+### T5g · Token-tuning hyper-parameters (ScanNet val crops, every 8th scene; selection set)
+
+_Source: aux/sweep_ttt_scannet_*.json_
+
+| steps | reg | label radius (m) | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@90 |
+|---|---|---|---|---|---|---|---|
+| 30 | 0.3 | 0 | 67.7 | 75.6 | 80.8 | 84.1 | 6.16 |
+| 30 | 1 | 0 | 67.8 | 76.2 | 81.1 | 85.3 | 6.12 |
+| 30 | 3 | 0 | 67.9 | 77.2 | 81.8 | 86.5 | 6.09 |
+| 30 | 10 | 0 | 67.8 | 77.5 | 82.7 | 87.2 | 6.12 |
+| 30 | 30 | 0 | 67.5 | 78.5 | 82.7 | 86.8 | 6.15 |
+| 100 | 1 | 0 | 67.7 | 76.0 | 81.3 | 85.4 | 6.13 |
+| 30 | 1 | 0.05 | 67.8 | 75.7 | 78.7 | 84.3 | 6.16 |
+| 100 | 0.3 | 0.05 | 67.9 | 73.8 | 76.8 | 81.4 | 6.18 |
+
+Selected: 30 steps, reg 10, click-only labels; used unchanged on every other dataset.
+
 ### T5b · Diagnosis of SNAP+ v1 regression (S3DIS subset, 4k)
 
 _Source: aux/diag_*.json_

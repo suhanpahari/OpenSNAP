@@ -22,7 +22,7 @@ A = {}
 
 def work(scan):
     a = A["args"]
-    name = os.path.basename(scan)[:-4]
+    name = scan.split("/")[-3] + "_" + os.path.basename(scan)[:-4] if a.split != "val" else os.path.basename(scan)[:-4]
     pts = np.fromfile(scan, np.float32).reshape(-1, 4)[:, :3]
     lab = np.fromfile(scan.replace("velodyne", "labels")[:-4] + ".label", np.uint32)
     seg = LUT[lab & 0xFFFF]
@@ -30,7 +30,8 @@ def work(scan):
     ins = np.where((seg < THINGS) & (inst > 0), seg.astype(np.int64) * 65536 + inst, -1)
     _, ins_c = np.unique(ins, return_inverse=True)
     ins = np.where(ins >= 0, ins_c - (ins < 0).any(), -1).astype(np.int32)
-    torch.save((pts, 0, seg), os.path.join(a.sem_dst, f"{name}.pth"))
+    if a.sem:
+        torch.save((pts, 0, seg), os.path.join(a.sem_dst, f"{name}.pth"))
     d = os.path.join(a.ins_dst, name)
     os.makedirs(d, exist_ok=True)
     np.save(f"{d}/coord.npy", pts)
@@ -43,13 +44,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default="/media/bigdata/71ec9ff9-bdc2-410a-bfcb-1a3e24aaf8f71/soham/lift/semantic_kitti/dataset/sequences")
     ap.add_argument("--seq", default="08")
+    ap.add_argument("--split", default="val")
+    ap.add_argument("--sem", type=int, default=1)
     ap.add_argument("--sem_dst", default=os.path.join(paths.DOWNLOADS, "data", "semantickitti", "val"))
     ap.add_argument("--ins_dst", default=os.path.join(paths.DOWNLOADS, "data", "pointcept", "semantickitti", "val"))
     ap.add_argument("--procs", type=int, default=24)
     a = ap.parse_args()
+    if a.split != "val":
+        a.sem_dst, a.ins_dst = a.sem_dst.replace("/val", f"/{a.split}"), a.ins_dst.replace("/val", f"/{a.split}")
     os.makedirs(a.sem_dst, exist_ok=True)
     os.makedirs(a.ins_dst, exist_ok=True)
-    scans = sorted(glob.glob(os.path.join(a.root, a.seq, "velodyne", "*.bin")))
+    scans = sorted(f for q in a.seq.split(",") for f in glob.glob(os.path.join(a.root, q, "velodyne", "*.bin")))
     print(len(scans), "scans", flush=True)
     A["args"] = a
     with Pool(a.procs) as p:

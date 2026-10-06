@@ -7,7 +7,7 @@ from multiprocessing import Pool
 
 import numpy as np
 import torch
-from nuscenes.utils.splits import val as VAL_SCENES
+from nuscenes.utils import splits as SPLITS
 from pyquaternion import Quaternion
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -46,7 +46,8 @@ def work(item):
         loc = (pts - c) @ R
         inside = (np.abs(loc[:, 0]) <= l / 2) & (np.abs(loc[:, 1]) <= w / 2) & (np.abs(loc[:, 2]) <= h / 2) & (raw == cat_idx)
         ins[inside & (seg != 255)] = k
-    torch.save((pts, 0, seg), os.path.join(a.sem_dst, f"{sd_tok}.pth"))
+    if a.sem:
+        torch.save((pts, 0, seg), os.path.join(a.sem_dst, f"{sd_tok}.pth"))
     d = os.path.join(a.ins_dst, sd_tok)
     os.makedirs(d, exist_ok=True)
     np.save(f"{d}/coord.npy", pts)
@@ -61,10 +62,14 @@ def main():
     ap.add_argument("--sem_dst", default=os.path.join(paths.DOWNLOADS, "data", "nuscenes_official", "val"))
     ap.add_argument("--ins_dst", default=os.path.join(paths.DOWNLOADS, "data", "pointcept", "nuscenes", "val"))
     ap.add_argument("--procs", type=int, default=24)
+    ap.add_argument("--split", default="val")
+    ap.add_argument("--sem", type=int, default=1)
     a = ap.parse_args()
+    if a.split != "val":
+        a.sem_dst, a.ins_dst = a.sem_dst.replace("/val", f"/{a.split}"), a.ins_dst.replace("/val", f"/{a.split}")
     os.makedirs(a.sem_dst, exist_ok=True)
     os.makedirs(a.ins_dst, exist_ok=True)
-    scenes = {s["token"] for s in table(a.root, "scene") if s["name"] in set(VAL_SCENES)}
+    scenes = {s["token"] for s in table(a.root, "scene") if s["name"] in set(getattr(SPLITS, a.split))}
     samples = {s["token"] for s in table(a.root, "sample") if s["scene_token"] in scenes}
     cs = {c["token"]: c for c in table(a.root, "calibrated_sensor")}
     pose = {p["token"]: p for p in table(a.root, "ego_pose")}

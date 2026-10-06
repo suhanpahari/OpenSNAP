@@ -54,8 +54,13 @@ All numbers are produced by the scripts in this repo; every table, with its sour
 | | building: 68 rooms, 5,149 objects | — | — | **0.9–3.4 ms** |
 | storage | 68-room catalog vs raw XYZ | — | 945 MB | **171 MB** |
 | semantic cracking (repeat queries / accuracy) | S3DIS workload, v4 refiner | — | refine every time 26.8 ms | **3.7 ms**, AP50 38.7 vs 38.9 |
-| interactive click segmentation | S3DIS, IoU@1/3/5 | 53.3 / 69.1 / 74.0 | — | identical (SNAP frozen) |
-| | S3DIS object crops (SNAP Table 2), IoU@1/3/5 | 56.1 / 72.0 / 76.8 | AGILE3D 58.7 / 77.4 / 83.6 (published) | identical (SNAP frozen) |
+| click segmentation, positive + negative clicks (IoU@5 / IoU@10) | S3DIS object crops (SNAP Table 2) | 73.1 / 74.6 | AGILE3D 83.6 / – (published) | **81.8 / 88.8** |
+| | S3DIS full rooms | 69.0 / 70.5 | — | **78.5 / 84.7** |
+| | Replica rooms | 59.5 / 60.1 | — | **74.8 / 81.9** |
+| | nuScenes LiDAR | 63.8 / 65.4 | — | **73.4 / 79.2** |
+| | SemanticKITTI LiDAR | 67.6 / 70.4 | — | **71.9 / 76.9** |
+| | latency per click (267k-voxel room) | 14 ms | — | 16–43 ms |
+| positive-only clicks | S3DIS, IoU@1/3/5 | 53.3 / 69.1 / 74.0 | — | identical (SNAP path kept exact) |
 
 ## Open-vocabulary gallery
 
@@ -193,8 +198,10 @@ python scripts/make_tables.py                                                   
 
 ## Limitations
 
-- **Segmentation itself is SNAP's.** Fine-tuning SNAP's decoder on ScanNet alone loses its multi-dataset generalisation,
-  so OpenSNAP keeps SNAP frozen; click segmentation is identical to SNAP-C (T5, T9).
+- **Positive-only clicking is SNAP's.** Fine-tuning SNAP's decoder on ScanNet alone loses its multi-dataset
+  generalisation, so positive-only click sets go through the exact frozen SNAP decoder (T5, T9). Our segmentation gains
+  come from negative / corrective clicks (T5f): test-time token tuning and a corrective decoder trained on ScanNet +
+  nuScenes + SemanticKITTI. On S3DIS crops AGILE3D's published IoU@3/5 (77.4 / 83.6) are still above ours (74.0 / 81.8).
 - **Flat objects on walls/floors** (paintings, whiteboards, rugs, maps) are hard: geometry cannot separate them from the wall.
 - **Truly novel concepts** (vase, sculpture) remain hard; most unseen-class gains come from near-synonyms of seen classes.
 - **Semantic cracking** with the training-free refiner costs instance AP (T12, T13); with the trained text decoder as

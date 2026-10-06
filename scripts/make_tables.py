@@ -190,6 +190,44 @@ def interactive():
               [["SNAP-C (released, our run) = OpenSNAP click path", pct(k["IoU@1"]), pct(k["IoU@3"]), pct(k["IoU@5"]), pct(k["IoU@10"]),
                 f"{k['NoC@80']:.2f}", f"{k['NoC@90']:.2f}", k["objects"]]],
               "Every 10th scan; things = panoptic instances (>= 10 points), stuff = one segment per class.")
+    sets = [("scannet_dev", "ScanNet val (dev subset)", None), ("s3dis_crops", "S3DIS crops", "s3dis_interactive_crops.json"), ("s3dis_full", "S3DIS rooms", "s3dis_interactive_snap_zeroshot_xyz.json"),
+            ("replica", "Replica", None), ("nuscenes", "nuScenes", "nuscenes_interactive.json"),
+            ("kitti", "SemanticKITTI", "semantickitti_interactive.json")]
+    methods = [("snap", "SNAP, corrective protocol (negatives ignored)"), ("subtract", "+ negative-mask subtraction"),
+               ("ttt", "**OpenSNAP: test-time token tuning**"), ("v5", "OpenSNAP: corrective decoder (ScanNet-trained)"), ("v5m", "OpenSNAP: corrective decoder (multi-domain)"),
+               ("v5ttt", "OpenSNAP: ScanNet decoder + token tuning"), ("v5mttt", "OpenSNAP: multi-domain decoder + token tuning")]
+    rows = []
+    for key, name, pos_file in sets:
+        if pos_file and get(pos_file):
+            r = get(pos_file)
+            rows.append([name, "SNAP, positive clicks only", pct(r["IoU@1"]), pct(r["IoU@3"]), pct(r["IoU@5"]), pct(r["IoU@10"]), f"{r['NoC@90']:.2f}"])
+        for m, label in methods:
+            r = get(f"aux/pn_{key}_{m}.json") or (get(f"aux/s3dis_crops_pn_{m}.json") if key == "s3dis_crops" and m in ("snap", "subtract") else None)
+            if r:
+                rows.append([name, label, pct(r["IoU@1"]), pct(r["IoU@3"]), pct(r["IoU@5"]), pct(r["IoU@10"]), f"{r['NoC@90']:.2f}"])
+        if key == "s3dis_crops":
+            rows += [[name, "AGILE3D (published)", "58.7", "77.4", "83.6", "–", "–"], [name, "Point-SAM (published)", "45.9", "77.6", "84.6", "–", "–"]]
+    if rows:
+        table("T5f · Corrective clicking with positive and negative clicks", "aux/pn_*.json",
+              ["dataset", "method", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@90"], rows,
+              "Corrective protocol: every click goes to the centre of the larger error region (positive on misses, negative on "
+              "false positives). SNAP cannot use negative clicks. Token tuning: 30 Adam steps on the mask token over SNAP's frozen "
+              "voxel embeddings, hyper-parameters chosen on ScanNet val only (aux/sweep_ttt_scannet_*.json).")
+    lat = load("aux/click_latency.json")
+    if lat:
+        names = {"snap": "SNAP (negatives ignored)", "ttt": "token tuning (30 steps)", "v5": "corrective decoder"}
+        table(f"T5h · Per-click latency with negative clicks (S3DIS rooms, {lat['mean_voxels'] / 1e3:.0f}k voxels)", "aux/click_latency.json",
+              ["method", "median ms", "p90 ms", "clicks"], [[n, f"{lat[k]['median_ms']:.0f}", f"{lat[k]['p90_ms']:.0f}", lat[k]["n"]] for k, n in names.items()],
+              "Backbone encoding is done once per scene and excluded; shared MIG 3g.40gb slice.")
+    sw = []
+    for st, rg, rad in [(30, 0.3, 0), (30, 1, 0), (30, 3, 0), (30, 10, 0), (30, 30, 0), (100, 1, 0), (30, 1, 0.05), (100, 0.3, 0.05)]:
+        r = get(f"aux/sweep_ttt_scannet_s{st}_r{rg}_rad{rad}.json")
+        if r:
+            sw.append([st, rg, rad, pct(r["IoU@1"]), pct(r["IoU@3"]), pct(r["IoU@5"]), pct(r["IoU@10"]), f"{r['NoC@90']:.2f}"])
+    if sw:
+        table("T5g · Token-tuning hyper-parameters (ScanNet val crops, every 8th scene; selection set)", "aux/sweep_ttt_scannet_*.json",
+              ["steps", "reg", "label radius (m)", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@90"], sw,
+              "Selected: 30 steps, reg 10, click-only labels; used unchanged on every other dataset.")
     diag = [("aux/diag_plus_iou.json", "IoU-head selection"), ("aux/diag_plus_oracle.json", "oracle best-of-K"),
             ("aux/diag_plus_first.json", "always token 0"), ("aux/diag_plus_nosem.json", "semantic features removed")]
     rows = [[l, pct(get(n)["IoU@1"]), pct(get(n)["IoU@3"]), pct(get(n)["IoU@5"]), pct(get(n)["IoU@10"])] for n, l in diag if get(n)]

@@ -35,6 +35,11 @@ class SNAPPlus(nn.Module):
         if arch == "v4":
             self.text_merge = copy.deepcopy(snap.merge)
             self.text_mask_head = copy.deepcopy(snap.mask_head)
+        if arch == "v5":
+            self.click_type = nn.Parameter(torch.zeros(2, D))
+            self.prev_embed = nn.Parameter(torch.zeros(1, D))
+            self.corr_merge = copy.deepcopy(snap.merge)
+            self.corr_mask_head = copy.deepcopy(snap.mask_head)
 
     @property
     def n_out(self):
@@ -118,6 +123,30 @@ class SNAPPlus(nn.Module):
         logits = torch.einsum("mnd,md->mn", pts_out, self.text_mask_head(tok_out[:, 1]))[:, None]
         iou = torch.sigmoid(self.iou_mlp(torch.cat([tok_out[:, 0], tok_out[:, 1]], -1)))
         return logits, iou, s.text_head(tok_out[:, 2])
+
+    def decode_v5(self, point, coord, clicks, labels, prev=None, force=False, embed=False):
+        """v5: positive-only clicks -> exact frozen SNAP; any negative click -> corrective decoder with click types + previous mask."""
+        s = self.snap
+        feat = point.feat
+        M, P = clicks.shape[:2]
+        pe = s.point_pos_embeddings_module(coord)
+        enc = s.prompt_encoder(clicks)
+        idx = torch.cdist(point.coord, clicks.reshape(-1, 3)).argmin(0)
+        tok = enc.view(-1, feat.shape[1]).add(feat[idx]).view(M, P, -1)
+        pts = feat[None].expand(M, -1, -1)
+        if bool(labels.all()) and not force:
+            return self.snap_exact(point, coord, clicks, pe, pts, tok)[:, 0]
+        tok = tok + self.click_type[(1 - labels).long()]
+        pe = pe[None].expand(M, -1, -1)
+        if prev is not None:
+            pe = pe + prev.sigmoid()[..., None] * self.prev_embed
+        base = torch.cat([s.iou_token.weight, s.mask_token.weight, s.text_token.weight], 0)
+        tokens = torch.cat([base[None].expand(M, -1, -1), tok], 1)
+        pts_out, tok_out = self.corr_merge([tokens], [pts], [pe])
+        m = self.corr_mask_head(tok_out[0][:, 1])
+        if embed:
+            return pts_out[0], m
+        return torch.einsum("mnd,md->mn", pts_out[0], m)
 
     def select(self, logits, iou, n_clicks):
         """v2: multi-click -> whole-object token; single click / text -> IoU-head choice among all tokens."""

@@ -14,8 +14,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from opensnap import paths  # noqa: E402
 
 DATA = {"s3dis": ("pointcept/s3dis", ["Area_5"]), "scannet": ("pointcept/scannet", ["val"]),
-        "nuscenes": ("pointcept/nuscenes", ["val"]), "semantickitti": ("pointcept/semantickitti", ["val"])}
-STRUCT = {"s3dis": {0, 1, 2}, "scannet": set(), "nuscenes": set(), "semantickitti": set()}
+        "nuscenes": ("pointcept/nuscenes", ["val"]), "semantickitti": ("pointcept/semantickitti", ["val"]),
+        "replica": ("pointcept/replica", ["all"])}
+STRUCT = {"s3dis": {0, 1, 2}, "scannet": set(), "nuscenes": set(), "semantickitti": set(), "replica": set()}
 
 
 def load(path, use_color, stuff=0):
@@ -33,6 +34,11 @@ def load(path, use_color, stuff=0):
     return d["coord"].astype(np.float32), color, d["normal"].astype(np.float32), ins, seg
 
 
+def majority(labels):
+    labels = labels[labels >= 0]
+    return int(np.bincount(labels).argmax()) if len(labels) else -1
+
+
 def next_click(pred, gt, vcoord):
     """Positive click at the centre of the missed object region (SNAP supports positive clicks only)."""
     err = gt & ~pred
@@ -46,11 +52,32 @@ def centre(region, vcoord):
     r = vcoord[region]
     out = vcoord[~region]
     sub = out[torch.randperm(len(out), device=out.device)[:20000]]
-    d = torch.cdist(r, sub).min(1).values
+    d = torch.cat([torch.cdist(r[i:i + 20000], sub).min(1).values for i in range(0, len(r), 20000)])
     return torch.nonzero(region)[d.argmax(), 0]
 
 
+def click_object_pn(seg, vcoord, gt, args):
+    """Corrective protocol: each click goes to the larger error region (positive on misses, negative on false positives)."""
+    pos, neg, ious = [], [], []
+    pred = torch.zeros_like(gt)
+    for k in range(args.max_clicks):
+        fn, fp = gt & ~pred, pred & ~gt
+        if not fn.any() and not fp.any():
+            ious += [ious[-1]] * (args.max_clicks - k)
+            break
+        if fn.sum() >= fp.sum():
+            pos.append(int(centre(fn, vcoord)))
+        else:
+            neg.append(int(centre(fp, vcoord)))
+        pred = seg(vcoord, torch.as_tensor(pos, dtype=torch.long, device=vcoord.device),
+                   torch.as_tensor(neg, dtype=torch.long, device=vcoord.device))
+        ious.append(float((pred & gt).sum() / (pred | gt).sum()))
+    return ious
+
+
 def click_object(snap, vcoord, gt, args):
+    if args.protocol == "pn":
+        return click_object_pn(args.seg, vcoord, gt, args)
     clicks, ious = [], []
     pred = torch.zeros_like(gt)
     for k in range(args.max_clicks):
@@ -70,11 +97,17 @@ def click_object(snap, vcoord, gt, args):
 def worker(rank, gpu, files, args, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
     snap = build_model(args)
+    if args.protocol == "pn":
+        from opensnap.clicks import ClickSegmenter, CorrectiveSegmenter
+        tuner = ClickSegmenter(snap, "ttt" if args.method == "v5ttt" else args.method, steps=args.steps, lr=args.lr, reg=args.reg,
+                               margin=args.margin, radius=args.radius)
+        args.seg = CorrectiveSegmenter(snap, args.corr_ckpt, tuner if args.method == "v5ttt" else None) \
+            if args.method in ("v5", "v5ttt") else tuner
     struct = STRUCT[args.dataset]
     for f in files:
         coord, color, normal, ins, seg = load(f, args.color, args.stuff)
         ids = [i for i in np.unique(ins) if i >= 0 and (ins == i).sum() >= args.min_points
-               and (not args.skip_structure or np.bincount(seg[ins == i]).argmax() not in struct)]
+               and (not args.skip_structure or majority(seg[ins == i]) not in struct)]
         if not args.crops:
             vcoord, inv = snap.encode(coord, color, normal if args.normals else None)
             ins_t = torch.from_numpy(ins).to(vcoord.device)
@@ -89,7 +122,7 @@ def worker(rank, gpu, files, args, queue):
                 gt = torch.zeros(len(vcoord), dtype=torch.bool, device=vcoord.device)
                 gt[inv[ins_t == i]] = True
             ious = click_object(snap, vcoord, gt, args)
-            queue.put(dict(scene=os.path.basename(f), obj=int(i), size=int(gt.sum()), seg=int(np.bincount(seg[ins == i]).argmax()), ious=ious))
+            queue.put(dict(scene=os.path.basename(f), obj=int(i), size=int(gt.sum()), seg=majority(seg[ins == i]), ious=ious))
     queue.put(None)
 
 
@@ -124,6 +157,14 @@ def main():
     ap.add_argument("--use_sem", type=int, default=1)
     ap.add_argument("--stride", type=int, default=1)
     ap.add_argument("--min_points", type=int, default=100)
+    ap.add_argument("--protocol", default="pos", choices=["pos", "pn"])
+    ap.add_argument("--method", default="snap", choices=["snap", "subtract", "ttt", "v5", "v5ttt"])
+    ap.add_argument("--corr_ckpt", default="../downloads/checkpoints/opensnap_corrective_v5_multi.pth")
+    ap.add_argument("--steps", type=int, default=30)
+    ap.add_argument("--lr", type=float, default=0.05)
+    ap.add_argument("--reg", type=float, default=10.0)
+    ap.add_argument("--margin", type=float, default=2.0)
+    ap.add_argument("--radius", type=float, default=0.0)
     ap.add_argument("--domain", default="Indoor", choices=["Indoor", "Outdoor", "Aerial"])
     ap.add_argument("--stuff", type=int, default=0, help="classes >= this id become one segment each (nuScenes: 10)")
     ap.add_argument("--skip_structure", type=int, default=0)

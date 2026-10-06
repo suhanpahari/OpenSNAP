@@ -92,11 +92,33 @@ Backbone and SNAP decoder frozen in the final system; ScanNet200 train only (S3D
   Trained on head+common classes (66 tail classes held out). Used for "segment the X", as the fallback of the viewer's
   text query, and as the query-time refiner of semantic cracking (where it removes cracking's accuracy cost).
 
+## 7b. Corrective clicking: negative clicks on a positive-only segmenter
+
+SNAP accepts positive clicks only, so once its mask spills onto a neighbour, further clicks cannot remove the spill and
+IoU plateaus (S3DIS crops: 76.8 → 80.4 from 5 to 10 clicks). Its mask is a dot product `z_i = E_i · m` between the refined
+voxel embeddings `E` (output of the two-way decoder) and one mask vector `m`. We add negative clicks in two ways.
+
+* **Test-time token tuning (training-free).** Decode the positive clicks once with frozen SNAP, keep `E` fixed, and take
+  30 Adam steps on `m` (plus a scalar bias) minimising a margin softplus loss on the clicked voxels (positives above +2,
+  negatives below −2) with an anchor `λ‖m − m₀‖² / ‖m₀‖²`, λ = 10. Only a D-dim vector is optimised over cached
+  embeddings: ~43 ms per click on a 267k-voxel room. Hyper-parameters chosen on ScanNet val only (T5g).
+* **Corrective decoder (trained, v5).** Positive-only click sets → exact frozen SNAP (parity guaranteed). Once a negative
+  click exists → a trainable copy of SNAP's two-way decoder and mask head, with learned positive/negative click-type
+  embeddings added to the prompt tokens and the previous mask injected as a dense prompt (`pe + σ(z_prev)·e_prev`).
+  Trained with simulated corrective clicking (each click in the larger error region), frozen backbone, 9k steps on an
+  equal mix of ScanNet, nuScenes-train and SemanticKITTI-train. The two compose: token tuning on top of the decoder's
+  `(E, m)`.
+* **Baselines.** SNAP under the same click sequence (negatives ignored) and negative-mask subtraction (decode each
+  negative click alone and remove its mask where it dominates).
+
 ## 8. Experimental protocol
 
 * **Interactive segmentation** (S3DIS Area 5 full rooms, zero-shot): XYZ-only input; first click at the object
   centre (farthest from the boundary), next clicks at the centre of the missed region; IoU@{1,3,5,10}, NoC@{80,85,90}.
   Our evaluation of the released checkpoint reproduces the published numbers (53.3/69.1/74.0 vs 53.6/71.1/77.6 IoU@1/3/5).
+* **Corrective clicking**: same click placement, but each click goes to the larger of the missed / false-positive
+  regions (positive or negative), as in AGILE3D / Point-SAM; S3DIS crops (SNAP Table 2 setting), S3DIS rooms, Replica,
+  nuScenes and SemanticKITTI (every 10th scan, things = instances, stuff = one segment per class).
 * **Query workload** (S3DIS Area 5): concept queries `IS(c)` and relational `IS(a) AND NEAR(IS(b), 0.5)` with answer
   sets derived from instance annotations; interpolated AP over IoU 0.50:0.95, AP50, AP25; latency; storage.
 * **Open-vocabulary naming**: click-to-name accuracy on Matterport3D-160 (seen/unseen classes).
@@ -105,7 +127,7 @@ Backbone and SNAP decoder frozen in the final system; ScanNet200 train only (S3D
 ## 9. Results
 
 All results, with their source files, are generated into [`results/TABLES.md`](../results/TABLES.md) by
-`scripts/make_tables.py` (17 tables: semantic segmentation and ablation, query workloads, SNAP-protocol instance AP,
+`scripts/make_tables.py` (tables include semantic segmentation and ablation, query workloads, SNAP-protocol instance AP,
 interactive segmentation and its diagnosis, click-to-name with two VLM sizes, text prompts on ScanNet200 and S3DIS,
 single-click selection, proposal recall, systems, cracking and its refiners, calibration sweeps, dense-feature source,
 building-level catalog).
