@@ -34,7 +34,9 @@ queries such as `SELECT WHERE IS('chair') AND NEAR(IS('table'), 0.5)` over a sin
 ## Key results
 
 All numbers are produced by the scripts in this repo; every table, with its source file, is in
-**[results/TABLES.md](results/TABLES.md)** (regenerate with `python3 scripts/make_tables.py`).
+**[results/TABLES.md](results/TABLES.md)** (regenerate with `python3 scripts/make_tables.py`); the full analysis
+(per research question, ablations, negative results, protocol caveats, ICDE framing) is in
+**[results/RESULTS.md](results/RESULTS.md)**.
 
 | task | benchmark | SNAP (its own text head) | other baseline | **OpenSNAP** |
 |---|---|---|---|---|
@@ -108,6 +110,24 @@ text decoder's mask is shown instead. Failures are kept (e.g. `rug` → sofa, `s
 ![outdoor](assets/outdoor_gallery.jpg)
 
 Labelled with a free vocabulary: road, grass, tree, building, street light, fence, … (★) are not nuScenes class names.
+</details>
+
+<details open><summary><b>Phone video → queryable 3D scene</b> (a lab desk, 83 s, not from any dataset)</summary>
+
+<video src="assets/demo_lab_desk/lab_desk.mp4" controls width="60%"></video>
+
+![frames](assets/demo_lab_desk/frames.jpg)
+![cloud](assets/demo_lab_desk/cloud.jpg)
+
+The video is reconstructed with VGGT, scaled with a metric-depth model and aligned to gravity (`scripts/video2cloud.py`).
+The dense 3D CLIP features collapse on this phone reconstruction, so OpenSNAP's collapse guard falls back to the
+segmenter's tokens. Clicked masks are projected back into the video and the VLM names the **real photo crop**:
+
+![click naming](assets/demo_lab_desk/click_naming.jpg)
+![viewer](assets/demo_lab_desk/viewer.jpg)
+
+Unfiltered: "browser" (laptop screen content) and "screwdriver" (a PC-case box) are wrong; text queries for keyboard,
+printer and water bottle miss on this scan.
 </details>
 
 <details><summary><b>Building-level search</b>: one query over all 68 rooms of S3DIS Area 5</summary>

@@ -111,6 +111,27 @@ voxel embeddings `E` (output of the two-way decoder) and one mask vector `m`. We
 * **Baselines.** SNAP under the same click sequence (negatives ignored) and negative-mask subtraction (decode each
   negative click alone and remove its mask where it dominates).
 
+## 7c. Backbone adapters, click-jitter TTA, video ingest
+
+* **Backbone adapters (v6).** Rank-16 LoRA on `qkv` and `proj` of every serialized-attention layer of PTv3, B = 0 at
+  init (exact SNAP at step 0). Trained jointly with the corrective decoder on ScanNet + nuScenes-train +
+  SemanticKITTI-train; losses: positive-click masks through SNAP's frozen decoder (1–3 clicks), corrective masks, and
+  feature distillation `‖f − f₀‖² / ‖f₀‖²` to the un-adapted backbone. Gains in the training domains (nuScenes IoU@1
+  +3.5), small first-click cost on held-out indoor crops (T5i) → use for the Outdoor domain.
+* **Click-jitter TTA.** The positive click set is decoded 8 more times with each click moved to a random voxel within
+  10 cm; logits are averaged. Radius chosen on ScanNet val (T5k).
+* **Video ingest.** `scripts/video2cloud.py`: sharpest frame per window → VGGT-1B depth + cameras → unprojection →
+  confidence filter → metric scale = median ratio of Depth-Anything-V2 (metric, indoor) to VGGT depth on 8 frames →
+  RANSAC plane whose normal is within ~35° of the first camera's up axis → rotate to z-up. Cameras, depth and frame
+  paths are stored in `views.npz`.
+* **Dense collapse guard.** At ingest, the dense features label every voxel with SNAP's training vocabulary; if one
+  label that is not wall/floor/ceiling-like takes > 75 % of the object voxels, the dense branch is dropped and text
+  relevance is computed from the segmenter's own proposals (soft-mask-weighted vote of their token probabilities).
+  Benchmark scans: 0.14–0.66; the phone-video scan: 0.80 (T18).
+* **Photo-grounded naming.** For scenes with `views.npz`, a selected 3D mask is projected into all frames, visibility is
+  checked against VGGT depth, the two frames with the largest visible fraction (penalising off-centre views) are cropped
+  around the mask's 2–98 % pixel extent with a red box, and the VLM names the photo; its ranked answer is used directly.
+
 ## 8. Experimental protocol
 
 * **Interactive segmentation** (S3DIS Area 5 full rooms, zero-shot): XYZ-only input; first click at the object

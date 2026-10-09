@@ -1,0 +1,242 @@
+{
+ "model": "matterport_openseg (OpenScene 3D distill)",
+ "vocab": "SNAP training vocabulary",
+ "structural": "labels containing wall/floor/ceiling excluded",
+ "threshold": 0.75,
+ "rows": [
+  {
+   "scene": "lab_desk",
+   "top_object_label_share": 0.8,
+   "label": "stair rail",
+   "source": "phone video (VGGT)"
+  },
+  {
+   "scene": "scene0011_00",
+   "top_object_label_share": 0.24,
+   "label": "dining table",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scene0015_00",
+   "top_object_label_share": 0.33,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scene0019_01",
+   "top_object_label_share": 0.28,
+   "label": "closet door",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scene0025_01",
+   "top_object_label_share": 0.2,
+   "label": "stair rail",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scene0030_00",
+   "top_object_label_share": 0.24,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scene0030_02",
+   "top_object_label_share": 0.23,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "WC_1",
+   "top_object_label_share": 0.5,
+   "label": "closet door",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "hallway_14",
+   "top_object_label_share": 0.39,
+   "label": "closet door",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "lobby_1",
+   "top_object_label_share": 0.66,
+   "label": "dining table",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office_18",
+   "top_object_label_share": 0.31,
+   "label": "storage organizer",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office_27",
+   "top_object_label_share": 0.24,
+   "label": "storage organizer",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office_36",
+   "top_object_label_share": 0.16,
+   "label": "desk",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office_7",
+   "top_object_label_share": 0.42,
+   "label": "storage organizer",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office0",
+   "top_object_label_share": 0.14,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office1",
+   "top_object_label_share": 0.17,
+   "label": "pillow",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office2",
+   "top_object_label_share": 0.25,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office3",
+   "top_object_label_share": 0.25,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "office4",
+   "top_object_label_share": 0.36,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "room0",
+   "top_object_label_share": 0.33,
+   "label": "sofa chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "room1",
+   "top_object_label_share": 0.2,
+   "label": "pillow",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "room2",
+   "top_object_label_share": 0.45,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "mp3d_pa4otMbVnkk_06",
+   "top_object_label_share": 0.21,
+   "label": "storage organizer",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "mp3d_wc2JMjhGNzB_34",
+   "top_object_label_share": 0.21,
+   "label": "doorframe",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "mp3d_yqstnuAEVhm_11",
+   "top_object_label_share": 0.19,
+   "label": "kitchen cabinet",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_office0",
+   "top_object_label_share": 0.16,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_office1",
+   "top_object_label_share": 0.2,
+   "label": "pillow",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_office2",
+   "top_object_label_share": 0.24,
+   "label": "sofa chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_office3",
+   "top_object_label_share": 0.22,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_office4",
+   "top_object_label_share": 0.37,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_room0",
+   "top_object_label_share": 0.33,
+   "label": "sofa chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_room1",
+   "top_object_label_share": 0.18,
+   "label": "pillow",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "replica_room2",
+   "top_object_label_share": 0.42,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "s3dis_conferenceRoom_2",
+   "top_object_label_share": 0.27,
+   "label": "folded chair",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "s3dis_office_19",
+   "top_object_label_share": 0.21,
+   "label": "storage organizer",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "s3dis_pantry_1",
+   "top_object_label_share": 0.46,
+   "label": "kitchen cabinet",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scannet_scene0050_00",
+   "top_object_label_share": 0.19,
+   "label": "doorframe",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scannet_scene0231_00",
+   "top_object_label_share": 0.22,
+   "label": "kitchen cabinet",
+   "source": "benchmark scan"
+  },
+  {
+   "scene": "scannet_scene0568_00",
+   "top_object_label_share": 0.22,
+   "label": "storage organizer",
+   "source": "benchmark scan"
+  }
+ ]
+}

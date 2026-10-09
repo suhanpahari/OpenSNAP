@@ -213,6 +213,57 @@ def interactive():
               "Corrective protocol: every click goes to the centre of the larger error region (positive on misses, negative on "
               "false positives). SNAP cannot use negative clicks. Token tuning: 30 Adam steps on the mask token over SNAP's frozen "
               "voxel embeddings, hyper-parameters chosen on ScanNet val only (aux/sweep_ttt_scannet_*.json).")
+    row = lambda r: [pct(r.get(k)) for k in ("IoU@1", "IoU@3", "IoU@5", "IoU@10")] + ([f"{r['NoC@90']:.2f}"] if "IoU@10" in r else ["–"])
+    pairs = [("S3DIS rooms", "s3dis_interactive_snap_zeroshot_xyz.json", "aux/pn_posonly_s3dis_full_v6.json", "held out"),
+             ("S3DIS crops", "s3dis_interactive_crops.json", "aux/pn_posonly_s3dis_crops_v6.json", "held out"),
+             ("nuScenes", "nuscenes_interactive.json", "aux/pn_posonly_nuscenes_v6.json", "train split seen"),
+             ("SemanticKITTI", "semantickitti_interactive.json", "aux/pn_posonly_kitti_v6.json", "train split seen")]
+    rows = []
+    for name, base, ad, note in pairs:
+        if get(base) and get(ad):
+            rows += [[name, note, "SNAP"] + row(get(base)), [name, note, "**+ backbone LoRA adapters**"] + row(get(ad))]
+    if rows:
+        table("T5i · Backbone adaptation (LoRA in every PTv3 attention layer), positive clicks only", "aux/pn_posonly_*_v6.json",
+              ["dataset", "adapter training data", "model", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@90"], rows,
+              "Adapters (rank 16, zero-init, 6k steps) trained jointly with the corrective decoder on ScanNet + nuScenes-train + "
+              "SemanticKITTI-train with feature distillation to the frozen backbone; decoder for positive clicks is SNAP's own.")
+    rows = []
+    for name, key in [("S3DIS crops", "s3dis_crops"), ("S3DIS rooms", "s3dis_full"), ("Replica", "replica"), ("nuScenes", "nuscenes"),
+                      ("SemanticKITTI", "kitti")]:
+        for m, label in [("snap", "SNAP (negatives ignored)"), ("v6snap", "SNAP decoder + adapters"), ("ttt", "token tuning"),
+                         ("v5mttt", "multi-domain decoder + token tuning"), ("v6ttt", "adapters + decoder + token tuning")]:
+            r = get(f"aux/pn_{key}_{m}.json") or (get(f"aux/s3dis_crops_pn_{m}.json") if key == "s3dis_crops" and m == "snap" else None)
+            if r:
+                rows.append([name, label] + row(r))
+    if rows:
+        table("T5j · Corrective clicking with the adapted backbone", "aux/pn_*_v6*.json",
+              ["dataset", "method", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@90"], rows,
+              "Adapters help where their training domains are (nuScenes first click +3.6) and are neutral-to-slightly-negative on "
+              "held-out indoor data; token tuning alone remains best on indoor rooms.")
+    rows = []
+    for name, a, b in [("ScanNet val dev (selection set)", "aux/sweep_ttt_scannet_s30_r10_rad0.json", "aux/sweep_tta_scannet_k8_r0.1.json"),
+                       ("S3DIS crops (held out)", "aux/pn_s3dis_crops_ttt.json", "aux/pn_s3dis_crops_tttj.json"),
+                       ("nuScenes (held out)", "aux/pn_nuscenes_ttt.json", "aux/pn_nuscenes_tttj.json")]:
+        if get(a) and get(b):
+            ra = dict(get(a)) if "dev" not in name else {k: get(a)[k] for k in ("IoU@1", "IoU@3")}
+            rows += [[name, "token tuning"] + row(ra), [name, "**+ click-jitter averaging (8 × 10 cm)**"] + row(get(b))]
+    for r in ("0.05", "0.2"):
+        x = get(f"aux/sweep_tta_scannet_k8_r{r}.json")
+        if x:
+            rows.append(["ScanNet val dev (selection set)", f"jitter radius {r} m"] + row(x))
+    if rows:
+        table("T5k · Click-jitter test-time augmentation for the first click", "aux/sweep_tta_*.json, aux/pn_*_tttj.json",
+              ["dataset", "method", "IoU@1", "IoU@3", "IoU@5", "IoU@10", "NoC@90"], rows,
+              "Dev sweep ran 3 clicks only. Radius chosen on ScanNet; helps indoors (+1.1 / +1.5 IoU@1), no effect on sparse outdoor LiDAR.")
+    dc = load("aux/dense_collapse.json")
+    if dc:
+        bench = [r for r in dc["rows"] if r["source"] == "benchmark scan"]
+        video = [r for r in dc["rows"] if r["source"] != "benchmark scan"]
+        rows = [[f"{len(bench)} benchmark scans (ScanNet, S3DIS, Replica, Matterport)", f"{min(r['top_object_label_share'] for r in bench):.2f}–{max(r['top_object_label_share'] for r in bench):.2f}", "no"]]
+        rows += [[f"{r['scene']} ({r['source']})", f"{r['top_object_label_share']:.2f} ('{r['label']}')", "**yes**"] for r in video]
+        table("T18 · Dense-feature collapse guard (out-of-distribution scenes)", "aux/dense_collapse.json",
+              ["scene", "top non-structural label share", f"guard fires (> {dc['threshold']})"], rows,
+              "When it fires, OpenSNAP drops the dense 3D CLIP features and uses the segmenter's own tokens for relevance and naming.")
     lat = load("aux/click_latency.json")
     if lat:
         names = {"snap": "SNAP (negatives ignored)", "ttt": "token tuning (30 steps)", "v5": "corrective decoder"}

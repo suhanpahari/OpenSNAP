@@ -247,6 +247,85 @@ _Source: aux/pn_*.json_
 
 Corrective protocol: every click goes to the centre of the larger error region (positive on misses, negative on false positives). SNAP cannot use negative clicks. Token tuning: 30 Adam steps on the mask token over SNAP's frozen voxel embeddings, hyper-parameters chosen on ScanNet val only (aux/sweep_ttt_scannet_*.json).
 
+### T5i · Backbone adaptation (LoRA in every PTv3 attention layer), positive clicks only
+
+_Source: aux/pn_posonly_*_v6.json_
+
+| dataset | adapter training data | model | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@90 |
+|---|---|---|---|---|---|---|---|
+| S3DIS rooms | held out | SNAP | 53.3 | 69.1 | 74.0 | 77.4 | 6.58 |
+| S3DIS rooms | held out | **+ backbone LoRA adapters** | 53.3 | 69.8 | 74.5 | 78.0 | 6.54 |
+| S3DIS crops | held out | SNAP | 56.1 | 72.0 | 76.8 | 80.4 | 6.18 |
+| S3DIS crops | held out | **+ backbone LoRA adapters** | 54.2 | 72.8 | 77.8 | 81.6 | 6.16 |
+| nuScenes | train split seen | SNAP | 53.5 | 63.5 | 66.0 | 68.9 | 5.94 |
+| nuScenes | train split seen | **+ backbone LoRA adapters** | 57.0 | 67.5 | 69.8 | 72.2 | 5.36 |
+| SemanticKITTI | train split seen | SNAP | 56.7 | 65.4 | 68.4 | 72.0 | 5.36 |
+| SemanticKITTI | train split seen | **+ backbone LoRA adapters** | 57.5 | 66.0 | 68.6 | 71.6 | 5.23 |
+
+Adapters (rank 16, zero-init, 6k steps) trained jointly with the corrective decoder on ScanNet + nuScenes-train + SemanticKITTI-train with feature distillation to the frozen backbone; decoder for positive clicks is SNAP's own.
+
+### T5j · Corrective clicking with the adapted backbone
+
+_Source: aux/pn_*_v6*.json_
+
+| dataset | method | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@90 |
+|---|---|---|---|---|---|---|
+| S3DIS crops | SNAP (negatives ignored) | 56.1 | 70.2 | 73.1 | 74.6 | 6.68 |
+| S3DIS crops | SNAP decoder + adapters | 54.3 | 69.5 | 72.6 | 74.4 | 6.67 |
+| S3DIS crops | token tuning | 56.1 | 73.9 | 81.8 | 88.8 | 5.87 |
+| S3DIS crops | multi-domain decoder + token tuning | 56.0 | 74.0 | 81.3 | 87.8 | 5.85 |
+| S3DIS crops | adapters + decoder + token tuning | 54.2 | 73.7 | 80.7 | 87.5 | 5.98 |
+| S3DIS rooms | SNAP (negatives ignored) | 53.0 | 66.5 | 69.0 | 70.5 | 7.17 |
+| S3DIS rooms | SNAP decoder + adapters | 53.1 | 66.1 | 68.8 | 70.5 | 7.12 |
+| S3DIS rooms | token tuning | 53.1 | 70.7 | 78.5 | 84.7 | 6.36 |
+| S3DIS rooms | multi-domain decoder + token tuning | 52.9 | 70.6 | 77.5 | 83.5 | 6.35 |
+| S3DIS rooms | adapters + decoder + token tuning | 53.5 | 70.4 | 77.4 | 83.6 | 6.43 |
+| Replica | SNAP (negatives ignored) | 56.3 | 58.9 | 59.5 | 60.1 | 7.62 |
+| Replica | SNAP decoder + adapters | 55.7 | 58.5 | 59.0 | 60.0 | 7.63 |
+| Replica | token tuning | 55.7 | 67.9 | 74.8 | 81.9 | 6.74 |
+| Replica | multi-domain decoder + token tuning | 55.5 | 67.0 | 72.6 | 80.3 | 6.80 |
+| Replica | adapters + decoder + token tuning | 55.4 | 67.1 | 72.1 | 79.6 | 6.82 |
+| nuScenes | SNAP (negatives ignored) | 53.6 | 62.0 | 63.8 | 65.4 | 6.18 |
+| nuScenes | SNAP decoder + adapters | 57.2 | 66.6 | 68.4 | 69.8 | 5.53 |
+| nuScenes | token tuning | 53.6 | 66.3 | 72.3 | 78.4 | 4.89 |
+| nuScenes | multi-domain decoder + token tuning | 53.7 | 68.0 | 73.4 | 79.2 | 4.78 |
+| nuScenes | adapters + decoder + token tuning | 57.2 | 68.8 | 73.2 | 77.8 | 4.59 |
+| SemanticKITTI | SNAP (negatives ignored) | 56.9 | 64.9 | 67.6 | 70.4 | 5.46 |
+| SemanticKITTI | SNAP decoder + adapters | 57.5 | 65.5 | 67.8 | 70.4 | 5.34 |
+| SemanticKITTI | token tuning | 56.9 | 65.9 | 71.0 | 76.5 | 4.78 |
+| SemanticKITTI | multi-domain decoder + token tuning | 56.8 | 67.7 | 71.9 | 76.9 | 4.72 |
+| SemanticKITTI | adapters + decoder + token tuning | 57.5 | 67.1 | 71.0 | 75.4 | 4.73 |
+
+Adapters help where their training domains are (nuScenes first click +3.6) and are neutral-to-slightly-negative on held-out indoor data; token tuning alone remains best on indoor rooms.
+
+### T5k · Click-jitter test-time augmentation for the first click
+
+_Source: aux/sweep_tta_*.json, aux/pn_*_tttj.json_
+
+| dataset | method | IoU@1 | IoU@3 | IoU@5 | IoU@10 | NoC@90 |
+|---|---|---|---|---|---|---|
+| ScanNet val dev (selection set) | token tuning | 67.8 | 77.5 | – | – | – |
+| ScanNet val dev (selection set) | **+ click-jitter averaging (8 × 10 cm)** | 68.9 | 77.2 | – | – | – |
+| S3DIS crops (held out) | token tuning | 56.1 | 73.9 | 81.8 | 88.8 | 5.87 |
+| S3DIS crops (held out) | **+ click-jitter averaging (8 × 10 cm)** | 57.6 | 74.4 | 82.2 | 89.0 | 5.82 |
+| nuScenes (held out) | token tuning | 53.6 | 66.3 | 72.3 | 78.4 | 4.89 |
+| nuScenes (held out) | **+ click-jitter averaging (8 × 10 cm)** | 53.7 | 66.3 | 72.2 | 78.3 | 4.89 |
+| ScanNet val dev (selection set) | jitter radius 0.05 m | 68.4 | 77.1 | – | – | – |
+| ScanNet val dev (selection set) | jitter radius 0.2 m | 67.6 | 76.2 | – | – | – |
+
+Dev sweep ran 3 clicks only. Radius chosen on ScanNet; helps indoors (+1.1 / +1.5 IoU@1), no effect on sparse outdoor LiDAR.
+
+### T18 · Dense-feature collapse guard (out-of-distribution scenes)
+
+_Source: aux/dense_collapse.json_
+
+| scene | top non-structural label share | guard fires (> 0.75) |
+|---|---|---|
+| 38 benchmark scans (ScanNet, S3DIS, Replica, Matterport) | 0.14–0.66 | no |
+| lab_desk (phone video (VGGT)) | 0.80 ('stair rail') | **yes** |
+
+When it fires, OpenSNAP drops the dense 3D CLIP features and uses the segmenter's own tokens for relevance and naming.
+
 ### T5h · Per-click latency with negative clicks (S3DIS rooms, 267k voxels)
 
 _Source: aux/click_latency.json_

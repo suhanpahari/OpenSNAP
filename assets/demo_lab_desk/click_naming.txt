@@ -1,0 +1,8 @@
+chair | VLM: chair, bag, desk
+monitor | VLM: monitor, screen, display
+bottle | VLM: bottle, thermos, flask
+browser | VLM: browser, window, screen
+vent | VLM: vent, speaker, fan
+desk | VLM: desk, floor, carpet
+printer | VLM: printer, monitor, laptop
+screwdriver | VLM: screwdriver, screw, tool

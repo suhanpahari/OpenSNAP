@@ -50,10 +50,11 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--openscene_ckpt", default="../downloads/ckpt/matterport_openseg.pth.tar")
     ap.add_argument("--feature", default="openseg")
+    ap.add_argument("--point_size", type=float, default=0.015)
     a = ap.parse_args()
     args = types.SimpleNamespace(scene=a.scene, domain="Indoor", snap_ckpt="../downloads/ckpt/SNAP_C.pth",
                                  openscene_ckpt=a.openscene_ckpt, feature=a.feature, vlm=a.vlm, prior=a.prior,
-                                 alpha=0.7, text_ckpt=a.text_ckpt, normals=0, point_size=0.015, host="127.0.0.1", port=a.port, demo=False)
+                                 alpha=0.7, text_ckpt=a.text_ckpt, normals=0, point_size=a.point_size, host="127.0.0.1", port=a.port, demo=False)
     app = A.App(args)
     if a.random_objects:
         a.clicks = random_clicks(app, a.random_objects, a.seed, a.min_pts, a.max_pts)
