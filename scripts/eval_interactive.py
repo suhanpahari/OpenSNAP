@@ -97,10 +97,12 @@ def click_object(snap, vcoord, gt, args):
 def worker(rank, gpu, files, args, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
     snap = build_model(args)
+    if args.adapter:
+        snap.load_adapter(args.adapter)
     if args.protocol == "pn":
         from opensnap.clicks import ClickSegmenter, CorrectiveSegmenter
         tuner = ClickSegmenter(snap, "ttt" if args.method == "v5ttt" else args.method, steps=args.steps, lr=args.lr, reg=args.reg,
-                               margin=args.margin, radius=args.radius)
+                               margin=args.margin, radius=args.radius, tta=args.tta, tta_radius=args.tta_radius)
         args.seg = CorrectiveSegmenter(snap, args.corr_ckpt, tuner if args.method == "v5ttt" else None) \
             if args.method in ("v5", "v5ttt") else tuner
     struct = STRUCT[args.dataset]
@@ -159,6 +161,9 @@ def main():
     ap.add_argument("--min_points", type=int, default=100)
     ap.add_argument("--protocol", default="pos", choices=["pos", "pn"])
     ap.add_argument("--method", default="snap", choices=["snap", "subtract", "ttt", "v5", "v5ttt"])
+    ap.add_argument("--adapter", default="")
+    ap.add_argument("--tta", type=int, default=0)
+    ap.add_argument("--tta_radius", type=float, default=0.1)
     ap.add_argument("--corr_ckpt", default="../downloads/checkpoints/opensnap_corrective_v5_multi.pth")
     ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--lr", type=float, default=0.05)

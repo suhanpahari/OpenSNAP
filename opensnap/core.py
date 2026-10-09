@@ -21,6 +21,7 @@ class Config:
     beta: float = 0.3
     relay_tau: float = 0.05
     relay_weight: float = 0.8
+    dense_collapse: float = 0.75
 
 
 @dataclass
@@ -37,7 +38,7 @@ class OpenSNAP:
     def __init__(self, snap, clip_snap, openscene=None, clip_dense=None, cfg=Config(), anchors=None, text_decoder=None):
         self.snap, self.clip_snap, self.text_decoder = snap, clip_snap, text_decoder
         self.openscene, self.clip_dense = openscene, clip_dense
-        self.cfg = cfg
+        self.cfg, self.anchors = cfg, anchors
         self.anchor_emb = clip_snap(anchors, SNAP_TEMPLATES) if anchors else None
 
     def encode(self, coord, color=None, normal=None, strength=None):
@@ -45,8 +46,24 @@ class OpenSNAP:
         dense = None
         if self.openscene is not None:
             dense = self.openscene.voxel_features(coord, inverse, len(vcoord))
-        self.scene = dict(vcoord=vcoord, inverse=inverse, dense=dense)
+        self.scene = dict(vcoord=vcoord, inverse=inverse, dense=dense, dense_collapsed=None)
+        if dense is not None and self.anchors and self.cfg.dense_collapse > 0:
+            self.check_dense()
         return self.scene
+
+    @torch.no_grad()
+    def check_dense(self):
+        """Out-of-distribution guard: if one non-structural label takes most object voxels, the dense features have
+        collapsed (e.g. on a noisy phone-video reconstruction); drop them and rely on the segmenter's own tokens."""
+        lab = self.dense_probs(self.anchors).argmax(1)
+        obj = torch.tensor([not any(w in a for w in ("wall", "floor", "ceiling")) for a in self.anchors], device=lab.device)[lab]
+        if obj.sum() == 0:
+            return
+        counts = torch.bincount(lab[obj], minlength=len(self.anchors))
+        share = float(counts.max() / obj.sum())
+        if share > self.cfg.dense_collapse:
+            self.scene["dense_collapsed"] = (self.anchors[int(counts.argmax())], share)
+            self.scene["dense"] = None
 
     @torch.no_grad()
     def propose_c2f(self, v0=0.8, levels=3, cover=0.5):
@@ -103,7 +120,16 @@ class OpenSNAP:
 
     @torch.no_grad()
     def relevance(self, text, bg=("wall", "floor", "ceiling", "object")):
-        return self.dense_probs([text, *[b for b in bg if b != text]])[:, 0]
+        """Per-voxel text relevance: dense 3D CLIP features, or (if absent/collapsed) a vote of the segmenter's own
+        proposals weighted by their soft masks."""
+        labels = [text, *[b for b in bg if b != text]]
+        if self.scene["dense"] is not None:
+            return self.dense_probs(labels)[:, 0]
+        if self.scene.get("props") is None:
+            self.scene["props"] = self.propose()
+        p = self.scene["props"]
+        w = (p.logits > 0).float() * p.logits.sigmoid() * p.scores[:, None]
+        return (w.T @ self.mask_probs(p, labels, use_dense=False)[:, 0]) / w.sum(0).clamp(min=1e-6)
 
     @torch.no_grad()
     def text_click(self, text, region=None, max_clicks=3, tau=0.5, radius=1.0, knn_r=0.1):

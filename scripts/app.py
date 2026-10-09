@@ -60,7 +60,7 @@ class App:
         self.status = g.add_markdown("_loading…_")
         self.keep = g.add_checkbox("keep previous objects", initial_value=False)
         self.use_vlm = g.add_checkbox("VLM naming", initial_value=self.namer is not None, disabled=self.namer is None)
-        self.vlm_mode = g.add_dropdown("VLM mode", ("choose", "free"), initial_value="choose")
+        self.vlm_mode = g.add_dropdown("VLM mode", ("choose", "free"), initial_value="free" if getattr(self, "photos", None) is not None else "choose")
         self.point_size = g.add_slider("point size", 0.002, 0.05, 0.001, self.args.point_size)
         self.point_size.on_update(lambda _: self.draw_base())
         g.add_button("New object").on_click(lambda _: self.new_object())
@@ -84,6 +84,14 @@ class App:
     def load(self, path):
         d = load_any(path)
         self.coord, self.color = d["coord"], d.get("color")
+        views = os.path.join(path, "views.npz")
+        if os.path.exists(views):
+            from opensnap.photo import PhotoViews
+            self.photos = PhotoViews(views)
+            if hasattr(self, "vlm_mode"):
+                self.vlm_mode.value = "free"
+        else:
+            self.photos = None
         normal = d.get("normal")
         if normal is None and self.args.normals:
             normal = estimate_normals(self.coord)
@@ -99,7 +107,11 @@ class App:
         self.server.initial_camera.look_at = tuple(mid)
         ext = hi - lo
         self.server.initial_camera.position = tuple(mid + np.array([0.15 * ext[0], -0.55 * ext[1], 0.3 * ext[:2].max() + ext[2]]))
-        self.say(f"{os.path.basename(path.rstrip('/'))}: {len(self.coord):,} points, encoded in {time.time() - t:.1f}s")
+        msg = f"{os.path.basename(path.rstrip('/'))}: {len(self.coord):,} points, encoded in {time.time() - t:.1f}s"
+        if self.m.scene.get("dense_collapsed"):
+            lab, share = self.m.scene["dense_collapsed"]
+            msg += f" · dense 3D features collapsed ({share:.0%} '{lab}'), naming uses segmenter tokens + VLM"
+        self.say(msg)
 
     def draw_base(self, rgb=None):
         self.server.scene.add_point_cloud("/scene", self.coord, self.base_rgb if rgb is None else rgb,
@@ -151,8 +163,8 @@ class App:
 
     def vlm_name(self, props, i):
         if self.vlm_mode.value == "choose":
-            return self.namer.name_choose(self.m, props, i, self.coord, self.color, self.vocab)[:3]
-        return self.namer.name(self.m, props, i, self.coord, self.color, prior_vocab=self.vocab)
+            return self.namer.name_choose(self.m, props, i, self.coord, self.color, self.vocab, photos=self.photos)[:3]
+        return self.namer.name(self.m, props, i, self.coord, self.color, prior_vocab=self.vocab, photos=self.photos)
 
     def name_fast(self, props, i):
         sub = type(props)(props.logits[i:i + 1], props.tokens[i:i + 1], props.scores[i:i + 1], props.prompts[i:i + 1])

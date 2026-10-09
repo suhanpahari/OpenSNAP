@@ -9,6 +9,8 @@ from .render import render_object
 PROMPTS = {
     "highlight": ("These {n} images are renders of an indoor 3D scan from different viewpoints. "
                   "One object is outlined in red. What is the outlined object? "),
+    "photo": ("These {n} images are photos of a real scene. One object is marked by a red box. What is the object "
+              "inside the red box? "),
     "isolate": ("These {n} images show the same object from a 3D point cloud scan, seen from different viewpoints. "
                 "The object is drawn in full color and its surroundings are dimmed. What is the object? "),
 }
@@ -27,9 +29,9 @@ class VLMNamer:
         self.device, self.k, self.style = device, k, style
 
     @torch.no_grad()
-    def ask(self, images):
+    def ask(self, images, style=None):
         content = [{"type": "image", "image": im} for im in images]
-        content.append({"type": "text", "text": (PROMPTS[self.style] + PROMPT_TAIL).format(n=len(images), k=self.k)})
+        content.append({"type": "text", "text": (PROMPTS[style or self.style] + PROMPT_TAIL).format(n=len(images), k=self.k)})
         msgs = [{"role": "user", "content": content}]
         text = self.processor.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
         inputs = self.processor(text=[text], images=images, return_tensors="pt").to(self.device)
@@ -38,10 +40,11 @@ class VLMNamer:
         return parse(reply)[: self.k], reply
 
     @torch.no_grad()
-    def choose(self, images, options):
+    def choose(self, images, options, style=None):
         letters = "ABCDEFGHIJ"[: len(options)]
         opts = " ".join(f"{l}) {o}" for l, o in zip(letters, options))
-        q = PROMPTS[self.style] + f"Options: {opts}. Answer with the letter only."
+        st = style or self.style
+        q = (PROMPTS[st].format(n=len(images)) if st == "photo" else PROMPTS[st]) + f"Options: {opts}. Answer with the letter only."
         content = [{"type": "image", "image": im} for im in images] + [{"type": "text", "text": q}]
         text = self.processor.apply_chat_template([{"role": "user", "content": content}], tokenize=False, add_generation_prompt=True)
         inputs = self.processor(text=[text], images=images, return_tensors="pt").to(self.device)
@@ -49,7 +52,7 @@ class VLMNamer:
         ids = [self.processor.tokenizer.encode(l, add_special_tokens=False)[0] for l in letters]
         return logits[ids].log_softmax(-1).cpu().numpy()
 
-    def name_choose(self, opensnap, props, idx, coord, color, prior_vocab, k=5, weight=0.5, cycle=1.0, use_vlm=True):
+    def name_choose(self, opensnap, props, idx, coord, color, prior_vocab, k=5, weight=0.5, cycle=1.0, use_vlm=True, photos=None):
         """3D proposes top-k names, the VLM chooses, and each name must re-segment the clicked object (cycle)."""
         inv = opensnap.scene["inverse"]
         m0 = props.logits[idx] > 0
@@ -59,7 +62,8 @@ class VLMNamer:
         options = [prior_vocab[i] for i in top.indices.tolist()]
         parts = {"lp3d": torch.log_softmax(top.values.clamp(min=1e-8).log(), -1).cpu().numpy()}
         if use_vlm:
-            parts["lvlm"] = self.choose(render_object(coord, color, m0[inv].cpu().numpy(), style=self.style), options)
+            ims, st = self.views(coord, color, m0[inv].cpu().numpy(), photos)
+            parts["lvlm"] = self.choose(ims, options, st)
         if cycle:
             click = int((opensnap.scene["vcoord"] - props.prompts[idx, 0]).norm(dim=1).argmin())
             parts["iou"], parts["contain"] = cycle_ious(opensnap, m0, options, click)
@@ -69,10 +73,22 @@ class VLMNamer:
         pick = options[int(parts["lvlm"].argmax())] if use_vlm else options[0]
         return ranked[0][0], ranked, pick, dict(options=options, **{k: v.tolist() for k, v in parts.items()})
 
-    def name(self, opensnap, props, idx, coord, color, prior_vocab=None, n_3d=3, gamma=1.0, eps=0.05):
+    def views(self, coord, color, mask, photos=None):
+        """Real photo crops when the scene comes from a video (PhotoViews), else point-cloud renders."""
+        if photos is not None:
+            ims = photos.crops(coord[mask])
+            if ims:
+                return ims, "photo"
+        return render_object(coord, color, mask, style=self.style), self.style
+
+    def name(self, opensnap, props, idx, coord, color, prior_vocab=None, n_3d=3, gamma=1.0, eps=0.05, photos=None):
         """Name proposal `idx` from VLM candidates + top 3D-evidence names of `prior_vocab`."""
         mask = (props.logits[idx] > 0)[opensnap.scene["inverse"]].cpu().numpy()
-        cands, reply = self.ask(render_object(coord, color, mask, style=self.style))
+        ims, st = self.views(coord, color, mask, photos)
+        cands, reply = self.ask(ims, st)
+        if st == "photo" and cands:
+            w = np.exp(-0.7 * np.arange(len(cands)))
+            return cands[0], [(c, float(x / w.sum())) for c, x in zip(cands, w)], reply
         sub = type(props)(props.logits[idx:idx + 1], props.tokens[idx:idx + 1], props.scores[idx:idx + 1], props.prompts[idx:idx + 1])
         use_dense = opensnap.scene["dense"] is not None
         extra = []

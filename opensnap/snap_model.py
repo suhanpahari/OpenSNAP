@@ -40,6 +40,15 @@ class SnapModel:
         assert not missing, missing
         self.model.eval()
 
+    def load_adapter(self, ckpt):
+        """Add the v6 LoRA adapters to the backbone and load their weights."""
+        from .lora import add_lora
+        state = torch.load(ckpt, map_location="cpu")
+        add_lora(self.model.backbone, state["cfg"]["lora_rank"])
+        missing, unexpected = self.model.backbone.load_state_dict(state["lora"], strict=False)
+        assert not unexpected and len(state["lora"]) > 0
+        self.model.eval()
+
     @torch.no_grad()
     def encode(self, coord, color=None, normal=None, strength=None):
         n = len(coord)

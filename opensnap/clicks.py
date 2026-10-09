@@ -5,8 +5,8 @@ import torch.nn.functional as F
 class ClickSegmenter:
     """Positive + negative clicks on a frozen SNAP: decode positives once, then enforce all clicks on the mask token."""
 
-    def __init__(self, snap, method="ttt", steps=30, lr=0.05, reg=10.0, margin=2.0, radius=0.0):
-        self.snap, self.method = snap, method
+    def __init__(self, snap, method="ttt", steps=30, lr=0.05, reg=10.0, margin=2.0, radius=0.0, tta=0, tta_radius=0.1):
+        self.snap, self.method, self.tta, self.tta_radius = snap, method, tta, tta_radius
         self.steps, self.lr, self.reg, self.margin, self.radius = steps, lr, reg, margin, radius
 
     @torch.no_grad()
@@ -26,8 +26,22 @@ class ClickSegmenter:
         E, m = E[0][0].float(), m[0].float()
         return E, m, E @ m
 
+    @torch.no_grad()
+    def jitter_logits(self, vcoord, pos_idx):
+        """Average SNAP's logits over click sets where every positive click moves to a random voxel within tta_radius."""
+        sets = [vcoord[pos_idx]]
+        for _ in range(self.tta):
+            js = []
+            for j in pos_idx.tolist():
+                near = torch.nonzero((vcoord - vcoord[j]).norm(dim=1) < self.tta_radius)[:, 0]
+                js.append(vcoord[near[torch.randint(len(near), (1,), device=near.device)]][0])
+            sets.append(torch.stack(js))
+        return self.snap.decode(torch.stack(sets))[0].mean(0)
+
     def __call__(self, vcoord, pos_idx, neg_idx):
         E, m, logits = self.embed(vcoord[pos_idx])
+        if self.tta and (not len(neg_idx) or self.method == "snap"):
+            return self.jitter_logits(vcoord, pos_idx) > 0
         if not len(neg_idx) or self.method == "snap":
             return logits > 0
         if self.method == "subtract":
