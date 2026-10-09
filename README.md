@@ -36,7 +36,8 @@ queries such as `SELECT WHERE IS('chair') AND NEAR(IS('table'), 0.5)` over a sin
 All numbers are produced by the scripts in this repo; every table, with its source file, is in
 **[results/TABLES.md](results/TABLES.md)** (regenerate with `python3 scripts/make_tables.py`); the full analysis
 (per research question, ablations, negative results, protocol caveats, ICDE framing) is in
-**[results/RESULTS.md](results/RESULTS.md)**.
+**[results/RESULTS.md](results/RESULTS.md)**. A full, explained write-up of the system (data model, semantics, query
+language, every operator with its equations, experiments and lessons) is in **[paper.md](paper.md)**.
 
 | task | benchmark | SNAP (its own text head) | other baseline | **OpenSNAP** |
 |---|---|---|---|---|
