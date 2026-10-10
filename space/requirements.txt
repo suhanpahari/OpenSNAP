@@ -1,0 +1,20 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+-f https://data.pyg.org/whl/torch-2.4.0+cu121.html
+torch==2.4.0
+torchvision==0.19.0
+torch_scatter
+torch_cluster
+spconv-cu120
+timm
+addict
+scipy
+einops
+safetensors
+transformers==4.56.2
+accelerate
+huggingface_hub
+plotly
+pillow
+imageio-ffmpeg
+git+https://github.com/openai/CLIP.git
+git+https://github.com/facebookresearch/vggt.git

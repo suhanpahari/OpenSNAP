@@ -1,3 +1,5 @@
+import importlib.util
+
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -27,8 +29,17 @@ def build_transform(domain, grid_size):
     return Compose(t)
 
 
+def disable_flash(model):
+    """Run PTv3 serialized attention without flash-attn (same attention within each patch; for hosts without flash-attn)."""
+    for m in model.modules():
+        if type(m).__name__ == "SerializedAttention" and m.enable_flash:
+            m.enable_flash, m.patch_size_max, m.patch_size = False, m.patch_size, 0
+            m.upcast_attention = m.upcast_softmax = True
+            m.attn_drop = torch.nn.Dropout(0.0)
+
+
 class SnapModel:
-    def __init__(self, ckpt, device="cuda", domain="Indoor", grid_size=None, chunk=16):
+    def __init__(self, ckpt, device="cuda", domain="Indoor", grid_size=None, chunk=16, flash=None):
         self.device = torch.device(device)
         self.domain = domain
         self.chunk = chunk
@@ -38,6 +49,8 @@ class SnapModel:
         sd = {k.replace("module.", ""): v for k, v in sd.get("model", sd).items()}
         missing, _ = self.model.load_state_dict(sd, strict=False)  # ckpt carries unused heads (merge_text, confidence_head)
         assert not missing, missing
+        if flash is False or (flash is None and importlib.util.find_spec("flash_attn") is None):
+            disable_flash(self.model)
         self.model.eval()
 
     def load_adapter(self, ckpt):

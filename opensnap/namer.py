@@ -9,8 +9,11 @@ from .render import render_object
 PROMPTS = {
     "highlight": ("These {n} images are renders of an indoor 3D scan from different viewpoints. "
                   "One object is outlined in red. What is the outlined object? "),
-    "photo": ("These {n} images are photos of a real scene. One object is marked by a red box. What is the object "
-              "inside the red box? "),
+    "photo": ("These {n} images are photos of a real scene. One object is highlighted: it is shown in full brightness "
+              "with a red outline and everything else is dimmed. What is the highlighted object? "),
+    "photo_pair": ("The first image is a photo of a real scene in which one object is marked by a red box. The second image "
+                   "is a close-up of the same object, highlighted (full brightness, red outline, the rest dimmed). What is that "
+                   "object? "),
     "isolate": ("These {n} images show the same object from a 3D point cloud scan, seen from different viewpoints. "
                 "The object is drawn in full color and its surroundings are dimmed. What is the object? "),
 }

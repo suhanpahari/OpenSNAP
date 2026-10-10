@@ -7,7 +7,10 @@ import torch
 from . import paths
 
 paths.add(paths.OPENSCENE_DIR)
-from dataset.label_constants import SCANNET_LABELS_20, MATTERPORT_LABELS_21, MATTERPORT_LABELS_160, NUSCENES_LABELS_16  # noqa: E402
+try:
+    from dataset.label_constants import SCANNET_LABELS_20, MATTERPORT_LABELS_21, MATTERPORT_LABELS_160, NUSCENES_LABELS_16  # noqa: E402
+except ImportError:  # deployments without the OpenScene repo (e.g. the video demo)
+    SCANNET_LABELS_20 = MATTERPORT_LABELS_21 = MATTERPORT_LABELS_160 = NUSCENES_LABELS_16 = ("other",)
 
 LABELSETS = {
     "scannet": [*SCANNET_LABELS_20[:-1], "other"],
@@ -24,6 +27,9 @@ DATA_DIRS = {"scannet": "scannet_3d", "matterport": "matterport_3d", "matterport
 
 def snap_train_vocab():
     """Class names SNAP's text head was supervised on (ScanNet200, SemanticKITTI, STPLS3D, DALES)."""
+    f = os.path.join(os.path.dirname(__file__), "vocab", "snap_train.txt")
+    if os.path.exists(f):
+        return [l.strip() for l in open(f) if l.strip()]
     paths.add(paths.SNAP_DIR)
     from datasets.demo import DemoDatset
     d = DemoDatset.__new__(DemoDatset)

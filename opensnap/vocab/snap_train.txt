@@ -1,0 +1,234 @@
+aircraft
+alarm clock
+armchair
+backpack
+bag
+ball
+bar
+basket
+bathroom cabinet
+bathroom counter
+bathroom stall
+bathroom stall door
+bathroom vanity
+bathtub
+bed
+bench
+bicycle
+bicyclist
+bike
+bin
+blackboard
+blanket
+blinds
+board
+book
+bookshelf
+bottle
+bowl
+box
+broom
+bucket
+building
+buildings
+bulletin board
+cabinet
+calendar
+candle
+car
+cars
+cart
+case of water bottles
+cd case
+ceiling
+ceiling light
+chair
+clock
+closet
+closet door
+closet rod
+closet wall
+clothes
+clothes dryer
+clutter
+coat rack
+coffee kettle
+coffee maker
+coffee table
+column
+computer tower
+container
+copier
+couch
+counter
+crate
+cup
+curtain
+cushion
+decoration
+desk
+dining table
+dish rack
+dishwasher
+divider
+door
+doorframe
+dresser
+dumbbell
+dustpan
+end table
+fan
+fence
+fences
+file cabinet
+fire alarm
+fire extinguisher
+fireplace
+floor
+folded chair
+furniture
+ground
+guitar
+guitar case
+hair dryer
+handicap bar
+hat
+headphones
+high vegetation
+ironing board
+jacket
+keyboard
+keyboard piano
+kitchen cabinet
+kitchen counter
+ladder
+lamp
+laptop
+laundry basket
+laundry detergent
+laundry hamper
+ledge
+light
+light pole
+light switch
+low vegetation
+luggage
+machine
+mailbox
+mat
+mattress
+med. vegetation
+microwave
+militaryvehicle
+mini fridge
+mirror
+monitor
+motorcycle
+motorcyclist
+mouse
+music stand
+nightstand
+object
+office chair
+other ground
+other vehicle
+ottoman
+oven
+paper
+paper bag
+paper cutter
+paper towel dispenser
+paper towel roll
+parking
+person
+piano
+picture
+pillar
+pillow
+pipe
+plant
+plate
+plunger
+pole
+poles
+poster
+potted plant
+power lines
+power outlet
+power strip
+printer
+projector
+projector screen
+purse
+rack
+radiator
+rail
+range hood
+recycling bin
+refrigerator
+road
+scale
+seat
+shelf
+shoe
+shower
+shower curtain
+shower curtain rod
+shower door
+shower floor
+shower head
+shower wall
+sidewalk
+sign
+sink
+soap dish
+soap dispenser
+sofa chair
+speaker
+stair rail
+stairs
+stand
+stool
+storage bin
+storage container
+storage organizer
+stove
+street sign
+structure
+stuffed animal
+suitcase
+table
+telephone
+terrain
+tissue box
+toaster
+toaster oven
+toilet
+toilet paper
+toilet paper dispenser
+toilet paper holder
+toilet seat cover dispenser
+towel
+traffic sign
+trash bin
+trash can
+tray
+truck
+trucks
+trunk
+tube
+tv
+tv stand
+vacuum cleaner
+vegetation
+vehicle
+vent
+wall
+wardrobe
+washing machine
+water bottle
+water cooler
+water pitcher
+whiteboard
+window
+windowsill
