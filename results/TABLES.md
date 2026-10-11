@@ -512,3 +512,290 @@ _Source: building_s3dis_area5.json, building_latency.json_
 | latency ABOVE (ms) | 2.95 |
 | latency OR_NOT (ms) | 2.08 |
 | partitioned join == per-room | 5149/5149 |
+
+### C1 · Replica, OVI-MAP protocol (8 scenes, 51 classes, GT mesh vertices)
+
+_Source: compare/replica_ovimap_c2f.json (ours); OVI-MAP Table 3 (published)_
+
+| method | mIoU | mAcc | AP25 | AP50 | AP |
+|---|---|---|---|---|---|
+| Mask3D+OpenMask3D (offline, RGB-D) | 18.7 | 29.4 | 6.8 | 4.5 | 3.2 |
+| Segment3D+OpenMask3D (offline, RGB-D) | 17.3 | 30.9 | 19.9 | 15.2 | 9.0 |
+| Semantic Gaussian (offline) | 16.1 | 22.1 | – | – | – |
+| OpenScene (offline) | 19.8 | 33.9 | – | – | – |
+| OpenNeRF (offline) | 19.2 | 30.9 | – | – | – |
+| OpenFusion (online) | 14.9 | 22.4 | – | – | – |
+| OVO-SLAM (online) | 24.9 | 34.0 | 28.1 | 17.5 | 9.1 |
+| OVI-MAP (online) | 26.5 | 32.2 | 34.5 | 21.2 | 8.5 |
+| OpenSNAP (XYZ only) [fps] | 18.7 | 28.1 | 15.5 | 13.4 | 11.7 |
+|   dense 3D expert only [fps] | 18.1 | 27.0 | 14.4 | 13.0 | 11.2 |
+|   segmenter token only [fps] | 16.9 | 25.5 | 13.8 | 12.4 | 10.5 |
+| **OpenSNAP + image column** [fps] | 19.4 | 28.7 | 16.5 | 14.3 | 11.8 |
+|   image column only [fps] | 20.6 | 37.5 | 24.8 | 19.0 | 14.7 |
+| OpenSNAP (XYZ only) [c2f] | 18.7 | 28.5 | 17.3 | 15.1 | 12.9 |
+|   dense 3D expert only [c2f] | 18.3 | 27.6 | 16.9 | 15.4 | 13.1 |
+|   segmenter token only [c2f] | 16.2 | 23.6 | 15.0 | 13.7 | 11.8 |
+| **OpenSNAP + image column** [c2f] | 19.9 | 29.9 | 22.3 | 19.1 | 16.1 |
+|   image column only [c2f] | 22.1 | 37.9 | 27.1 | 21.8 | 16.9 |
+| **OpenSNAP + image column, fused, weights by leave-one-scene-out CV** [c2f] | 23.4 | 32.5 | 24.4 | 18.8 | 14.9 |
+
+Published rows are copied from OVI-MAP (CVPR 2026) Table 3. Ours: same scenes, classes and per-vertex scoring (classes without GT vertices skipped; instance AP with the ScanNet evaluator, predictions < 100 vertices dropped).
+
+### C2 · ScanNet, OVI-MAP protocol (18 scenes, ScanNet200 labels)
+
+_Source: compare/scannet18.json (ours); OVI-MAP Table 3 (published)_
+
+| method | mIoU | mAcc | AP25 | AP50 | AP |
+|---|---|---|---|---|---|
+| Mask3D+OpenMask3D (offline, RGB-D) | 8.6 | 17.5 | 10.4 | 8.0 | 5.1 |
+| Segment3D+OpenMask3D (offline, RGB-D) | 4.5 | 13.5 | 5.0 | 3.9 | 2.3 |
+| Semantic Gaussian (offline) | 10.7 | 17.8 | – | – | – |
+| OpenScene (offline) | 10.3 | 17.3 | – | – | – |
+| OpenFusion (online) | 8.3 | 11.5 | – | – | – |
+| OVO-SLAM (online) | 14.6 | 27.8 | 19.4 | 12.6 | 5.5 |
+| OVI-MAP (online) | 17.5 | 27.6 | 23.4 | 15.7 | 7.2 |
+| OpenSNAP (XYZ only) | 14.4 | 20.4 | 17.6 | 14.7 | 9.8 |
+|   dense 3D expert only | 10.1 | 16.2 | 11.6 | 9.4 | 6.4 |
+|   segmenter token only | 15.1 | 22.5 | 17.5 | 14.8 | 10.5 |
+| OpenSNAP (XYZ only) (15 val scenes) | 15.6 | 22.2 | 19.7 | 16.8 | 11.5 |
+|   dense 3D expert only (15 val scenes) | 11.0 | 17.3 | 11.9 | 11.1 | 7.7 |
+|   segmenter token only (15 val scenes) | 15.4 | 23.4 | 17.8 | 15.5 | 11.2 |
+
+Published rows are copied from OVI-MAP (CVPR 2026) Table 3. Ours: same scenes, classes and per-vertex scoring (classes without GT vertices skipped; instance AP with the ScanNet evaluator, predictions < 100 vertices dropped).
+
+### C1b · Image-column fusion weights on Replica (test-set grid: sensitivity only, not a result)
+
+_Source: compare/replica_fusion_cv.json_
+
+| w_image / alpha | mIoU | mAcc | AP25 | AP50 | AP |
+|---|---|---|---|---|---|
+| 0.0 / 0.3 | 16.4 | 26.1 | 14.9 | 13.6 | 11.7 |
+| 0.0 / 0.5 | 18.3 | 28.0 | 18.6 | 17.0 | 14.3 |
+| 0.0 / 0.7 | 18.6 | 28.5 | 17.3 | 15.1 | 12.9 |
+| 0.0 / 0.9 | 18.7 | 28.3 | 18.5 | 16.5 | 14.2 |
+| 0.25 / 0.3 | 17.9 | 27.3 | 17.2 | 15.0 | 12.9 |
+| 0.25 / 0.5 | 18.9 | 28.8 | 20.2 | 17.7 | 14.8 |
+| 0.25 / 0.7 | 19.3 | 29.0 | 18.7 | 15.9 | 13.6 |
+| 0.25 / 0.9 | 19.7 | 29.8 | 20.1 | 17.3 | 14.5 |
+| 0.5 / 0.3 | 21.6 | 30.5 | 24.3 | 21.5 | 17.0 |
+| 0.5 / 0.5 | 21.2 | 31.0 | 24.4 | 21.3 | 16.9 |
+| 0.5 / 0.7 | 19.8 | 29.7 | 22.3 | 19.1 | 16.1 |
+| 0.5 / 0.9 | 20.2 | 30.5 | 24.6 | 21.0 | 17.8 |
+| 0.75 / 0.3 | 26.2 | 36.5 | 29.6 | 24.6 | 18.9 |
+| 0.75 / 0.5 | 26.9 | 36.6 | 29.4 | 24.4 | 18.5 |
+| 0.75 / 0.7 | 27.5 | 36.5 | 30.5 | 24.8 | 18.8 |
+| 0.75 / 0.9 | 24.6 | 34.1 | 28.1 | 22.8 | 17.9 |
+| 0.9 / 0.3 | 27.3 | 39.1 | 27.9 | 22.5 | 17.6 |
+| 0.9 / 0.5 | 27.3 | 39.2 | 27.6 | 22.8 | 17.8 |
+| 0.9 / 0.7 | 27.2 | 38.8 | 27.7 | 22.4 | 17.5 |
+| 0.9 / 0.9 | 27.0 | 38.2 | 28.6 | 22.3 | 17.4 |
+| 1.0 / 0.3 | 26.4 | 39.2 | 27.1 | 21.8 | 16.9 |
+| 1.0 / 0.5 | 26.4 | 39.2 | 27.1 | 21.8 | 16.9 |
+| 1.0 / 0.7 | 26.4 | 39.2 | 27.1 | 21.8 | 16.9 |
+| 1.0 / 0.9 | 26.4 | 39.2 | 27.1 | 21.8 | 16.9 |
+
+Per-point semantics mix 30% dense per-point evidence (beta = 0.3) as in the system default. The leave-one-scene-out row in C1 is the only fused number to report; this grid shows how sensitive the fusion is to alpha (dense vs token split).
+
+### C3 · ScanNet200 val open-vocabulary instance segmentation (312 scenes, 198 classes)
+
+_Source: compare/scannet200_val.json; Search3D Table V (published)_
+
+| method | AP | head | common | tail |
+|---|---|---|---|---|
+| Mask3D (closed vocabulary, supervised) | 26.9 | 39.8 | 21.7 | 17.9 |
+| OpenScene 2D fusion + Mask3D masks | 11.7 | 13.4 | 11.6 | 9.9 |
+| OpenMask3D | 15.4 | 17.1 | 14.1 | 14.9 |
+| Open3DIS 3D-only (Mask3D) | 18.9 | 23.9 | 17.4 | 15.3 |
+| Open3DIS 2D+3D | 23.7 | 27.8 | 21.2 | 21.8 |
+| Search3D (CLIP) | 14.3 | 16.1 | 13.6 | 12.9 |
+| Search3D (SigLIP) | 23.0 | 26.3 | 21.2 | 21.4 |
+| OpenSNAP (XYZ only) | 6.1 | 14.0 | 1.7 | 2.1 |
+|   dense 3D expert only | 3.2 | 7.7 | 0.9 | 0.5 |
+|   segmenter token only | 4.5 | 11.4 | 1.3 | 0.0 |
+
+Published rows from Search3D (RA-L 2025) Table V; all of them use posed RGB images (CLIP/SigLIP/OpenSeg crops) and Mask3D masks trained on ScanNet200. Ours uses XYZ only.
+
+### C4 · Spatial joins over whole multi-floor buildings (HouseLayout3D / Matterport3D)
+
+_Source: compare/hl3d_partition.json_
+
+| partitioning | NEAR(0.25) | NEAR(0.5) | NEAR(1.0) | NEAR(2.0) | ABOVE(0) | ON(0.1) | ms / query | cells (M) |
+|---|---|---|---|---|---|---|---|---|
+| global | 100.0 | 100.0 | 100.0 | 100.0 | 100.0 | 100.0 | 2.45 | 1.72 |
+| room | 84.9 | 81.1 | 75.6 | 68.0 | 47.2 | 95.2 | 3.11 | 0.25 |
+| room+door | 89.9 | 86.6 | 82.2 | 76.9 | 49.1 | 96.0 | 2.62 | 0.80 |
+| level | 99.2 | 98.0 | 95.2 | 92.8 | 50.5 | 98.9 | 1.70 | 1.59 |
+| room+halo h=0.5 | 100.0 | 100.0 | 97.1 | 90.2 | 59.1 | 100.0 | 2.07 | 0.86 |
+| room+halo h=1.0 | 100.0 | 100.0 | 100.0 | 95.1 | 68.3 | 100.0 | 2.14 | 1.06 |
+| room+halo h=2.0 | 100.0 | 100.0 | 100.0 | 100.0 | 81.1 | 100.0 | 2.09 | 1.54 |
+| level+halo h=1.0 | 99.2 | 98.0 | 95.2 | 88.9 | 50.5 | 98.9 | 1.79 | 0.71 |
+| level+halo h=2.0 | 99.2 | 98.0 | 95.2 | 92.8 | 50.5 | 98.9 | 2.24 | 1.00 |
+| grid T=4 h=1.0 | 100.0 | 100.0 | 100.0 | 99.2 | 100.0 | 100.0 | 1.99 | 2.74 |
+| grid T=8 h=2.0 | 100.0 | 100.0 | 100.0 | 100.0 | 100.0 | 100.0 | 2.00 | 3.76 |
+
+16 buildings, 354 rooms, 19044 objects, 33 levels (levels found from region floor heights; 96.9% coincide with a HouseLayout3D horizontal layout plane). Recall = share of the unpartitioned (global) join's answers (score >= 0.5) that a partitioning returns; 'cells' = join work in millions of pairs per query. Global vertical answers whose only witness is on another floor: ABOVE 18323, BELOW 19146, ON 69 (of 37053, 37108, 6125).
+
+### C5 · Calibration of IS(c): ECE / Brier / IS-query AP
+
+_Source: compare/calibration.json_
+
+| setting | scannet_train (61) | scannet_val (156) | replica (8) | s3dis (68) | nuscenes (201) |
+|---|---|---|---|---|---|
+| B=4 (previous default) | 0.118 / 0.096 / 21.3 | 0.111 / 0.091 / 11.9 | 0.041 / 0.038 / 17.7 | 0.056 / 0.049 / 11.7 | 0.086 / 0.047 / 5.1 |
+| B=dataset classes | 0.015 / 0.019 / 20.9 | 0.016 / 0.019 / 11.8 | 0.013 / 0.014 / 17.7 | 0.039 / 0.037 / 11.5 | 0.009 / 0.016 / 7.1 |
+| B=234 training vocab | 0.015 / 0.018 / 21.0 | 0.015 / 0.019 / 11.8 | 0.015 / 0.016 / 18.4 | 0.022 / 0.023 / 10.4 | 0.017 / 0.018 / 5.5 |
+| B=1 ('object') | 0.213 / 0.172 / 21.6 | 0.198 / 0.160 / 12.0 | 0.175 / 0.131 / 17.3 | 0.213 / 0.165 / 12.4 | 0.287 / 0.155 / 6.1 |
+| tau = 0.005 | 0.021 / 0.022 / 18.9 | 0.022 / 0.023 / 10.4 | 0.017 / 0.017 / 18.1 | 0.026 / 0.026 / 9.8 | 0.019 / 0.019 / 5.5 |
+| tau = 0.01 | 0.015 / 0.018 / 21.0 | 0.015 / 0.019 / 11.8 | 0.015 / 0.016 / 18.4 | 0.022 / 0.023 / 10.4 | 0.017 / 0.018 / 5.5 |
+| tau = 0.02 | 0.004 / 0.015 / 23.9 | 0.005 / 0.015 / 12.8 | 0.011 / 0.014 / 18.9 | 0.012 / 0.019 / 11.3 | 0.015 / 0.018 / 5.8 |
+| tau = 0.05 | 0.011 / 0.018 / 25.0 | 0.010 / 0.017 / 13.8 | 0.013 / 0.017 / 19.0 | 0.015 / 0.022 / 12.3 | 0.013 / 0.019 / 6.3 |
+| Platt (A=0.40, B=-1.20) fitted on ScanNet train | 0.004 / 0.015 / 21.0 | 0.004 / 0.015 / 11.8 | 0.010 / 0.015 / 18.4 | 0.009 / 0.020 / 10.4 | 0.010 / 0.018 / 5.5 |
+
+ECE with 15 equal-width bins over every (object, class present in the scene) pair; y = object overlaps a GT instance of the class at IoU >= 0.5.
+
+### C6 · Sensitivity of IS(c) to expert weight, relay and temperature: AP (ECE)
+
+_Source: compare/calibration.json_
+
+| setting | scannet_train | scannet_val | replica | s3dis | nuscenes |
+|---|---|---|---|---|---|
+| alpha = 0.0 | 16.1 (0.023) | 8.7 (0.022) | 15.2 (0.017) | 11.7 (0.027) | 7.8 (0.023) |
+| alpha = 0.3 | 18.7 (0.019) | 10.4 (0.019) | 17.6 (0.018) | 11.3 (0.027) | 7.9 (0.017) |
+| alpha = 0.5 | 20.2 (0.015) | 11.4 (0.016) | 17.2 (0.018) | 11.2 (0.026) | 7.1 (0.008) |
+| alpha = 0.7 | 21.0 (0.015) | 11.8 (0.015) | 18.4 (0.015) | 10.4 (0.022) | 5.5 (0.017) |
+| alpha = 0.9 | 20.5 (0.018) | 11.1 (0.018) | 19.1 (0.015) | 9.0 (0.021) | 3.4 (0.019) |
+| alpha = 1.0 | 18.3 (0.019) | 9.8 (0.020) | 18.7 (0.015) | 8.2 (0.022) | 2.3 (0.019) |
+| rho = 0.0 | 20.9 (0.016) | 11.4 (0.016) | 17.5 (0.017) | 10.2 (0.025) | 6.5 (0.015) |
+| rho = 0.4 | 20.9 (0.016) | 11.7 (0.016) | 17.6 (0.017) | 10.2 (0.024) | 6.6 (0.016) |
+| rho = 0.8 | 21.0 (0.015) | 11.8 (0.015) | 18.4 (0.015) | 10.4 (0.022) | 5.5 (0.017) |
+| rho = 1.0 | 21.3 (0.014) | 11.7 (0.015) | 18.2 (0.014) | 10.1 (0.020) | 4.4 (0.017) |
+| tau_r = 0.02 | 20.1 (0.015) | 11.4 (0.016) | 17.5 (0.016) | 10.3 (0.023) | 5.7 (0.017) |
+| tau_r = 0.05 | 21.0 (0.015) | 11.8 (0.015) | 18.4 (0.015) | 10.4 (0.022) | 5.5 (0.017) |
+| tau_r = 0.1 | 22.2 (0.014) | 12.3 (0.014) | 19.5 (0.014) | 10.1 (0.019) | 5.0 (0.017) |
+| synonym classes, queried by class name | 27.7 (0.017) | 28.6 (0.017) | 30.5 (0.023) | 10.4 (0.022) | 6.1 (0.020) |
+| same classes, queried by synonym | 23.6 (0.018) | 23.6 (0.019) | 28.1 (0.025) | 6.1 (0.022) | 5.5 (0.022) |
+
+Defaults: alpha 0.7, rho 0.8, tau 0.01, tau_r 0.05; all rows use B = the 234-word training vocabulary. Synonym rows: same classes, queried by class name vs by synonym.
+
+### C7 · Long cracking workload: probe AP50 drift, growth and safeguards (S3DIS Area 5)
+
+_Source: compare/workload_s3dis.json_
+
+| policy | AP50 @0 | AP50 @50 | AP50 @100 | AP50 @200 | AP50 @400 | cracked rows | relation MB | rejected | evicted | ms / query |
+|---|---|---|---|---|---|---|---|---|---|---|
+| no cracking | 21.7 | 21.7 | 21.7 | 21.7 | 21.7 | 0.0 | 1.99 | 0.0 | 0.0 | 2.7 |
+| cracking (default) | 21.7 | 17.2 | 12.9 | 10.4 | 8.6 | 85.3 | 2.30 | 0.0 | 0.0 | 33.8 |
+| + verify | 21.7 | 21.7 | 21.7 | 21.7 | 21.7 | 0.2 | 1.99 | 174.9 | 0.0 | 39.8 |
+| + verify + budget 20% | 21.7 | 21.7 | 21.7 | 21.7 | 21.7 | 0.2 | 1.99 | 174.9 | 0.0 | 38.5 |
+| + verify + budget + conf-weighted rank | 22.6 | 22.6 | 22.6 | 22.6 | 22.6 | 0.2 | 1.99 | 174.9 | 0.0 | 37.6 |
+
+34 rooms x 400 random IS queries (50% LVIS nouns, 25% training vocabulary, 25% class names and synonyms). Probe = IS(c) for every annotated class present, scored after each checkpoint without refinement.
+
+### C8 · Scaling past one building (HouseLayout3D catalogs replicated into a campus)
+
+_Source: compare/scale.json_
+
+| copies | rooms | objects | catalog MB | IS ms | NEAR padded ms | NEAR pushdown ms | candidates | peak GPU MB |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 354 | 19044 | 50 | 13.73 | 2.33 | 0.42 | 1885 | 1692 |
+| 4 | 1416 | 76176 | 199 | 2.32 | 9.50 | 3.84 | 7540 | 2818 |
+| 16 | 5664 | 304704 | 796 | 8.84 | 25.23 | 7.24 | 30158 | 7331 |
+| 64 | 22656 | 1218816 | 3184 | 47.95 | 92.61 | 2.55 | 120634 | 25379 |
+
+pushdown = IS selections before the join + exact uniform-grid spatial join on surviving candidates (exact for threshold answers).
+
+### C10 · Phone-video pipeline on the 8 Replica sequences (RGB only)
+
+_Source: compare/replica_video*.json_
+
+| input | method | mIoU | mAcc | AP25 | AP50 | AP | mIoU (observed) | mAcc (observed) | GT observed |
+|---|---|---|---|---|---|---|---|---|---|
+| RGB-D + GT poses, 2000 frames | OVI-MAP (published) | 26.5 | 32.2 | 34.5 | 21.2 | 8.5 | – | – | – |
+| RGB-only video, estimated metric scale | OpenSNAP (XYZ only) | 2.7 | 3.7 | 0.3 | 0.0 | 0.0 | 4.2 | 6.5 | 55.7 |
+| RGB-only video, estimated metric scale |   dense 3D expert only | 2.6 | 3.6 | 0.1 | 0.0 | 0.0 | 4.0 | 6.3 | 55.7 |
+| RGB-only video, estimated metric scale |   segmenter token only | 3.9 | 5.9 | 3.3 | 2.5 | 1.9 | 5.6 | 8.9 | 55.7 |
+| RGB-only video, estimated metric scale | **OpenSNAP + image column** | 4.2 | 5.9 | 6.9 | 0.7 | 0.1 | 6.1 | 9.2 | 55.7 |
+| RGB-only video, estimated metric scale |   image column only | 10.4 | 16.8 | 15.0 | 4.8 | 1.3 | 14.9 | 25.7 | 55.7 |
+| RGB-only video, oracle scale (diagnostic) | OpenSNAP (XYZ only) | 7.2 | 9.5 | 7.7 | 4.0 | 1.2 | 10.5 | 14.5 | 55.7 |
+| RGB-only video, oracle scale (diagnostic) |   dense 3D expert only | 5.1 | 6.9 | 3.7 | 3.3 | 0.9 | 7.9 | 11.2 | 55.7 |
+| RGB-only video, oracle scale (diagnostic) |   segmenter token only | 9.6 | 13.0 | 11.0 | 4.4 | 2.7 | 13.3 | 19.5 | 55.7 |
+| RGB-only video, oracle scale (diagnostic) | **OpenSNAP + image column** | 10.2 | 13.1 | 15.9 | 8.8 | 2.7 | 15.0 | 20.0 | 55.7 |
+| RGB-only video, oracle scale (diagnostic) |   image column only | 17.5 | 26.3 | 29.4 | 14.1 | 4.7 | 23.3 | 36.9 | 55.7 |
+
+60 RGB frames per sequence (no depth, no poses) -> VGGT + metric depth -> OpenSNAP; scored on the GT mesh after a similarity alignment of predicted to GT camera centres (scoring only). Unobserved GT vertices count as wrong. Metric-scale error 35% on average (range 20-42%), camera RMSE 4.2 cm.
+
+### C11 · Dense-collapse guard: share rule (v1), exact agreement (v2), soft agreement calibrated on clean scans (v3)
+
+_Source: compare/guard.json_
+
+| scenes | n | v1 fired | v2 fired | v3 fired |
+|---|---|---|---|---|
+| RGB-only video (Replica) | 8 | 0 | 0 | 1 |
+| benchmark: Matterport (HL3D) | 21 | 20 | 19 | 5 |
+| benchmark: ScanNet val | 14 | 12 | 9 | 0 |
+| calib: Matterport (HL3D) | 59 | 3 | 3 | 0 |
+| calib: ScanNet val | 63 | 3 | 2 | 2 |
+| phone video | 1 | 1 | 1 | 0 |
+
+v1: share > 0.75; v2: share > 0.75 and agreement < 0.5; v3: soft agreement < 0.782 (1st percentile of clean calibration scans). Calibration rows are random clean scans (false-alarm rate); phone-video rows should fire (the 8 RGB-only Replica clouds show 45-71% 'stair rail' dense labels). Benchmark rows are every clean scan on which v1 fired in the large runs (14/312 ScanNet val, 21/354 Matterport rooms).
+
+### C12 · OpenScan / GOV-3D attribute queries (ScanNet200 val, instance AP)
+
+_Source: compare/openscan.json; OpenScan Table 3 (published)_
+
+| method | affordance | property | type | manner | synonyms | requirement | element | material | mean |
+|---|---|---|---|---|---|---|---|---|---|
+| OpenMask3D | 7.2 | 7.5 | 8.5 | 12.8 | 16.9 | 13.0 | 12.2 | 18.8 | 9.9 |
+| SAI3D | 5.3 | 5.8 | 7.8 | 11.3 | 10.0 | 10.0 | 8.7 | 11.3 | 7.7 |
+| MaskClustering | 6.2 | 7.0 | 7.1 | 11.1 | 16.2 | 11.3 | 7.4 | 12.1 | 8.1 |
+| Open3DIS | 11.9 | 12.8 | 14.2 | 19.2 | 26.7 | 19.2 | 18.7 | 28.3 | 15.8 |
+| OpenSNAP (XYZ only) | 2.0 | 2.8 | 2.2 | 3.3 | 3.2 | 5.6 | 1.1 | 9.7 | 2.7 |
+|   dense 3D expert only | 0.9 | 1.2 | 1.3 | 2.9 | 3.6 | 5.4 | 0.7 | 7.2 | 1.8 |
+
+Published rows use posed RGB images (CLIP crops) and pretrained 3D/2D mask proposals; ours XYZ only.
+
+### C13 · Cracking trigger theta and dedup IoU across datasets (IS queries)
+
+_Source: compare/sweep_*.json_
+
+| dataset | setting | AP | AP50 | refined / scene |
+|---|---|---|---|---|
+| replica | opensnap | 20.1 | 26.1 | 0.00 |
+| replica | opensnap_refine | 19.3 | 24.8 | 7.38 |
+| replica | dedup0.3_t0.1 | 19.7 | 25.6 | 3.75 |
+| replica | dedup0.3_t0.2 | 19.7 | 25.6 | 4.38 |
+| replica | dedup0.3_t0.3 | 19.6 | 25.5 | 4.38 |
+| replica | dedup0.5_t0.1 | 19.6 | 25.5 | 4.00 |
+| replica | dedup0.5_t0.2 | 19.5 | 25.4 | 4.62 |
+| replica | dedup0.5_t0.3 | 19.5 | 25.4 | 4.75 |
+| replica | dedup0.7_t0.1 | 19.6 | 25.4 | 4.50 |
+| replica | dedup0.7_t0.2 | 19.5 | 25.3 | 5.12 |
+| replica | dedup0.7_t0.3 | 19.5 | 25.4 | 5.25 |
+| s3dis | opensnap | 11.6 | 18.5 | 0.00 |
+| s3dis | opensnap_refine | 11.7 | 18.9 | 0.91 |
+| s3dis | dedup0.3_t0.1 | 11.7 | 18.9 | 0.63 |
+| s3dis | dedup0.3_t0.2 | 11.7 | 18.9 | 0.74 |
+| s3dis | dedup0.3_t0.3 | 11.7 | 18.9 | 0.76 |
+| s3dis | dedup0.5_t0.1 | 11.7 | 18.9 | 0.68 |
+| s3dis | dedup0.5_t0.2 | 11.7 | 18.9 | 0.79 |
+| s3dis | dedup0.5_t0.3 | 11.7 | 18.9 | 0.82 |
+| s3dis | dedup0.7_t0.1 | 11.7 | 18.9 | 0.72 |
+| s3dis | dedup0.7_t0.2 | 11.7 | 18.9 | 0.84 |
+| s3dis | dedup0.7_t0.3 | 11.7 | 18.9 | 0.88 |
+
+### C9 · Relational queries: OVQL semantics vs phrase-embedding retrieval (NEAR, d = 0.5 m)
+
+_Source: compare/agg_*.json_
+
+| dataset | query evaluation | AP | AP50 | ECE |
+|---|---|---|---|---|
+| s3dis | OVQL, max witness (default) | 14.0 | 21.7 | 0.030 |
+| s3dis | OVQL, noisy-OR | 14.3 | 22.2 | 0.033 |
+| s3dis | OVQL, clipped count | 14.1 | 21.9 | 0.034 |
+| s3dis | phrase embedding 'a near a b' (OpenMask3D/Search3D/OVI-MAP style) | 8.8 | 14.3 | 0.088 |
+| replica | OVQL, max witness (default) | 19.7 | 24.8 | 0.021 |
+| replica | OVQL, noisy-OR | 19.7 | 24.8 | 0.023 |
+| replica | OVQL, clipped count | 20.1 | 25.4 | 0.025 |
+| replica | phrase embedding 'a near a b' (OpenMask3D/Search3D/OVI-MAP style) | 18.0 | 21.7 | 0.065 |
+
+Same stored objects and evidence columns for every row; ground truth = GT objects of class a with a GT object of class b within 0.5 m.

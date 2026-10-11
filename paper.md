@@ -383,7 +383,7 @@ token makes the system robust to dense-model mismatch.
 | dataset (classes) | SNAP token | **OpenSNAP** | + cracking | published references |
 |---|---|---|---|---|
 | S3DIS (13, c2f proposals) | 10.5 | 15.4 | 15.5 | SNAP@auto 16.1 (own protocol) |
-| Replica (all objects, c2f) | 14.8 | **19.9** | 18.9 | SNAP@auto 10.1, OpenMask3D 13.1 |
+| Replica (all objects, c2f) | 14.8 | **19.9** | 18.9 | SNAP@auto 10.1 (OpenMask3D's closed-set protocol: see §8.10) |
 | nuScenes (10 things) | 7.9 | 12.7 | **13.9** | — |
 | SemanticKITTI (8 things) | 13.9 | 18.0 | **20.6** | — |
 
@@ -470,9 +470,29 @@ single-video result.
 * SNAP's published S3DIS click numbers exceed our reproduction at 10 clicks (83.2 vs. 77.4): click placement differs;
   every comparison we make uses one protocol.
 * SNAP@auto's 16.1 S3DIS AP uses the authors' evaluation; under ours SNAP's text token gives 10.5 and OpenSNAP 15.4.
-* OpenMask3D's 13.1 Replica AP uses 51 classes; we use Replica's own class names minus structure/undefined.
+* OpenMask3D's 13.1 Replica AP is a closed-set 51-class protocol and is not comparable with the query workload above; the
+  closed-set comparison is §8.10 (OpenSNAP 12.9 XYZ-only, 16.9 with the image column).
 * OpenScene's published nuScenes 36.7 uses its own processed sweeps and script; ours, on single keyframes, is 26.9
   (31.1 on OpenScene's processed sweeps).
+
+### 8.10 Comparative study under the protocols of Search3D, OVI-MAP and HouseLayout3D [C1–C13]
+The full study is in `results/COMPARISON.md`. In brief:
+* **OVI-MAP protocol** (same 8 Replica and 18 ScanNet scenes, same 51 / ScanNet200 classes, same evaluator):
+  * OpenSNAP's stored objects reach Replica AP 16.9 with an image column (SigLIP, the same encoder) and 12.9 from XYZ only,
+    against 8.5 for OVI-MAP, and AP50 21.8 vs 21.2. OVI-MAP leads on mIoU (26.5 vs 23.4) and AP25 (34.5 vs 27.1).
+  * On ScanNet, XYZ only, AP is 9.8 vs 7.2.
+* **Search3D / OpenMask3D on ScanNet200:** XYZ-only OpenSNAP reaches 6.1 AP against 15.4 / 23.0 for these image-based
+  systems; the long tail needs image evidence.
+* **OpenScan attributes:** 2.7 vs 9.9 mean AP.
+* **HouseLayout3D buildings:** strict room partitioning loses 15–32% of NEAR answers, room + halo h ≥ d is exact, and about
+  half of the global ABOVE / BELOW answers have their only witness on another floor, so vertical predicates are
+  level-scoped.
+* **Relational queries:** OVQL beats phrase-embedding retrieval (S3DIS NEAR AP50 21.7 vs 14.3).
+* **Calibration:** ECE is 0.015–0.022 with the 234-word background (0.004–0.010 after Platt scaling fitted on ScanNet
+  train).
+* **Long cracking workloads** need admission control: without it probe AP50 drops from 21.7 to 8.6 after 400 queries; with
+  verify-before-admit it stays at 21.7.
+* **Campus scale:** a cost-based pushdown join answers NEAR over 1.22 M objects in 2.6 ms.
 
 ---
 
@@ -491,11 +511,16 @@ single-video result.
 * Positive-only clicking is SNAP's; our segmentation gains come from negative clicks, test-time methods and adapters.
 * Flat objects on walls and floors (boards, rugs, paintings) are hard with XYZ-only input.
 * Truly novel concepts remain hard; most unseen-class gains come from near-synonyms of seen classes.
-* Tuple independence is an assumption for composite predicates.
+* Tuple independence is an assumption for composite predicates; in practice max-witness, noisy-OR and clipped-count
+  semantics differ by ≤ 0.5 AP50 (C9).
+* Geometry-only evidence is weak on long-tail classes and attributes (ScanNet200 common/tail ≈ 2 AP, OpenScan 2.7 mean AP);
+  the image column helps where posed frames exist.
+* RGB-only video ingest is limited by monocular metric scale (20–42% error on Replica).
+* No scene-level collapse guard we tried separates collapse from clean scans (C11); per-object gating is future work.
 * Several baselines are in-domain for SNAP (nuScenes, SemanticKITTI, ScanNet200); S3DIS, Replica and Matterport-160
   unseen classes are the fairest tests.
-* The collapse-guard threshold was set from 38 benchmark scans and one phone video; the video pipeline is shown on one
-  video.
+* The collapse-guard threshold was set from 38 benchmark scans and one phone video; at scale it fires on 4.5–5.9% of clean
+  scans and misses partial collapse (C11).
 
 ## 11. Related work (pointers)
 *Promptable 3D segmentation*: SNAP, AGILE3D, Point-SAM, Interactive4D, InterObject3D. *Segment Anything* (multi-mask

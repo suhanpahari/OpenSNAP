@@ -25,7 +25,12 @@ datasets (ScanNet, ScanNet200, Matterport3D-160, S3DIS, Replica, nuScenes, Seman
 |---|---|---|
 | Open-vocab 3D semantic segmentation beats both SNAP's text head and OpenScene | T1/T2, T2b | ScanNet 58.2 vs 41.5 (SNAP) / 52.0 (OpenScene); nuScenes 32.0 vs 23.8 / 26.9 |
 | Generalises to classes the segmenter never saw | T1/T2 | Matterport-160 unseen classes 5.7 vs 1.9 (SNAP), 5.5 (OpenScene) |
-| Open-vocab instance segmentation beats SNAP everywhere, and OpenMask3D on Replica | T4, T4b–d | S3DIS 15.4 vs 10.5; Replica 19.9 vs 14.8 (SNAP), 13.1 (OpenMask3D, published); nuScenes 13.9 vs 7.9; SemanticKITTI 20.6 vs 13.9 |
+| OVQL query accuracy beats SNAP's text token on every dataset (query workload, classes present) | T4, T4b–d | S3DIS 15.4 vs 10.5; Replica 19.9 vs 14.8; nuScenes 13.9 vs 7.9; SemanticKITTI 20.6 vs 13.9 (not comparable to OpenMask3D's closed-set protocol, see C1) |
+| Under OVI-MAP's exact protocol, stored objects beat OVI-MAP on strict AP | C1, C2 | Replica AP 16.9 (image column) / 12.9 (XYZ only) vs 8.5; ScanNet-18 AP 9.8 (XYZ only) vs 7.2 |
+| OVQL beats phrase-embedding retrieval on relational queries | C9 | NEAR AP50 21.7 vs 14.3 (S3DIS), 24.8 vs 21.7 (Replica); ECE 0.02–0.03 vs 0.07–0.09 |
+| IS(c) is calibrated across 5 datasets | C5 | ECE 0.015–0.022 with the 234-word background; 0.004–0.010 after Platt scaling fitted on ScanNet train |
+| Building joins: halo makes room partitioning exact; cross-floor vertical answers removed | C4 | 16 HouseLayout3D buildings: room-only NEAR recall 68–85%, room+halo 100%; ~50% of global ABOVE/BELOW answers are cross-floor |
+| Campus scale | C8 | 1.22 M objects, NEAR 2.6 ms with pushdown vs 92.6 ms padded |
 | Click → name: 3D-propose / VLM-choose beats the segmenter and the VLM alone | T6/T7 | 40.1% vs 30.7% (segmenter) vs 18.9% (VLM free); unseen 17.2% vs 12.2% |
 | Text → mask on a zero-shot dataset | T8b | S3DIS 27.2 mIoU vs 20.0 training-free |
 | Negative clicks fix SNAP's positive-only plateau, on all 5 datasets | T5f | IoU@5 / IoU@10: S3DIS crops 81.8 / 88.8 vs 73.1 / 74.6; Replica 74.8 / 81.9 vs 59.5 / 60.1; nuScenes 73.4 / 79.2 vs 63.8 / 65.4 |
@@ -159,8 +164,9 @@ Rejected variants (keep as ablations — they explain design decisions):
 ### RQ2 — Query accuracy of OVQL and instance segmentation (T3, T4, T4b, T4c, T4d)
 * S3DIS (13 classes, SNAP Table 4 setting): 15.4 AP (c2f) vs 10.5 for SNAP's own text token under the same protocol.
   SNAP's published 16.1 uses its own evaluation; do not claim a win over the published number.
-* Replica: 19.9 / 25.9 AP / AP50 vs SNAP 14.8 / 19.7 (ours) or 10.1 / 11.7 (published) and OpenMask3D 13.1 / 18.4
-  (published, 51-class protocol; ours uses Replica's own class names minus structure — note the difference).
+* Replica: 19.9 / 25.9 AP / AP50 vs SNAP 14.8 / 19.7 (ours) or 10.1 / 11.7 (published). This is the *query workload*
+  (classes present in the scene are asked); it is **not** comparable to OpenMask3D's closed-set 13.1 / 18.4. Under the
+  closed-set protocol (C1) OpenSNAP XYZ-only gives 12.9 / 15.1 and with the image column 16.9 / 21.8.
 * nuScenes: 13.9 AP with cracking vs 7.9; SemanticKITTI 20.6 vs 13.9. SNAP's text head was trained on these exact
   classes, so these are wins against an in-domain baseline.
 * Relational queries (NEAR) also improve: S3DIS 14.5 vs 12.2 AP; nuScenes 17.0 vs 13.3.
@@ -243,7 +249,8 @@ Rejected variants (keep as ablations — they explain design decisions):
 * SNAP published S3DIS click numbers (53.6 / 71.1 / 77.6 / 83.2) are higher than our reproduction at 10 clicks (77.4) —
   click placement differs; all our comparisons use one protocol for every method.
 * SNAP@auto S3DIS AP 16.1 (published) uses the authors' evaluation; ours 15.4 vs their model's 10.5 under our protocol.
-* OpenMask3D Replica 13.1 AP is on 51 classes; ours on Replica's class names minus structure/undefined.
+* OpenMask3D Replica 13.1 AP is the closed-set 51-class protocol; compare it only with C1 (OpenSNAP 12.9 XYZ-only, 16.9 with
+  the image column), never with the T4b query workload.
 * OpenScene nuScenes 36.7 (published) vs 26.9 (our run, single keyframes, our script).
 * AGILE3D / Point-SAM numbers are copied from their papers (crop protocol); their click placement may differ slightly.
 
@@ -279,6 +286,29 @@ IoU-vs-clicks curves for T5f (SNAP vs token tuning vs decoder, per dataset), cra
 * The phone-video demo is a single qualitative example.
 * Checkpoints (text decoder, corrective decoders, adapters) are kept local (`downloads/checkpoints/`, SHA256SUMS), not
   in the repository.
+
+## 12. Comparative study and response to the review
+
+The full comparative study against Search3D, OVI-MAP and HouseLayout3D, and the point-by-point answers to the review
+(calibration, sensitivity, cracking workload, cross-room joins, attribute queries, scaling, collapse guard, multi-capture
+video), is in **[COMPARISON.md](COMPARISON.md)** with tables C1–C13 in `TABLES.md`. Short version:
+
+* **Ahead (same protocol):**
+  * Strict-IoU instance quality vs OVI-MAP (Replica AP 16.9 / 12.9 vs 8.5; ScanNet AP 9.8 vs 7.2).
+  * Relational queries vs phrase retrieval (C9).
+  * Calibration (C5).
+  * Building and campus joins (C4, C8).
+* **Behind:**
+  * mIoU / AP25 vs OVI-MAP (coverage).
+  * ScanNet200 long tail vs Search3D (6.1 vs 23.0 AP, XYZ only).
+  * OpenScan attributes (2.7 vs 9.9 mean AP).
+  * RGB-only video (metric scale off 20–42%).
+* **Method changes:**
+  * image-evidence column;
+  * admission control for cracking (fixes a 60% AP drift under long workloads);
+  * level-scoped halo joins;
+  * cost-based pushdown join;
+  * 234-word calibration background.
 
 ## 11. Reproduction (key commands)
 ```bash

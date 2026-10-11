@@ -1,0 +1,7572 @@
+{
+ "per_building": {
+  "17DRP5sb8fy": {
+   "rooms": 10,
+   "objects": 470,
+   "levels": 1,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 5,
+   "door_edges": 4,
+   "ingest_s": 37.77426052093506,
+   "results": {
+    "global": {
+     "ms_per_query": 1.9405773707798548,
+     "cells": 220900,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 0.5540861402239118,
+     "cells": 53290,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 0.9188034188034188,
+      "max_abs_diff": 0.9989420175552368
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 0.8803661616161617,
+      "max_abs_diff": 0.9999867081642151
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 0.812015958695142,
+      "max_abs_diff": 0.999947190284729
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 0.7299003322259137,
+      "max_abs_diff": 0.9998961091041565
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 0.9326530612244898,
+      "max_abs_diff": 0.9815812706947327
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.04135400056838989
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.09565439820289612
+     }
+    },
+    "room+door": {
+     "ms_per_query": 0.5880444390433175,
+     "cells": 103660,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 0.9378399378399378,
+      "max_abs_diff": 0.9986138343811035
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 0.9075126262626263,
+      "max_abs_diff": 0.9999867081642151
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 0.8582492372682469,
+      "max_abs_diff": 0.9999211430549622
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 0.7960132890365449,
+      "max_abs_diff": 0.9997649788856506
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 0.9326530612244898,
+      "max_abs_diff": 0.9815812706947327
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.04135400056838989
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0006082342006266117
+     }
+    },
+    "level": {
+     "ms_per_query": 0.5841374397277832,
+     "cells": 220900,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 0.5642138208661761,
+     "cells": 103660,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 0.9704294766486741,
+      "max_abs_diff": 0.9999211430549622
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 0.9486710963455149,
+      "max_abs_diff": 0.9997649788856506
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.5788087844848633,
+     "cells": 127020,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 0.9774086378737542,
+      "max_abs_diff": 0.9993401169776917
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5874020712716239,
+     "cells": 213160,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.6003689765930176,
+     "cells": 127020,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 0.9774086378737542,
+      "max_abs_diff": 0.9993401169776917
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.6002310344151088,
+     "cells": 213160,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.6632467678615025,
+     "cells": 282555,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 0.9900332225913622,
+      "max_abs_diff": 0.9152742624282837
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.6552215984889439,
+     "cells": 422400,
+     "NEAR(0.25)": {
+      "answers": 2574,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3168,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4261,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6020,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 490,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 296,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 116,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "1LXtFkjw3qL": {
+   "rooms": 31,
+   "objects": 1698,
+   "levels": 3,
+   "guard_fired": 3,
+   "levels_match_hl3d": 1.0,
+   "doors": 24,
+   "door_edges": 19,
+   "ingest_s": 125.11124062538147,
+   "results": {
+    "global": {
+     "ms_per_query": 0.6576146398271833,
+     "cells": 2883204,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1401
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1529
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 2
+     }
+    },
+    "room": {
+     "ms_per_query": 1.9911881855555944,
+     "cells": 548359,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 0.8202954048140044,
+      "max_abs_diff": 0.99967360496521
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 0.7735060593397409,
+      "max_abs_diff": 0.9999316334724426
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 0.7282817818558532,
+      "max_abs_diff": 0.9998559355735779
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.6480753405869982,
+      "max_abs_diff": 0.9998912215232849
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.27326440177252587,
+      "max_abs_diff": 0.9999707937240601
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.2891954022988506,
+      "max_abs_diff": 0.9999990463256836
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 0.9368421052631579,
+      "max_abs_diff": 0.9397820830345154
+     }
+    },
+    "room+door": {
+     "ms_per_query": 7.897772107805524,
+     "cells": 1220408,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 0.8840262582056893,
+      "max_abs_diff": 0.99967360496521
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 0.838069368992896,
+      "max_abs_diff": 0.9999316334724426
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 0.7947313896699719,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.7327420682088324,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.29935992122107336,
+      "max_abs_diff": 0.9999707937240601
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.29379310344827586,
+      "max_abs_diff": 0.9999990463256836
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 0.9368421052631579,
+      "max_abs_diff": 0.9397820830345154
+     }
+    },
+    "level": {
+     "ms_per_query": 3.4333300590515137,
+     "cells": 1692003,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 0.9898796498905909,
+      "max_abs_diff": 0.9960308074951172
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 0.9651065608023401,
+      "max_abs_diff": 0.999550461769104
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 0.9154950421784815,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.869068300265155,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.310192023633678,
+      "max_abs_diff": 0.9999707937240601
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.29701149425287354,
+      "max_abs_diff": 0.9999990463256836
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 0.9789473684210527,
+      "max_abs_diff": 0.8206835389137268
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 1.2836425645010812,
+     "cells": 2197559,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 0.9742489270386266,
+      "max_abs_diff": 0.9998547434806824
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.8782115753863033,
+      "max_abs_diff": 0.9997099041938782
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.37715411127523385,
+      "max_abs_diff": 0.999970018863678
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.8275862068965517,
+      "max_abs_diff": 0.9999802708625793
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.6506827899387905,
+     "cells": 2692319,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.9368199689128646,
+      "max_abs_diff": 0.9997099041938782
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.5292959133431807,
+      "max_abs_diff": 0.999970018863678
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.8606896551724138,
+      "max_abs_diff": 0.9999802708625793
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.775857652936663,
+     "cells": 3978695,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.5775480059084195,
+      "max_abs_diff": 0.999970018863678
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.8818390804597701,
+      "max_abs_diff": 0.9999802708625793
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.5970280511038644,
+     "cells": 1290499,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 0.9898796498905909,
+      "max_abs_diff": 0.9960308074951172
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 0.9651065608023401,
+      "max_abs_diff": 0.999550461769104
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 0.9154950421784815,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.8179573923379354,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.310192023633678,
+      "max_abs_diff": 0.9999707937240601
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.29701149425287354,
+      "max_abs_diff": 0.9999990463256836
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 0.9789473684210527,
+      "max_abs_diff": 0.8206835389137268
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.6153580120631627,
+     "cells": 2040885,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 0.9898796498905909,
+      "max_abs_diff": 0.9960308074951172
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 0.9651065608023401,
+      "max_abs_diff": 0.999550461769104
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 0.9154950421784815,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.869068300265155,
+      "max_abs_diff": 0.9998552799224854
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 0.310192023633678,
+      "max_abs_diff": 0.9999707937240601
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 0.29701149425287354,
+      "max_abs_diff": 0.9999990463256836
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 0.9789473684210527,
+      "max_abs_diff": 0.8206835389137268
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.9528960500444684,
+     "cells": 5211925,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 0.9985370759806163,
+      "max_abs_diff": 0.8616276383399963
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 1.04400634765625,
+     "cells": 5172920,
+     "NEAR(0.25)": {
+      "answers": 3656,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 4786,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 6757,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 10937,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2031,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2175,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 95,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "2t7WUuJeko7": {
+   "rooms": 6,
+   "objects": 398,
+   "levels": 1,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 6,
+   "door_edges": 4,
+   "ingest_s": 10.514042854309082,
+   "results": {
+    "global": {
+     "ms_per_query": 0.6232220785958427,
+     "cells": 158404,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 1.693474224635533,
+     "cells": 45414,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 0.8399732172748577,
+      "max_abs_diff": 0.9998380541801453
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 0.8308882368631635,
+      "max_abs_diff": 0.9998380541801453
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 0.8161079150962111,
+      "max_abs_diff": 0.9999523162841797
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 0.7924020341011068,
+      "max_abs_diff": 0.9999425411224365
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 0.9941434846266471,
+      "max_abs_diff": 0.9841445684432983
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.26735633611679077
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.006792010739445686
+     }
+    },
+    "room+door": {
+     "ms_per_query": 3.8098560060773576,
+     "cells": 130500,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 0.8848342818881821,
+      "max_abs_diff": 0.9998380541801453
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 0.8773006134969326,
+      "max_abs_diff": 0.9998380541801453
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 0.868875223170006,
+      "max_abs_diff": 0.9997997283935547
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 0.8535746335626683,
+      "max_abs_diff": 0.9995200634002686
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0638452097773552
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.06047471612691879
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 9.940767085936386e-06
+     }
+    },
+    "level": {
+     "ms_per_query": 0.5510776383536202,
+     "cells": 158404,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 1.189885480063302,
+     "cells": 101790,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 0.9918666931164452,
+      "max_abs_diff": 0.9974703788757324
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 0.9425665569847442,
+      "max_abs_diff": 0.9983687400817871
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.5504168782915387,
+     "cells": 111708,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 0.9572240502542626,
+      "max_abs_diff": 0.9976913332939148
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5461324964250837,
+     "cells": 157122,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.5945951598031181,
+     "cells": 111708,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 0.9572240502542626,
+      "max_abs_diff": 0.9976913332939148
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.5609093393598285,
+     "cells": 157122,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.5564260482788086,
+     "cells": 470690,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 0.9949147472330242,
+      "max_abs_diff": 0.958652675151825
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.6170647484915597,
+     "cells": 592224,
+     "NEAR(0.25)": {
+      "answers": 2987,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3749,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 5041,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6686,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 683,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 534,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 145,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "5LpN3gDmAk7": {
+   "rooms": 28,
+   "objects": 1403,
+   "levels": 2,
+   "guard_fired": 1,
+   "levels_match_hl3d": 1.0,
+   "doors": 15,
+   "door_edges": 14,
+   "ingest_s": 40.643054246902466,
+   "results": {
+    "global": {
+     "ms_per_query": 3.6161698613848006,
+     "cells": 1968409,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1148
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1336
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 7.044637884412493,
+     "cells": 183708,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 0.8527301713830211,
+      "max_abs_diff": 0.9997519254684448
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 0.7926961926961927,
+      "max_abs_diff": 0.9999578595161438
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 0.7484051482932289,
+      "max_abs_diff": 0.9999228715896606
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.6628429700821578,
+      "max_abs_diff": 0.9999176859855652
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.4591368227731864,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.4473358116480793,
+      "max_abs_diff": 0.9999996423721313
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 0.9948453608247423,
+      "max_abs_diff": 0.7734018564224243
+     }
+    },
+    "room+door": {
+     "ms_per_query": 7.403867244720459,
+     "cells": 818748,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 0.8911917098445595,
+      "max_abs_diff": 0.9997519254684448
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 0.864957264957265,
+      "max_abs_diff": 0.9999578595161438
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 0.8323447118074986,
+      "max_abs_diff": 0.9999228715896606
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.7712757711982638,
+      "max_abs_diff": 0.9999176859855652
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.4628099173553719,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.4473358116480793,
+      "max_abs_diff": 0.9999996423721313
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 0.9948453608247423,
+      "max_abs_diff": 0.7734018564224243
+     }
+    },
+    "level": {
+     "ms_per_query": 0.545710836138044,
+     "cells": 1143072,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 0.9990035870864886,
+      "max_abs_diff": 0.623924195766449
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 0.9982905982905983,
+      "max_abs_diff": 0.623924195766449
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 0.9866815892557359,
+      "max_abs_diff": 0.99668949842453
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.952177956905906,
+      "max_abs_diff": 0.9988960027694702
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.472910927456382,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.44816191656340354,
+      "max_abs_diff": 0.9999996423721313
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.06622288376092911
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 0.5692028999328613,
+     "cells": 632772,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 0.9647453833240067,
+      "max_abs_diff": 0.9996633529663086
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.8928073166950861,
+      "max_abs_diff": 0.9994040131568909
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.472910927456382,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.5720776538620405,
+      "max_abs_diff": 0.9999993443489075
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.5942232268197196,
+     "cells": 766584,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.9534955820802976,
+      "max_abs_diff": 0.998956561088562
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.5091827364554637,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.85212722015696,
+      "max_abs_diff": 0.9998399615287781
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5841946601867676,
+     "cells": 1145340,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.6115702479338843,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.9929781082197439,
+      "max_abs_diff": 0.949499249458313
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.589463370186942,
+     "cells": 567000,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 0.9990035870864886,
+      "max_abs_diff": 0.623924195766449
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 0.9982905982905983,
+      "max_abs_diff": 0.623924195766449
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 0.9866815892557359,
+      "max_abs_diff": 0.99668949842453
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.9221826073476981,
+      "max_abs_diff": 0.9993329048156738
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.472910927456382,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.44816191656340354,
+      "max_abs_diff": 0.9999996423721313
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.06622288376092911
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.5813142231532505,
+     "cells": 809676,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 0.9990035870864886,
+      "max_abs_diff": 0.623924195766449
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 0.9982905982905983,
+      "max_abs_diff": 0.623924195766449
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 0.9866815892557359,
+      "max_abs_diff": 0.99668949842453
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.952177956905906,
+      "max_abs_diff": 0.9988960027694702
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 0.472910927456382,
+      "max_abs_diff": 0.9999986290931702
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 0.44816191656340354,
+      "max_abs_diff": 0.9999996423721313
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.06622288376092911
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.6515932083129883,
+     "cells": 2885220,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 0.9975197643776159,
+      "max_abs_diff": 0.9950491189956665
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.8446417536054339,
+     "cells": 4454740,
+     "NEAR(0.25)": {
+      "answers": 5018,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8935,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12902,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2178,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2421,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 388,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "HxpKQynjfin": {
+   "rooms": 8,
+   "objects": 345,
+   "levels": 1,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 7,
+   "door_edges": 12,
+   "ingest_s": 7.804948091506958,
+   "results": {
+    "global": {
+     "ms_per_query": 2.9696127346583774,
+     "cells": 119025,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 6.295428276062012,
+     "cells": 35912,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 0.7752606975907946,
+      "max_abs_diff": 0.999629020690918
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 0.7520119225037257,
+      "max_abs_diff": 0.999629020690918
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 0.7026617615234798,
+      "max_abs_diff": 0.9998155236244202
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 0.6309601567602874,
+      "max_abs_diff": 0.9999377727508545
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 0.9021207177814029,
+      "max_abs_diff": 0.9999963641166687
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 0.860730593607306,
+      "max_abs_diff": 0.9786081910133362
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 0.9655172413793104,
+      "max_abs_diff": 0.9791990518569946
+     }
+    },
+    "room+door": {
+     "ms_per_query": 2.1694895199366977,
+     "cells": 128640,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 0.9557713052858684,
+      "max_abs_diff": 0.9788809418678284
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 0.9496274217585693,
+      "max_abs_diff": 0.9788809418678284
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 0.9184159272884657,
+      "max_abs_diff": 0.9927683472633362
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 0.9028412802090137,
+      "max_abs_diff": 0.9994515776634216
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 0.9869494290375204,
+      "max_abs_diff": 0.9791990518569946
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 0.9726027397260274,
+      "max_abs_diff": 0.9616369605064392
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 0.9753694581280788,
+      "max_abs_diff": 0.9791990518569946
+     }
+    },
+    "level": {
+     "ms_per_query": 1.126101357596261,
+     "cells": 119025,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 0.6491892678397042,
+     "cells": 92728,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 0.9675394936161004,
+      "max_abs_diff": 0.9927683472633362
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 0.9250489875898106,
+      "max_abs_diff": 0.9995449781417847
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 9.296140246473072e-11
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.5792692729404995,
+     "cells": 117920,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 0.9839973873285435,
+      "max_abs_diff": 0.9936106204986572
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5818108149937221,
+     "cells": 165088,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.5726603099278041,
+     "cells": 117920,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 0.9839973873285435,
+      "max_abs_diff": 0.9936106204986572
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.5847924096243722,
+     "cells": 165088,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.5840584209987095,
+     "cells": 405600,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 0.974689745264533,
+      "max_abs_diff": 0.9585332274436951
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.5810223306928363,
+     "cells": 411930,
+     "NEAR(0.25)": {
+      "answers": 2781,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 3355,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 4621,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 6124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 613,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 438,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 203,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "JeFG25nYj2p": {
+   "rooms": 22,
+   "objects": 1356,
+   "levels": 1,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 14,
+   "door_edges": 10,
+   "ingest_s": 31.602078437805176,
+   "results": {
+    "global": {
+     "ms_per_query": 0.5648555074419294,
+     "cells": 1838736,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 0.988293034689767,
+     "cells": 338272,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 0.8246538229981939,
+      "max_abs_diff": 0.9999353289604187
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 0.7770531400966184,
+      "max_abs_diff": 0.999957263469696
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 0.7169495997888996,
+      "max_abs_diff": 0.9999828338623047
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 0.6541068208667538,
+      "max_abs_diff": 0.999958336353302
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 0.8983050847457628,
+      "max_abs_diff": 0.9993606805801392
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 0.944206008583691,
+      "max_abs_diff": 0.9926005005836487
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 0.8842105263157894,
+      "max_abs_diff": 0.9936667084693909
+     }
+    },
+    "room+door": {
+     "ms_per_query": 0.6377083914620536,
+     "cells": 919336,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 0.8461770018061409,
+      "max_abs_diff": 0.9999353289604187
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 0.8003623188405797,
+      "max_abs_diff": 0.999957263469696
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 0.7427214354824523,
+      "max_abs_diff": 0.9999828338623047
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 0.698190636075359,
+      "max_abs_diff": 0.999958336353302
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 0.9206471494607088,
+      "max_abs_diff": 0.9993606805801392
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 0.944206008583691,
+      "max_abs_diff": 0.9926005005836487
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 0.8842105263157894,
+      "max_abs_diff": 0.9936667084693909
+     }
+    },
+    "level": {
+     "ms_per_query": 0.6358919824872699,
+     "cells": 1838736,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 4.091716834477016,
+     "cells": 793848,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 0.9782742545518516,
+      "max_abs_diff": 0.9931073188781738
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 0.9042467201392775,
+      "max_abs_diff": 0.9999452233314514
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 3.6682724952697754,
+     "cells": 941160,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 0.9439781135360318,
+      "max_abs_diff": 0.9999452233314514
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5602148600987026,
+     "cells": 1301256,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.6581289427621024,
+     "cells": 941160,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 0.9439781135360318,
+      "max_abs_diff": 0.9999452233314514
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.6822848320007324,
+     "cells": 1301256,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.6262561253138951,
+     "cells": 2373670,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 0.9713983709506933,
+      "max_abs_diff": 0.9999452233314514
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.6508432115827288,
+     "cells": 2827440,
+     "NEAR(0.25)": {
+      "answers": 6644,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8280,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 11369,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 16083,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 1298,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 1165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 380,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "JmbYfDe2QKZ": {
+   "rooms": 19,
+   "objects": 1101,
+   "levels": 2,
+   "guard_fired": 1,
+   "levels_match_hl3d": 1.0,
+   "doors": 11,
+   "door_edges": 12,
+   "ingest_s": 27.563806533813477,
+   "results": {
+    "global": {
+     "ms_per_query": 0.6328330721173968,
+     "cells": 1212201,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1366
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 2078
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 17
+     }
+    },
+    "room": {
+     "ms_per_query": 2.7536582946777344,
+     "cells": 190000,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 0.8363579474342928,
+      "max_abs_diff": 0.9998164176940918
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 0.7950839045142992,
+      "max_abs_diff": 0.999772310256958
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 0.7436750998668442,
+      "max_abs_diff": 0.99992436170578
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.6678387115068338,
+      "max_abs_diff": 0.9999717473983765
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.4912648497554158,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.37270114942528737,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 0.9217391304347826,
+      "max_abs_diff": 0.9964306354522705
+     }
+    },
+    "room+door": {
+     "ms_per_query": 2.128228119441441,
+     "cells": 733400,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 0.9033166458072591,
+      "max_abs_diff": 0.9998164176940918
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 0.8506263294729378,
+      "max_abs_diff": 0.999772310256958
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 0.8018475366178429,
+      "max_abs_diff": 0.99992436170578
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.725344524471162,
+      "max_abs_diff": 0.9999717473983765
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.543675751222921,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.4002873563218391,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 0.9260869565217391,
+      "max_abs_diff": 0.9964306354522705
+     }
+    },
+    "level": {
+     "ms_per_query": 0.577918461390904,
+     "cells": 1089288,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 0.9496245306633292,
+      "max_abs_diff": 0.9992597699165344
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 0.9333490900496336,
+      "max_abs_diff": 0.999612033367157
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 0.8981358189081226,
+      "max_abs_diff": 0.9998623728752136
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.8684852265638292,
+      "max_abs_diff": 0.9997097253799438
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.522711390635919,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.4028735632183908,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 0.9630434782608696,
+      "max_abs_diff": 0.9964306354522705
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 0.5722716876438686,
+     "cells": 959500,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 0.9785286284953395,
+      "max_abs_diff": 0.9963862895965576
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.9151023648840243,
+      "max_abs_diff": 0.998685896396637
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.7064989517819706,
+      "max_abs_diff": 0.999995768070221
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.8238505747126437,
+      "max_abs_diff": 0.9981911778450012
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.5454948970249721,
+     "cells": 1155200,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.9597913004026541,
+      "max_abs_diff": 0.9985966086387634
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.7921034241788959,
+      "max_abs_diff": 0.9999946355819702
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.9028735632183909,
+      "max_abs_diff": 0.9978787302970886
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5618078368050712,
+     "cells": 1548500,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.9986023759608665,
+      "max_abs_diff": 0.45814597606658936
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.9729885057471265,
+      "max_abs_diff": 0.9966356158256531
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.549248286655971,
+     "cells": 729600,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 0.9496245306633292,
+      "max_abs_diff": 0.9992597699165344
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 0.9333490900496336,
+      "max_abs_diff": 0.999612033367157
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 0.8981358189081226,
+      "max_abs_diff": 0.9998623728752136
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.8266885952475472,
+      "max_abs_diff": 0.9997813105583191
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.522711390635919,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.39741379310344827,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 0.9630434782608696,
+      "max_abs_diff": 0.9964306354522705
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.5536522184099469,
+     "cells": 1014600,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 0.9496245306633292,
+      "max_abs_diff": 0.9992597699165344
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 0.9333490900496336,
+      "max_abs_diff": 0.999612033367157
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 0.8981358189081226,
+      "max_abs_diff": 0.9998623728752136
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.8684852265638292,
+      "max_abs_diff": 0.9997097253799438
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 0.522711390635919,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 0.4028735632183908,
+      "max_abs_diff": 0.9999966621398926
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 0.9630434782608696,
+      "max_abs_diff": 0.9964306354522705
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.5676705496651786,
+     "cells": 2325096,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 0.9968808484092326,
+      "max_abs_diff": 0.9159907102584839
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.5912450381687709,
+     "cells": 2677992,
+     "NEAR(0.25)": {
+      "answers": 6392,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 8462,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12016,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17633,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2862,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 3480,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 460,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "S9hNv5qa7GM": {
+   "rooms": 19,
+   "objects": 1054,
+   "levels": 2,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 20,
+   "door_edges": 14,
+   "ingest_s": 67.05687880516052,
+   "results": {
+    "global": {
+     "ms_per_query": 0.6177268709455218,
+     "cells": 1110916,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1303
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1490
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 0.614853927067348,
+     "cells": 153900,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 0.9155533564242124,
+      "max_abs_diff": 0.999705970287323
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 0.8834258524980174,
+      "max_abs_diff": 0.999705970287323
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 0.8343405275779376,
+      "max_abs_diff": 0.9998987317085266
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.7396947560657449,
+      "max_abs_diff": 0.9999210834503174
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.4960091220068415,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.48708361658735555,
+      "max_abs_diff": 0.9999932050704956
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 0.9908592321755028,
+      "max_abs_diff": 0.9785062074661255
+     }
+    },
+    "room+door": {
+     "ms_per_query": 0.6629439762660435,
+     "cells": 434340,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 0.958601352465776,
+      "max_abs_diff": 0.9991147518157959
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 0.9332540311921755,
+      "max_abs_diff": 0.9979124665260315
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 0.8879616306954436,
+      "max_abs_diff": 0.9997972249984741
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.8139186016175319,
+      "max_abs_diff": 0.9999120831489563
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.5017103762827823,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.4921821889870836,
+      "max_abs_diff": 0.9999932050704956
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.40259698033332825
+     }
+    },
+    "level": {
+     "ms_per_query": 0.9026714733668736,
+     "cells": 682112,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 0.9986805211941283,
+      "max_abs_diff": 0.9385871291160583
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 0.9899550621200106,
+      "max_abs_diff": 0.9979124665260315
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 0.953189448441247,
+      "max_abs_diff": 0.9995232224464417
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.9116879728672058,
+      "max_abs_diff": 0.9994197487831116
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.5047510452299506,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.4935418082936778,
+      "max_abs_diff": 0.9999932050704956
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.43849101662635803
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 0.804779188973563,
+     "cells": 499320,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 0.9744844124700239,
+      "max_abs_diff": 0.9980432987213135
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.9097312809809549,
+      "max_abs_diff": 0.9993665814399719
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.5708855948308628,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.858599592114208,
+      "max_abs_diff": 0.9999340772628784
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 0.9659896578107562,
+     "cells": 627570,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.9507565875293503,
+      "max_abs_diff": 0.9987059235572815
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.7434435575826682,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.8830727396329028,
+      "max_abs_diff": 0.9998297095298767
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.5616467339651925,
+     "cells": 961020,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.9490687951349297,
+      "max_abs_diff": 0.999484121799469
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.9870836165873556,
+      "max_abs_diff": 0.9910320043563843
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 2.2244511331830705,
+     "cells": 395010,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 0.9986805211941283,
+      "max_abs_diff": 0.9385871291160583
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 0.9899550621200106,
+      "max_abs_diff": 0.9979124665260315
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 0.953189448441247,
+      "max_abs_diff": 0.9995232224464417
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.8868379859118184,
+      "max_abs_diff": 0.9994197487831116
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.5047510452299506,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.4935418082936778,
+      "max_abs_diff": 0.9999932050704956
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.43849101662635803
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 4.774834428514753,
+     "cells": 543780,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 0.9986805211941283,
+      "max_abs_diff": 0.9385871291160583
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 0.9899550621200106,
+      "max_abs_diff": 0.9979124665260315
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 0.953189448441247,
+      "max_abs_diff": 0.9995232224464417
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.9116879728672058,
+      "max_abs_diff": 0.9994197487831116
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 0.5047510452299506,
+      "max_abs_diff": 0.9999961256980896
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 0.4935418082936778,
+      "max_abs_diff": 0.9999932050704956
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.43849101662635803
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 3.0324806485857283,
+     "cells": 1884696,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 0.9928906861466215,
+      "max_abs_diff": 0.9872617721557617
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.7241817883082798,
+     "cells": 1549562,
+     "NEAR(0.25)": {
+      "answers": 6063,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 7566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10425,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15332,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2631,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2942,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 547,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "TbHJrupSAjP": {
+   "rooms": 28,
+   "objects": 1792,
+   "levels": 3,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 32,
+   "door_edges": 22,
+   "ingest_s": 43.50674080848694,
+   "results": {
+    "global": {
+     "ms_per_query": 4.255844865526472,
+     "cells": 3211264,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 4040
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 3369
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 7.338134901864188,
+     "cells": 263452,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 0.8270659761315019,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 0.815025950821067,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 0.7730749937296213,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.6913167938931297,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.29092136348295644,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.3480225988700565,
+      "max_abs_diff": 0.9999937415122986
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 0.9306784660766961,
+      "max_abs_diff": 0.9692511558532715
+     }
+    },
+    "room+door": {
+     "ms_per_query": 3.6269290106637135,
+     "cells": 1108128,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 0.8697365458230129,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 0.8597804815791713,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 0.8231753197893152,
+      "max_abs_diff": 0.9999693632125854
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.7556818181818182,
+      "max_abs_diff": 0.9999110102653503
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.30509618629767127,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.35480225988700564,
+      "max_abs_diff": 0.9999937415122986
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 0.9705014749262537,
+      "max_abs_diff": 0.966959536075592
+     }
+    },
+    "level": {
+     "ms_per_query": 3.002947057996477,
+     "cells": 1620675,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 0.9981986039180365,
+      "max_abs_diff": 0.9403873682022095
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 0.991576618735642,
+      "max_abs_diff": 0.9993966221809387
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 0.9396162528216704,
+      "max_abs_diff": 0.9997246861457825
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.8915249826509368,
+      "max_abs_diff": 0.9998289942741394
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.3182585217684779,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.3655367231638418,
+      "max_abs_diff": 0.9999937415122986
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.056678224354982376
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 3.053999628339495,
+     "cells": 1678488,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 0.9784298971657888,
+      "max_abs_diff": 0.9996784925460815
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.8953417765440667,
+      "max_abs_diff": 0.9998289942741394
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.3965575430307121,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.7527306967984934,
+      "max_abs_diff": 0.9995546340942383
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 11.343777179718018,
+     "cells": 2004408,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.9358084663428174,
+      "max_abs_diff": 0.9998289942741394
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.5006749915626054,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.8129943502824859,
+      "max_abs_diff": 0.9995546340942383
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 7.444239343915667,
+     "cells": 2859948,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.6461356733040837,
+      "max_abs_diff": 0.9999980926513672
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.8969868173258003,
+      "max_abs_diff": 0.9994434714317322
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 3.0678176879882812,
+     "cells": 975044,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 0.9981986039180365,
+      "max_abs_diff": 0.9403873682022095
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 0.991576618735642,
+      "max_abs_diff": 0.9993966221809387
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 0.9396162528216704,
+      "max_abs_diff": 0.9997246861457825
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.8532269257460097,
+      "max_abs_diff": 0.9998289942741394
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.3182585217684779,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.3655367231638418,
+      "max_abs_diff": 0.9999937415122986
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.056678224354982376
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 4.967535223279681,
+     "cells": 1292816,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 0.9981986039180365,
+      "max_abs_diff": 0.9403873682022095
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 0.991576618735642,
+      "max_abs_diff": 0.9993966221809387
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 0.9396162528216704,
+      "max_abs_diff": 0.9997246861457825
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.8915249826509368,
+      "max_abs_diff": 0.9998289942741394
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 0.3182585217684779,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 0.3655367231638418,
+      "max_abs_diff": 0.9999937415122986
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.056678224354982376
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 6.178101130894253,
+     "cells": 7118034,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 0.9944916724496877,
+      "max_abs_diff": 0.9826624393463135
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 3.8750648498535156,
+     "cells": 10278720,
+     "NEAR(0.25)": {
+      "answers": 8882,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 11753,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 15948,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 23056,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 5926,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 5310,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 678,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "WYY7iVyf5p8": {
+   "rooms": 25,
+   "objects": 1007,
+   "levels": 4,
+   "guard_fired": 6,
+   "levels_match_hl3d": 0.5,
+   "doors": 22,
+   "door_edges": 20,
+   "ingest_s": 26.81110429763794,
+   "results": {
+    "global": {
+     "ms_per_query": 2.5579616001674106,
+     "cells": 1014049,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1916
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 2273
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 27
+     }
+    },
+    "room": {
+     "ms_per_query": 1.4221269743783134,
+     "cells": 164025,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 0.8687889868788987,
+      "max_abs_diff": 0.999496340751648
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 0.7987421383647799,
+      "max_abs_diff": 0.9999758005142212
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 0.707745637102558,
+      "max_abs_diff": 0.9999758005142212
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.5791224457468716,
+      "max_abs_diff": 0.9999634027481079
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.3349009069533087,
+      "max_abs_diff": 0.9999922513961792
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.3175029868578256,
+      "max_abs_diff": 0.9999924898147583
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 0.9393305439330544,
+      "max_abs_diff": 0.8327812552452087
+     }
+    },
+    "room+door": {
+     "ms_per_query": 4.674852234976632,
+     "cells": 783675,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 0.9247149924714992,
+      "max_abs_diff": 0.996640682220459
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 0.8656668279309788,
+      "max_abs_diff": 0.9998232126235962
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 0.7878316997370308,
+      "max_abs_diff": 0.9997791647911072
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.6881831142087755,
+      "max_abs_diff": 0.9999452829360962
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.35774269398723546,
+      "max_abs_diff": 0.9999922513961792
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.31899641577060933,
+      "max_abs_diff": 0.9999924898147583
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 0.9393305439330544,
+      "max_abs_diff": 0.8289064764976501
+     }
+    },
+    "level": {
+     "ms_per_query": 4.052365166800363,
+     "cells": 630436,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 0.9922563992256399,
+      "max_abs_diff": 0.8028823137283325
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 0.9293662312530238,
+      "max_abs_diff": 0.9997331500053406
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 0.8790341859909157,
+      "max_abs_diff": 0.9995107650756836
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.8228259147790274,
+      "max_abs_diff": 0.9999634027481079
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.356399059455828,
+      "max_abs_diff": 0.9999922513961792
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.32108721624850656,
+      "max_abs_diff": 0.9999924898147583
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 0.9435146443514645,
+      "max_abs_diff": 0.8289064764976501
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 2.564713273729597,
+     "cells": 698625,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 0.968682763566818,
+      "max_abs_diff": 0.9623720645904541
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.864723586250594,
+      "max_abs_diff": 0.9996249675750732
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.514947934161908,
+      "max_abs_diff": 0.9999919533729553
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.7915173237753883,
+      "max_abs_diff": 0.9998010993003845
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 1.5586635044642858,
+     "cells": 880875,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.9247584349754475,
+      "max_abs_diff": 0.9977259635925293
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.5639905945582802,
+      "max_abs_diff": 0.9999919533729553
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.8219832735961768,
+      "max_abs_diff": 0.9998010993003845
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 2.603231498173305,
+     "cells": 1322325,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.8444743029895868,
+      "max_abs_diff": 0.9998929500579834
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.8891875746714456,
+      "max_abs_diff": 0.9993266463279724
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 1.3739909444536482,
+     "cells": 506250,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 0.9922563992256399,
+      "max_abs_diff": 0.8028823137283325
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 0.9293662312530238,
+      "max_abs_diff": 0.9997331500053406
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 0.8790341859909157,
+      "max_abs_diff": 0.9995107650756836
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.7829874861397117,
+      "max_abs_diff": 0.9999634027481079
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.356399059455828,
+      "max_abs_diff": 0.9999922513961792
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.32108721624850656,
+      "max_abs_diff": 0.9999924898147583
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 0.9435146443514645,
+      "max_abs_diff": 0.8289064764976501
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 2.646482672010149,
+     "cells": 735075,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 0.9922563992256399,
+      "max_abs_diff": 0.8028823137283325
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 0.9293662312530238,
+      "max_abs_diff": 0.9997331500053406
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 0.8790341859909157,
+      "max_abs_diff": 0.9995107650756836
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.8228259147790274,
+      "max_abs_diff": 0.9999634027481079
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 0.356399059455828,
+      "max_abs_diff": 0.9999922513961792
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 0.32108721624850656,
+      "max_abs_diff": 0.9999924898147583
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 0.9435146443514645,
+      "max_abs_diff": 0.8289064764976501
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 1.625528335571289,
+     "cells": 2033856,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 0.9963567242198638,
+      "max_abs_diff": 0.9830588698387146
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 3.0418007714407787,
+     "cells": 2766335,
+     "NEAR(0.25)": {
+      "answers": 4649,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6201,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 8366,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 12626,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2977,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 3348,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 478,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "YFuZgdQ5vWj": {
+   "rooms": 24,
+   "objects": 1131,
+   "levels": 2,
+   "guard_fired": 3,
+   "levels_match_hl3d": 1.0,
+   "doors": 15,
+   "door_edges": 13,
+   "ingest_s": 26.253958702087402,
+   "results": {
+    "global": {
+     "ms_per_query": 1.962904589516776,
+     "cells": 1279161,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1491
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1379
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 21
+     }
+    },
+    "room": {
+     "ms_per_query": 2.5812404496329173,
+     "cells": 194400,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 0.8370038064165307,
+      "max_abs_diff": 0.9999560713768005
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 0.8006359300476947,
+      "max_abs_diff": 0.9999507665634155
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 0.7658035922556566,
+      "max_abs_diff": 0.9999545812606812
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.7014617272930149,
+      "max_abs_diff": 0.9999619722366333
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.48687580025608196,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.5256955810147299,
+      "max_abs_diff": 0.9999967813491821
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 0.9379014989293362,
+      "max_abs_diff": 0.9999582767486572
+     }
+    },
+    "room+door": {
+     "ms_per_query": 1.5449248041425432,
+     "cells": 879120,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 0.8878466557911908,
+      "max_abs_diff": 0.9999560713768005
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 0.8507684154742978,
+      "max_abs_diff": 0.9999507665634155
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 0.8206204805225099,
+      "max_abs_diff": 0.9999545812606812
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.7877147958045079,
+      "max_abs_diff": 0.9999545812606812
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.48687580025608196,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.5283142389525368,
+      "max_abs_diff": 0.9999967813491821
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 0.9379014989293362,
+      "max_abs_diff": 0.9999582767486572
+     }
+    },
+    "level": {
+     "ms_per_query": 2.5516390800476074,
+     "cells": 1086338,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 0.9683251767264818,
+      "max_abs_diff": 0.9997422695159912
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 0.9611022787493376,
+      "max_abs_diff": 0.9997472763061523
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 0.9479045175336288,
+      "max_abs_diff": 0.9998049736022949
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.9506248605222049,
+      "max_abs_diff": 0.9979112148284912
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.5227272727272727,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.54860883797054,
+      "max_abs_diff": 0.9999967813491821
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 0.9550321199143469,
+      "max_abs_diff": 0.9999582767486572
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 2.483595779963902,
+     "cells": 704160,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 0.9687427105201772,
+      "max_abs_diff": 0.998374342918396
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.9082236108011604,
+      "max_abs_diff": 0.9997607469558716
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.6270806658130602,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.84189852700491,
+      "max_abs_diff": 0.9984971880912781
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 1.5511488914489746,
+     "cells": 913680,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.9485047980361526,
+      "max_abs_diff": 0.9933738708496094
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.6779769526248399,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.900163666121113,
+      "max_abs_diff": 0.9984971880912781
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 2.849916390010289,
+     "cells": 1401840,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.7256722151088348,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.9908346972176759,
+      "max_abs_diff": 0.9971105456352234
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 2.818869182041713,
+     "cells": 773280,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 0.9683251767264818,
+      "max_abs_diff": 0.9997422695159912
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 0.9611022787493376,
+      "max_abs_diff": 0.9997472763061523
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 0.9479045175336288,
+      "max_abs_diff": 0.9998049736022949
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.9064382950234323,
+      "max_abs_diff": 0.9979112148284912
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.5227272727272727,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.54860883797054,
+      "max_abs_diff": 0.9999967813491821
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 0.9550321199143469,
+      "max_abs_diff": 0.9999582767486572
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 5.466322558266776,
+     "cells": 1125360,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 0.9683251767264818,
+      "max_abs_diff": 0.9997422695159912
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 0.9611022787493376,
+      "max_abs_diff": 0.9997472763061523
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 0.9479045175336288,
+      "max_abs_diff": 0.9998049736022949
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.9506248605222049,
+      "max_abs_diff": 0.9979112148284912
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 0.5227272727272727,
+      "max_abs_diff": 0.999996542930603
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 0.54860883797054,
+      "max_abs_diff": 0.9999967813491821
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 0.9550321199143469,
+      "max_abs_diff": 0.9999582767486572
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 1.5504166058131628,
+     "cells": 2097180,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 0.9932492747154653,
+      "max_abs_diff": 0.9893161654472351
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 3.466041769300188,
+     "cells": 4804720,
+     "NEAR(0.25)": {
+      "answers": 7356,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 9435,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 12861,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 17924,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 3124,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 3055,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 467,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "e9zR4mvMWw7": {
+   "rooms": 24,
+   "objects": 1149,
+   "levels": 3,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 17,
+   "door_edges": 21,
+   "ingest_s": 32.829413414001465,
+   "results": {
+    "global": {
+     "ms_per_query": 2.157482760293143,
+     "cells": 1320201,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1356
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1401
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 3.4979544367109026,
+     "cells": 131424,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 0.8707658321060383,
+      "max_abs_diff": 0.9999220967292786
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 0.8240171551107934,
+      "max_abs_diff": 0.9999224543571472
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 0.7462715289136919,
+      "max_abs_diff": 0.9999517798423767
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.6739307919361929,
+      "max_abs_diff": 0.9999789595603943
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.4025586353944563,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.4220039292730845,
+      "max_abs_diff": 0.9999992847442627
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 0.9667519181585678,
+      "max_abs_diff": 0.9682388305664062
+     }
+    },
+    "room+door": {
+     "ms_per_query": 1.1960547310965401,
+     "cells": 903984,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 0.9000368188512519,
+      "max_abs_diff": 0.9999220967292786
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 0.8558970693352395,
+      "max_abs_diff": 0.9999224543571472
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 0.7970749542961609,
+      "max_abs_diff": 0.9999324083328247
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.7271242856245682,
+      "max_abs_diff": 0.9999781847000122
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.4051172707889126,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.4275049115913556,
+      "max_abs_diff": 0.9999992847442627
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 0.9667519181585678,
+      "max_abs_diff": 0.9682388305664062
+     }
+    },
+    "level": {
+     "ms_per_query": 1.9153261184692383,
+     "cells": 887808,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 0.998159057437408,
+      "max_abs_diff": 0.9450449347496033
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 0.966976411722659,
+      "max_abs_diff": 0.9988958835601807
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 0.9057057634946599,
+      "max_abs_diff": 0.9999265074729919
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.8729510770583433,
+      "max_abs_diff": 0.9992985129356384
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.42174840085287846,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.4495088408644401,
+      "max_abs_diff": 0.9999992847442627
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.018130680546164513
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 3.5881236621311734,
+     "cells": 571872,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 0.9682478591359569,
+      "max_abs_diff": 0.9995933771133423
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.8974439490045846,
+      "max_abs_diff": 0.9995933771133423
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.5279317697228145,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.9449901768172888,
+      "max_abs_diff": 0.9938485622406006
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 2.4714040756225586,
+     "cells": 738816,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.9468065063116247,
+      "max_abs_diff": 0.997759997844696
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.6823027718550106,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.9791748526522593,
+      "max_abs_diff": 0.9719277024269104
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 3.604552745819092,
+     "cells": 1149072,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.9970149253731343,
+      "max_abs_diff": 0.9967975616455078
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 1.0,
+      "max_abs_diff": 0.03550710529088974
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 3.138988358633859,
+     "cells": 486624,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 0.998159057437408,
+      "max_abs_diff": 0.9450449347496033
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 0.966976411722659,
+      "max_abs_diff": 0.9988958835601807
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 0.9057057634946599,
+      "max_abs_diff": 0.9999265074729919
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.8203228034918043,
+      "max_abs_diff": 0.9997425675392151
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.42174840085287846,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.4495088408644401,
+      "max_abs_diff": 0.9999992847442627
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.018130680546164513
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.8990253720964704,
+     "cells": 708624,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 0.998159057437408,
+      "max_abs_diff": 0.9450449347496033
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 0.966976411722659,
+      "max_abs_diff": 0.9988958835601807
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 0.9057057634946599,
+      "max_abs_diff": 0.9999265074729919
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.8729510770583433,
+      "max_abs_diff": 0.9992985129356384
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 0.42174840085287846,
+      "max_abs_diff": 0.9999979734420776
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 0.4495088408644401,
+      "max_abs_diff": 0.9999992847442627
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.018130680546164513
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 3.528531619480678,
+     "cells": 1918080,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 0.9934685674810023,
+      "max_abs_diff": 0.9932283163070679
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 2.7925351687840054,
+     "cells": 3066288,
+     "NEAR(0.25)": {
+      "answers": 5432,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6995,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 10393,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 15923,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2345,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2545,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 391,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "i5noydFURQK": {
+   "rooms": 14,
+   "objects": 823,
+   "levels": 2,
+   "guard_fired": 0,
+   "levels_match_hl3d": 1.0,
+   "doors": 13,
+   "door_edges": 9,
+   "ingest_s": 21.643336057662964,
+   "results": {
+    "global": {
+     "ms_per_query": 7.403356007167271,
+     "cells": 677329,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1217
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 1169
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 4.927684920174735,
+     "cells": 118496,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 0.8918195718654435,
+      "max_abs_diff": 0.9999831318855286
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 0.8542491623515077,
+      "max_abs_diff": 0.9999831318855286
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 0.8108428540633758,
+      "max_abs_diff": 0.9999113082885742
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.7116829032497954,
+      "max_abs_diff": 0.9999125003814697
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.503562945368171,
+      "max_abs_diff": 0.9999962449073792
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.48935245545415035,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.13974878191947937
+     }
+    },
+    "room+door": {
+     "ms_per_query": 1.986957277570452,
+     "cells": 539672,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 0.9235474006116208,
+      "max_abs_diff": 0.9999831318855286
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 0.8888212001218397,
+      "max_abs_diff": 0.9999831318855286
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 0.8496443198965294,
+      "max_abs_diff": 0.9999113082885742
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.7669368632408716,
+      "max_abs_diff": 0.9998910427093506
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.5126682501979414,
+      "max_abs_diff": 0.9999962449073792
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.49109083007388094,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.038507502526044846
+     }
+    },
+    "level": {
+     "ms_per_query": 2.3303025109427318,
+     "cells": 607202,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 0.9980886850152905,
+      "max_abs_diff": 0.9955593347549438
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 0.9734998477002741,
+      "max_abs_diff": 0.9991000890731812
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 0.9662642810950636,
+      "max_abs_diff": 0.9999113082885742
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.950546590317543,
+      "max_abs_diff": 0.9995105266571045
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.5182106096595408,
+      "max_abs_diff": 0.9999962449073792
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.4919600173837462,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.038507502526044846
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 1.7476466723850794,
+     "cells": 397992,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 0.9774735934468636,
+      "max_abs_diff": 0.9976732730865479
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.9045140179965792,
+      "max_abs_diff": 0.9995142221450806
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.6999208234362628,
+      "max_abs_diff": 0.999995768070221
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.8852672750977836,
+      "max_abs_diff": 0.9999071359634399
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 2.6014760562351773,
+     "cells": 461104,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.9598423440172529,
+      "max_abs_diff": 0.9995142221450806
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.7723673792557403,
+      "max_abs_diff": 0.999995768070221
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.919600173837462,
+      "max_abs_diff": 0.9995418787002563
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 1.78279025214059,
+     "cells": 636272,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.7941409342834521,
+      "max_abs_diff": 0.999995768070221
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.9943502824858758,
+      "max_abs_diff": 0.9926983118057251
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 2.275684220450265,
+     "cells": 410872,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 0.9980886850152905,
+      "max_abs_diff": 0.9955593347549438
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 0.9734998477002741,
+      "max_abs_diff": 0.9991000890731812
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 0.9662642810950636,
+      "max_abs_diff": 0.9999113082885742
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.9125455491931286,
+      "max_abs_diff": 0.9996316432952881
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.5182106096595408,
+      "max_abs_diff": 0.9999962449073792
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.4919600173837462,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.038507502526044846
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.551825932094029,
+     "cells": 534520,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 0.9980886850152905,
+      "max_abs_diff": 0.9955593347549438
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 0.9734998477002741,
+      "max_abs_diff": 0.9991000890731812
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 0.9662642810950636,
+      "max_abs_diff": 0.9999113082885742
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.950546590317543,
+      "max_abs_diff": 0.9995105266571045
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 0.5182106096595408,
+      "max_abs_diff": 0.9999962449073792
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 0.4919600173837462,
+      "max_abs_diff": 0.9999985694885254
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.038507502526044846
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 0.5531818526131767,
+     "cells": 926288,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 0.9910760764482784,
+      "max_abs_diff": 0.9898188710212708
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 0.5460844721112933,
+     "cells": 1439616,
+     "NEAR(0.25)": {
+      "answers": 5232,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 6566,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 9278,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 13447,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2526,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2301,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 499,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "jtcxE69GiFV": {
+   "rooms": 38,
+   "objects": 2333,
+   "levels": 2,
+   "guard_fired": 3,
+   "levels_match_hl3d": 1.0,
+   "doors": 41,
+   "door_edges": 36,
+   "ingest_s": 57.291603088378906,
+   "results": {
+    "global": {
+     "ms_per_query": 0.9032562800816127,
+     "cells": 5442889,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 2288
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 2361
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 2
+     }
+    },
+    "room": {
+     "ms_per_query": 0.5687424114772252,
+     "cells": 723672,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 0.8544415993697065,
+      "max_abs_diff": 0.9999288320541382
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 0.8126534739274881,
+      "max_abs_diff": 0.9999428987503052
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 0.7594370444835385,
+      "max_abs_diff": 0.9999650120735168
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.7071144688316804,
+      "max_abs_diff": 0.9999135732650757
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.42661632845681924,
+      "max_abs_diff": 0.9999974966049194
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.39711370987807915,
+      "max_abs_diff": 0.999997615814209
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 0.9060240963855422,
+      "max_abs_diff": 0.951999306678772
+     }
+    },
+    "room+door": {
+     "ms_per_query": 0.756049496786935,
+     "cells": 1919304,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 0.9135316131573764,
+      "max_abs_diff": 0.9999288320541382
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 0.8808320092445472,
+      "max_abs_diff": 0.9999421834945679
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 0.8401608444332747,
+      "max_abs_diff": 0.9999276995658875
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.8221561817465717,
+      "max_abs_diff": 0.9998481869697571
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.4530438886267107,
+      "max_abs_diff": 0.9999974966049194
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.4105498880318487,
+      "max_abs_diff": 0.999997615814209
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 0.9349397590361446,
+      "max_abs_diff": 0.9190808534622192
+     }
+    },
+    "level": {
+     "ms_per_query": 1.1668651444571358,
+     "cells": 3825378,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 0.9979318495174315,
+      "max_abs_diff": 0.8964297771453857
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 0.9945832731474794,
+      "max_abs_diff": 0.9996146559715271
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 0.9592862528273436,
+      "max_abs_diff": 0.9998640418052673
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.9508038239822407,
+      "max_abs_diff": 0.9996005296707153
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.4601226993865031,
+      "max_abs_diff": 0.9999974966049194
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.4125404329435183,
+      "max_abs_diff": 0.999997615814209
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 0.9951807228915662,
+      "max_abs_diff": 0.8985869288444519
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 3.726208209991455,
+     "cells": 1615152,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 0.9660216134707212,
+      "max_abs_diff": 0.9996707439422607
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.910988578180386,
+      "max_abs_diff": 0.9995797872543335
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.49079754601226994,
+      "max_abs_diff": 0.9999974966049194
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.8039313262005474,
+      "max_abs_diff": 0.9999550580978394
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 1.4618349075317383,
+     "cells": 2165772,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.9595760678864262,
+      "max_abs_diff": 0.9977858662605286
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.6276545540349221,
+      "max_abs_diff": 0.9999953508377075
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.9218711122169694,
+      "max_abs_diff": 0.9995108842849731
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 0.749786240713937,
+     "cells": 3765192,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.7470504955167532,
+      "max_abs_diff": 0.9999953508377075
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.9952724558347847,
+      "max_abs_diff": 0.6747568249702454
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 0.5646664755684989,
+     "cells": 1442100,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 0.9979318495174315,
+      "max_abs_diff": 0.8964297771453857
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 0.9945832731474794,
+      "max_abs_diff": 0.9996146559715271
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 0.9592862528273436,
+      "max_abs_diff": 0.9998640418052673
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.9117762898779047,
+      "max_abs_diff": 0.9998481869697571
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.4601226993865031,
+      "max_abs_diff": 0.9999974966049194
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.4125404329435183,
+      "max_abs_diff": 0.999997615814209
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 0.9951807228915662,
+      "max_abs_diff": 0.8985869288444519
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 0.5579219545636859,
+     "cells": 2039916,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 0.9979318495174315,
+      "max_abs_diff": 0.8964297771453857
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 0.9945832731474794,
+      "max_abs_diff": 0.9996146559715271
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 0.9592862528273436,
+      "max_abs_diff": 0.9998640418052673
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.9508038239822407,
+      "max_abs_diff": 0.9996005296707153
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 0.4601226993865031,
+      "max_abs_diff": 0.9999974966049194
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 0.4125404329435183,
+      "max_abs_diff": 0.999997615814209
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 0.9951807228915662,
+      "max_abs_diff": 0.8985869288444519
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 1.0565638542175293,
+     "cells": 7198786,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 0.9935192810340506,
+      "max_abs_diff": 0.9963977932929993
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 1.3176396914890833,
+     "cells": 9870120,
+     "NEAR(0.25)": {
+      "answers": 10154,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 13846,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 19895,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 27929,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 4238,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 4019,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 415,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "p5wJjkQkbXX": {
+   "rooms": 37,
+   "objects": 2053,
+   "levels": 3,
+   "guard_fired": 2,
+   "levels_match_hl3d": 1.0,
+   "doors": 31,
+   "door_edges": 30,
+   "ingest_s": 54.93112325668335,
+   "results": {
+    "global": {
+     "ms_per_query": 0.7197887556893485,
+     "cells": 4214809,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 797
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 761
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 0.6245885576520648,
+     "cells": 578125,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 0.8567223799011878,
+      "max_abs_diff": 0.9999300837516785
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 0.8218386057652598,
+      "max_abs_diff": 0.9999284744262695
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 0.7405762375080358,
+      "max_abs_diff": 0.9999892711639404
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.666114232588221,
+      "max_abs_diff": 0.9999958872795105
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.642551674982181,
+      "max_abs_diff": 0.9999915361404419
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.7141831238779174,
+      "max_abs_diff": 0.9999253749847412
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 0.9463276836158192,
+      "max_abs_diff": 0.9947471022605896
+     }
+    },
+    "room+door": {
+     "ms_per_query": 0.5856752395629883,
+     "cells": 1771375,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 0.9035004730368968,
+      "max_abs_diff": 0.9993629455566406
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 0.8768481044024118,
+      "max_abs_diff": 0.999894380569458
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 0.820057273099176,
+      "max_abs_diff": 0.9999892711639404
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.7980920813290755,
+      "max_abs_diff": 0.9998806715011597
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.6707056307911617,
+      "max_abs_diff": 0.9999915361404419
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.7156193895870736,
+      "max_abs_diff": 0.9999253749847412
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 0.9477401129943502,
+      "max_abs_diff": 0.9947471022605896
+     }
+    },
+    "level": {
+     "ms_per_query": 1.7995984213692802,
+     "cells": 8916528,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.2932891845703125
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 0.9946312050879657,
+      "max_abs_diff": 0.9935581684112549
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 0.9647595114253988,
+      "max_abs_diff": 0.9990599155426025
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.949997978899713,
+      "max_abs_diff": 0.9993633031845093
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.7159657875980042,
+      "max_abs_diff": 0.9999913573265076
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.7267504488330341,
+      "max_abs_diff": 0.9998659491539001
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.011206553317606449
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 3.998849391937256,
+     "cells": 2261625,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 0.9576295949973701,
+      "max_abs_diff": 0.9995054602622986
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.8874247140143093,
+      "max_abs_diff": 0.9997847676277161
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.7972202423378475,
+      "max_abs_diff": 0.9997373819351196
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.9181328545780969,
+      "max_abs_diff": 0.9996071457862854
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 3.021134649004255,
+     "cells": 2747250,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.9598205262945148,
+      "max_abs_diff": 0.9995617270469666
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.8973627940128297,
+      "max_abs_diff": 0.9996404051780701
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.9813285457809695,
+      "max_abs_diff": 0.9849057197570801
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 7.61988707951137,
+     "cells": 3242125,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.9533143264433357,
+      "max_abs_diff": 0.9996404051780701
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 1.0,
+      "max_abs_diff": 0.0949825793504715
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 7.352358613695417,
+     "cells": 1924000,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.2932891845703125
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 0.9946312050879657,
+      "max_abs_diff": 0.9935581684112549
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 0.9647595114253988,
+      "max_abs_diff": 0.9990599155426025
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.9162051821011359,
+      "max_abs_diff": 0.9995617270469666
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.7159657875980042,
+      "max_abs_diff": 0.9999913573265076
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.7267504488330341,
+      "max_abs_diff": 0.9998659491539001
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.011206553317606449
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 8.74683209827968,
+     "cells": 2640875,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.2932891845703125
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 0.9946312050879657,
+      "max_abs_diff": 0.9935581684112549
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 0.9647595114253988,
+      "max_abs_diff": 0.9990599155426025
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.949997978899713,
+      "max_abs_diff": 0.9993633031845093
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 0.7159657875980042,
+      "max_abs_diff": 0.9999913573265076
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 0.7267504488330341,
+      "max_abs_diff": 0.9998659491539001
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.011206553317606449
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 8.254341057368688,
+     "cells": 5342150,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 0.9895307005133595,
+      "max_abs_diff": 0.9968793392181396
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 8.358687332698278,
+     "cells": 8044808,
+     "NEAR(0.25)": {
+      "answers": 9513,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 12107,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 17111,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 24739,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 2806,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 2785,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 708,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  },
+  "r47D5H71a5s": {
+   "rooms": 21,
+   "objects": 931,
+   "levels": 1,
+   "guard_fired": 2,
+   "levels_match_hl3d": 1.0,
+   "doors": 19,
+   "door_edges": 10,
+   "ingest_s": 25.846784353256226,
+   "results": {
+    "global": {
+     "ms_per_query": 7.6963339533124655,
+     "cells": 866761,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0,
+      "cross_level_answers": 0
+     }
+    },
+    "room": {
+     "ms_per_query": 6.908132348741804,
+     "cells": 227136,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 0.6820776255707762,
+      "max_abs_diff": 0.9997297525405884
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 0.6378752886836028,
+      "max_abs_diff": 0.9997297525405884
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 0.5894039735099338,
+      "max_abs_diff": 0.9997297525405884
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 0.5485603781693167,
+      "max_abs_diff": 0.9997364282608032
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 0.9261538461538461,
+      "max_abs_diff": 0.9808018803596497
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 0.9693877551020408,
+      "max_abs_diff": 0.9862327575683594
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 0.9935483870967742,
+      "max_abs_diff": 0.4896659553050995
+     }
+    },
+    "room+door": {
+     "ms_per_query": 2.2992352076939175,
+     "cells": 430248,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 0.7517123287671232,
+      "max_abs_diff": 0.9997297525405884
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 0.7117782909930715,
+      "max_abs_diff": 0.9997297525405884
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 0.6972563859981078,
+      "max_abs_diff": 0.9997297525405884
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 0.6480446927374302,
+      "max_abs_diff": 0.9997364282608032
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 0.9753846153846154,
+      "max_abs_diff": 0.9526323080062866
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 0.9727891156462585,
+      "max_abs_diff": 0.9862327575683594
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 0.9935483870967742,
+      "max_abs_diff": 0.4896659553050995
+     }
+    },
+    "level": {
+     "ms_per_query": 1.9742580822535925,
+     "cells": 866761,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=0.5": {
+     "ms_per_query": 2.2113919258117676,
+     "cells": 504504,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 0.9416587827183853,
+      "max_abs_diff": 0.9996026754379272
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 0.8743016759776536,
+      "max_abs_diff": 0.9996404051780701
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0002620371524244547
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=1.0": {
+     "ms_per_query": 2.047457354409354,
+     "cells": 585312,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 0.9387623549634723,
+      "max_abs_diff": 0.9994521737098694
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "room+halo h=2.0": {
+     "ms_per_query": 2.0037569318498885,
+     "cells": 731640,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=1.0": {
+     "ms_per_query": 1.6917967796325684,
+     "cells": 585312,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 0.9387623549634723,
+      "max_abs_diff": 0.9994521737098694
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "level+halo h=2.0": {
+     "ms_per_query": 2.9975696972438266,
+     "cells": 731640,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=4 h=1.0": {
+     "ms_per_query": 1.479142733982631,
+     "cells": 1341256,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 0.9802320584443489,
+      "max_abs_diff": 0.9942793846130371
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    },
+    "grid T=8 h=2.0": {
+     "ms_per_query": 2.9588259969438826,
+     "cells": 1818144,
+     "NEAR(0.25)": {
+      "answers": 1752,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(0.5)": {
+      "answers": 2165,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(1.0)": {
+      "answers": 3171,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "NEAR(2.0)": {
+      "answers": 4654,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ABOVE(0)": {
+      "answers": 325,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "BELOW(0)": {
+      "answers": 294,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     },
+     "ON(0.1)": {
+      "answers": 155,
+      "recall": 1.0,
+      "max_abs_diff": 0.0
+     }
+    }
+   }
+  }
+ },
+ "args": {
+  "scans": [
+   "17DRP5sb8fy",
+   "1LXtFkjw3qL",
+   "2t7WUuJeko7",
+   "5LpN3gDmAk7",
+   "HxpKQynjfin",
+   "JeFG25nYj2p",
+   "JmbYfDe2QKZ",
+   "S9hNv5qa7GM",
+   "TbHJrupSAjP",
+   "WYY7iVyf5p8",
+   "YFuZgdQ5vWj",
+   "e9zR4mvMWw7",
+   "i5noydFURQK",
+   "jtcxE69GiFV",
+   "p5wJjkQkbXX",
+   "r47D5H71a5s"
+  ],
+  "tau": 0.5,
+  "repeats": 5,
+  "out": "results/compare/hl3d_partition.json"
+ },
+ "aggregate": {
+  "global": {
+   "ms_per_query": 2.4549713092190877,
+   "cells": 1721141.125,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 1.0,
+    "max_abs_diff": 0.0,
+    "cross_level_answers": 18323
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 1.0,
+    "max_abs_diff": 0.0,
+    "cross_level_answers": 19146
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 1.0,
+    "max_abs_diff": 0.0,
+    "cross_level_answers": 69
+   }
+  },
+  "room": {
+   "ms_per_query": 3.112764060497284,
+   "cells": 246849.0625,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 0.8491104001796037,
+    "max_abs_diff": 0.9999831318855286
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 0.8106451697150667,
+    "max_abs_diff": 0.9999867081642151
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 0.7556466892700439,
+    "max_abs_diff": 0.9999892711639404
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.6798655259358232,
+    "max_abs_diff": 0.9999958872795105
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.4720535449221386,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.46717688908052174,
+    "max_abs_diff": 0.9999996423721313
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 0.9516734693877551,
+    "max_abs_diff": 0.9999582767486572
+   }
+  },
+  "room+door": {
+   "ms_per_query": 2.623036737952914,
+   "cells": 801533.625,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 0.8990402424650614,
+    "max_abs_diff": 0.9999831318855286
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 0.8661083495111823,
+    "max_abs_diff": 0.9999867081642151
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 0.8215870562425209,
+    "max_abs_diff": 0.9999892711639404
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.7686356485572053,
+    "max_abs_diff": 0.9999781847000122
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.4909184141634955,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.4751536056914951,
+    "max_abs_diff": 0.9999996423721313
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 0.9596734693877551,
+    "max_abs_diff": 0.9999582767486572
+   }
+  },
+  "level": {
+   "ms_per_query": 1.6968838019030434,
+   "cells": 1586541.625,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 0.9921647864399169,
+    "max_abs_diff": 0.9997422695159912
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 0.9802644751847757,
+    "max_abs_diff": 0.9997472763061523
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 0.9516790486637415,
+    "max_abs_diff": 0.9999265074729919
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.9282632588410232,
+    "max_abs_diff": 0.9999634027481079
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.5054921328907241,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.48404656677805324,
+    "max_abs_diff": 0.9999996423721313
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 0.988734693877551,
+    "max_abs_diff": 0.9999582767486572
+   }
+  },
+  "room+halo h=0.5": {
+   "ms_per_query": 2.0687143930367062,
+   "cells": 863349.6875,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 0.9706446948544076,
+    "max_abs_diff": 0.9999211430549622
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.9016141197767386,
+    "max_abs_diff": 0.9999452233314514
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.5908833292850781,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.8287700765333621,
+    "max_abs_diff": 0.9999993443489075
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   }
+  },
+  "room+halo h=1.0": {
+   "ms_per_query": 2.136878413813455,
+   "cells": 1064793.625,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.9511928108096459,
+    "max_abs_diff": 0.9999452233314514
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.6830486060507921,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.8964913226258489,
+    "max_abs_diff": 0.9999802708625793
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   }
+  },
+  "room+halo h=2.0": {
+   "ms_per_query": 2.0885767255510603,
+   "cells": 1536162.1875,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.8113782959544437,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.9627034601703137,
+    "max_abs_diff": 0.9999802708625793
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   }
+  },
+  "level+halo h=1.0": {
+   "ms_per_query": 1.791882280792509,
+   "cells": 711462.4375,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 0.9921647864399169,
+    "max_abs_diff": 0.9997422695159912
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 0.9802644751847757,
+    "max_abs_diff": 0.9997472763061523
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 0.9516790486637415,
+    "max_abs_diff": 0.9999265074729919
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.8885115186518113,
+    "max_abs_diff": 0.9999634027481079
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.5054921328907241,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.4835345478064029,
+    "max_abs_diff": 0.9999996423721313
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 0.988734693877551,
+    "max_abs_diff": 0.9999582767486572
+   }
+  },
+  "level+halo h=2.0": {
+   "ms_per_query": 2.236680750335966,
+   "cells": 1003399.5625,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 0.9921647864399169,
+    "max_abs_diff": 0.9997422695159912
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 0.9802644751847757,
+    "max_abs_diff": 0.9997472763061523
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 0.9516790486637415,
+    "max_abs_diff": 0.9999265074729919
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.9282632588410232,
+    "max_abs_diff": 0.9999634027481079
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 0.5054921328907241,
+    "max_abs_diff": 0.9999986290931702
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 0.48404656677805324,
+    "max_abs_diff": 0.9999996423721313
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 0.988734693877551,
+    "max_abs_diff": 0.9999582767486572
+   }
+  },
+  "grid T=4 h=1.0": {
+   "ms_per_query": 1.9912771880626678,
+   "cells": 2738442.625,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 0.9915048595995949,
+    "max_abs_diff": 0.9999452233314514
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   }
+  },
+  "grid T=8 h=2.0": {
+   "ms_per_query": 2.004056679350989,
+   "cells": 3762372.4375,
+   "NEAR(0.25)": {
+    "answers": 89085,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(0.5)": {
+    "answers": 114869,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(1.0)": {
+    "answers": 160448,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "NEAR(2.0)": {
+    "answers": 232015,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "ABOVE(0)": {
+    "answers": 37053,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "BELOW(0)": {
+    "answers": 37108,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   },
+   "ON(0.1)": {
+    "answers": 6125,
+    "recall": 1.0,
+    "max_abs_diff": 0.0
+   }
+  }
+ },
+ "buildings": {
+  "n": 16,
+  "rooms": 354,
+  "objects": 19044,
+  "levels": 33,
+  "levels_match_hl3d": 0.96875
+ }
+}

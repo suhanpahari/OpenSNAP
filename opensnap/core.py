@@ -22,6 +22,7 @@ class Config:
     relay_tau: float = 0.05
     relay_weight: float = 0.8
     dense_collapse: float = 0.75
+    image_weight: float = 0.5
 
 
 @dataclass
@@ -94,6 +95,16 @@ class OpenSNAP:
         keep = (stability > c.stability_thresh) & (size >= c.min_points)
         idx = keep.nonzero().squeeze(1)
         idx = idx[mask_nms(logits[idx] > 0, (scores * stability)[idx], c.nms_thresh)]
+        return Proposals(logits[idx], tokens[idx], scores[idx], prompts[idx])
+
+    @torch.no_grad()
+    def propose_union(self, v0=0.8, levels=3):
+        """Union of farthest-point and coarse-to-fine proposals, one joint NMS (more coverage at the same thresholds)."""
+        a, b = self.propose(), self.propose_c2f(v0=v0, levels=levels)
+        logits, tokens = torch.cat([a.logits, b.logits]), torch.cat([a.tokens, b.tokens])
+        scores, prompts = torch.cat([a.scores, b.scores]), torch.cat([a.prompts[:, :1], b.prompts[:, :1]])
+        stability = (logits > 1).sum(1).float() / (logits > -1).sum(1).clamp(min=1).float()
+        idx = mask_nms(logits > 0, scores * stability, self.cfg.nms_thresh)
         return Proposals(logits[idx], tokens[idx], scores[idx], prompts[idx])
 
     @torch.no_grad()
@@ -184,7 +195,9 @@ class OpenSNAP:
         text = self.clip_dense(labels, SCENE_TEMPLATES)
         return (self.scene["dense"] @ text.T / self.cfg.tau).softmax(-1)
 
-    def mask_probs(self, props, labels, use_dense=True, use_snap=True):
+    def mask_probs(self, props, labels, use_dense=True, use_snap=True, image=None):
+        """Product of experts over a label list; `image` = (per-proposal image embeddings, ImageExpert) adds the
+        image-evidence column with weight cfg.image_weight (the other experts share the rest)."""
         c = self.cfg
         terms, weights = [], []
         if use_dense and self.scene["dense"] is not None:
@@ -193,19 +206,32 @@ class OpenSNAP:
             terms.append((pooled @ self.clip_dense(labels, SCENE_TEMPLATES).T / c.tau).softmax(-1))
             weights.append(c.alpha)
         if use_snap:
-            terms.append(self.snap_probs(props.tokens, labels))
+            ps = self.snap_probs(props.tokens, labels)
+            ps = torch.where((props.tokens.norm(dim=-1) > 0)[:, None], ps, torch.full_like(ps, 1.0 / len(labels)))
+            terms.append(ps)
             weights.append(1 - c.alpha if terms[:-1] else 1.0)
+        if image is not None:
+            emb, expert = image
+            seen = emb.norm(dim=-1) > 0
+            pi = expert.probs(emb, labels, c.tau)
+            if terms:
+                weights = [w * (1 - c.image_weight) / sum(weights) for w in weights]
+                pi = torch.where(seen[:, None], pi, torch.full_like(pi, 1.0 / len(labels)))
+            terms.append(pi)
+            weights.append(c.image_weight if len(terms) > 1 else 1.0)
+        if not terms:
+            return torch.full((len(props.scores), len(labels)), 1.0 / len(labels), device=props.scores.device)
         logp = sum(wt * t.clamp(min=1e-8).log() for wt, t in zip(weights, terms)) / sum(weights)
         return logp.softmax(-1)
 
-    def semantic(self, props, labels, use_dense=True, use_snap=True, beta=None):
+    def semantic(self, props, labels, use_dense=True, use_snap=True, beta=None, image=None):
         """Per original point class probabilities (N, C)."""
         beta = self.cfg.beta if beta is None else beta
         dense = self.dense_probs(labels) if self.scene["dense"] is not None else None
-        if len(props.scores) == 0 or not (use_dense or use_snap):
+        if len(props.scores) == 0 or not (use_dense or use_snap or image is not None):
             out = dense
         else:
-            pm = self.mask_probs(props, labels, use_dense, use_snap)
+            pm = self.mask_probs(props, labels, use_dense, use_snap, image)
             w = (props.logits > 0).float() * props.logits.sigmoid() * props.scores[:, None]
             cover = w.sum(0)
             vote = (w.T @ pm) / cover.clamp(min=1e-6)[:, None]

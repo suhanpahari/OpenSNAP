@@ -2,6 +2,8 @@
 import json
 import os
 
+import numpy as np
+
 R = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
 out = []
 
@@ -389,9 +391,212 @@ def building():
         table("T16 · Building-level catalog and queries (S3DIS Area 5 as one database)", "building_s3dis_area5.json, building_latency.json", ["metric", "value"], rows)
 
 
+OVIMAP_REPLICA = [("Mask3D+OpenMask3D (offline, RGB-D)", 18.7, 29.4, 6.8, 4.5, 3.2), ("Segment3D+OpenMask3D (offline, RGB-D)", 17.3, 30.9, 19.9, 15.2, 9.0),
+                  ("Semantic Gaussian (offline)", 16.1, 22.1, None, None, None),
+                  ("OpenScene (offline)", 19.8, 33.9, None, None, None), ("OpenNeRF (offline)", 19.2, 30.9, None, None, None),
+                  ("OpenFusion (online)", 14.9, 22.4, None, None, None), ("OVO-SLAM (online)", 24.9, 34.0, 28.1, 17.5, 9.1),
+                  ("OVI-MAP (online)", 26.5, 32.2, 34.5, 21.2, 8.5)]
+OVIMAP_SCANNET = [("Mask3D+OpenMask3D (offline, RGB-D)", 8.6, 17.5, 10.4, 8.0, 5.1), ("Segment3D+OpenMask3D (offline, RGB-D)", 4.5, 13.5, 5.0, 3.9, 2.3),
+                  ("Semantic Gaussian (offline)", 10.7, 17.8, None, None, None),
+                  ("OpenScene (offline)", 10.3, 17.3, None, None, None), ("OpenFusion (online)", 8.3, 11.5, None, None, None),
+                  ("OVO-SLAM (online)", 14.6, 27.8, 19.4, 12.6, 5.5), ("OVI-MAP (online)", 17.5, 27.6, 23.4, 15.7, 7.2)]
+SEARCH3D_SCANNET200 = [("Mask3D (closed vocabulary, supervised)", 26.9, 39.8, 21.7, 17.9), ("OpenScene 2D fusion + Mask3D masks", 11.7, 13.4, 11.6, 9.9),
+                       ("OpenMask3D", 15.4, 17.1, 14.1, 14.9), ("Open3DIS 3D-only (Mask3D)", 18.9, 23.9, 17.4, 15.3),
+                       ("Open3DIS 2D+3D", 23.7, 27.8, 21.2, 21.8), ("Search3D (CLIP)", 14.3, 16.1, 13.6, 12.9), ("Search3D (SigLIP)", 23.0, 26.3, 21.2, 21.4)]
+OPENSCAN = [("OpenMask3D", (7.2, 7.5, 8.5, 12.8, 16.9, 13.0, 12.2, 18.8, 9.9)), ("SAI3D", (5.3, 5.8, 7.8, 11.3, 10.0, 10.0, 8.7, 11.3, 7.7)),
+            ("MaskClustering", (6.2, 7.0, 7.1, 11.1, 16.2, 11.3, 7.4, 12.1, 8.1)), ("Open3DIS", (11.9, 12.8, 14.2, 19.2, 26.7, 19.2, 18.7, 28.3, 15.8))]
+NAMES = {"opensnap": "OpenSNAP (XYZ only)", "dense_only": "  dense 3D expert only", "token_only": "  segmenter token only",
+         "opensnap+image": "**OpenSNAP + image column**", "image_only": "  image column only"}
+
+
+def f1(x):
+    return "–" if x is None else f"{x:.1f}"
+
+
+def compare():
+    for names, title, ref in ((("compare/replica_ovimap_fps.json", "compare/replica_ovimap_c2f.json"),
+                               "C1 · Replica, OVI-MAP protocol (8 scenes, 51 classes, GT mesh vertices)", OVIMAP_REPLICA),
+                              (("compare/scannet18.json",), "C2 · ScanNet, OVI-MAP protocol (18 scenes, ScanNet200 labels)", OVIMAP_SCANNET)):
+        if not load(names[0]):
+            pending(title, names[0])
+            continue
+        rows = [[n, f1(a), f1(b), f1(c), f1(e), f1(g)] for n, a, b, c, e, g in ref]
+        for name in names:
+            d = load(name)
+            if not d:
+                continue
+            key = "48" if "replica" in name else "200"
+            prop = " [fps]" if "fps" in name else (" [c2f]" if "c2f" in name else "")
+            for split in d["results"]:
+                for v, r in d["results"][split].items():
+                    ins = r[f"inst{key}_p_x_iou"]
+                    tag = prop + ("" if split == "all" else " (15 val scenes)")
+                    rows.append([NAMES.get(v, v) + tag, pct(r["semantic"]["mIoU"]), pct(r["semantic"]["mAcc"]), pct(ins["AP25"]), pct(ins["AP50"]), pct(ins["AP"])])
+        cv = load("compare/replica_fusion_cv.json") if "replica" in names[0] else None
+        if cv:
+            c = cv["loso_cv"]
+            rows.append(["**OpenSNAP + image column, fused, weights by leave-one-scene-out CV** [c2f]", pct(c["mIoU"]), pct(c["mAcc"]),
+                         pct(c["AP25"]), pct(c["AP50"]), pct(c["AP"])])
+        table(title, name + " (ours); OVI-MAP Table 3 (published)", ["method", "mIoU", "mAcc", "AP25", "AP50", "AP"], rows,
+              "Published rows are copied from OVI-MAP (CVPR 2026) Table 3. Ours: same scenes, classes and per-vertex scoring "
+              "(classes without GT vertices skipped; instance AP with the ScanNet evaluator, predictions < 100 vertices dropped).")
+    cv = load("compare/replica_fusion_cv.json")
+    if cv:
+        rows = [[k.replace("w_img=", "").replace(" alpha=", " / "), pct(r["mIoU"]), pct(r["mAcc"]), pct(r["AP25"]), pct(r["AP50"]), pct(r["AP"])]
+                for k, r in cv["grid"].items()]
+        table("C1b · Image-column fusion weights on Replica (test-set grid: sensitivity only, not a result)", "compare/replica_fusion_cv.json",
+              ["w_image / alpha", "mIoU", "mAcc", "AP25", "AP50", "AP"], rows,
+              "Per-point semantics mix 30% dense per-point evidence (beta = 0.3) as in the system default. The leave-one-scene-out row in C1 is "
+              "the only fused number to report; this grid shows how sensitive the fusion is to alpha (dense vs token split).")
+    d = load("compare/scannet200_val.json")
+    if d:
+        rows = [[n, f1(a), f1(h), f1(c), f1(t)] for n, a, h, c, t in SEARCH3D_SCANNET200]
+        for v, r in d["results"]["all"].items():
+            ins = r["inst198_p_x_iou"]
+            rows.append([NAMES.get(v, v), pct(ins["AP"]), pct(ins["AP_head"]), pct(ins["AP_common"]), pct(ins["AP_tail"])])
+        table("C3 · ScanNet200 val open-vocabulary instance segmentation (312 scenes, 198 classes)", "compare/scannet200_val.json; Search3D Table V (published)",
+              ["method", "AP", "head", "common", "tail"], rows,
+              "Published rows from Search3D (RA-L 2025) Table V; all of them use posed RGB images (CLIP/SigLIP/OpenSeg crops) and "
+              "Mask3D masks trained on ScanNet200. Ours uses XYZ only.")
+    else:
+        pending("C3 · ScanNet200 val", "compare/scannet200_val.json")
+
+    d = load("compare/hl3d_partition.json")
+    if d:
+        b, agg = d["buildings"], d["aggregate"]
+        keys = ["NEAR(0.25)", "NEAR(0.5)", "NEAR(1.0)", "NEAR(2.0)", "ABOVE(0)", "ON(0.1)"]
+        rows = []
+        for s, r in agg.items():
+            rows.append([s] + [pct(r[k]["recall"]) for k in keys] + [f"{r['ms_per_query']:.2f}", f"{r['cells'] / 1e6:.2f}"])
+        g = agg["global"]
+        note = (f"{b['n']} buildings, {b['rooms']} rooms, {b['objects']} objects, {b['levels']} levels (levels found from region floor heights; "
+                f"{pct(b['levels_match_hl3d'])}% coincide with a HouseLayout3D horizontal layout plane). Recall = share of the unpartitioned "
+                f"(global) join's answers (score >= 0.5) that a partitioning returns; 'cells' = join work in millions of pairs per query. "
+                f"Global vertical answers whose only witness is on another floor: ABOVE {g['ABOVE(0)'].get('cross_level_answers', '–')}, "
+                f"BELOW {g['BELOW(0)'].get('cross_level_answers', '–')}, ON {g['ON(0.1)'].get('cross_level_answers', '–')} "
+                f"(of {g['ABOVE(0)']['answers']}, {g['BELOW(0)']['answers']}, {g['ON(0.1)']['answers']}).")
+        table("C4 · Spatial joins over whole multi-floor buildings (HouseLayout3D / Matterport3D)", "compare/hl3d_partition.json",
+              ["partitioning"] + keys + ["ms / query", "cells (M)"], rows, note)
+    d = load("compare/calibration.json")
+    if d:
+        sets = list(d["n_scenes"])
+        rows = [[b] + [f"{r[n]['ECE']:.3f} / {r[n]['Brier']:.3f} / {pct(r[n]['AP'])}" for n in sets] for b, r in d["background"].items()]
+        for tau, r in d["tau"].items():
+            rows.append([f"tau = {tau}"] + [f"{r[n]['ECE']:.3f} / {r[n]['Brier']:.3f} / {pct(r[n]['AP'])}" for n in sets])
+        if "platt_applied" in d:
+            rows.append([f"Platt (A={d['platt']['A']:.2f}, B={d['platt']['B']:.2f}) fitted on ScanNet train"] +
+                        [f"{d['platt_applied'][n]['ECE_after']:.3f} / {d['platt_applied'][n]['Brier_after']:.3f} / {pct(d['platt_applied'][n]['AP'])}" for n in sets])
+        table("C5 · Calibration of IS(c): ECE / Brier / IS-query AP", "compare/calibration.json", ["setting"] + [f"{n} ({d['n_scenes'][n]})" for n in sets], rows,
+              "ECE with 15 equal-width bins over every (object, class present in the scene) pair; y = object overlaps a GT instance of the class at IoU >= 0.5.")
+        rows = []
+        for name in ("alpha", "rho", "tau_r"):
+            for v, r in d[name].items():
+                rows.append([f"{name} = {v}"] + [f"{pct(r[n]['AP'])} ({r[n]['ECE']:.3f})" for n in sets])
+        if "synonyms_paired" in d:
+            sp = d["synonyms_paired"]
+            rows.append(["synonym classes, queried by class name"] + [f"{pct(sp[n]['class_name_AP'])} ({sp[n]['class_name_ECE']:.3f})" for n in sets])
+            rows.append(["same classes, queried by synonym"] + [f"{pct(sp[n]['synonym_AP'])} ({sp[n]['synonym_ECE']:.3f})" for n in sets])
+        table("C6 · Sensitivity of IS(c) to expert weight, relay and temperature: AP (ECE)", "compare/calibration.json", ["setting"] + sets, rows,
+              "Defaults: alpha 0.7, rho 0.8, tau 0.01, tau_r 0.05; all rows use B = the 234-word training vocabulary. Synonym rows: same classes, queried by class name vs by synonym.")
+    d = load("compare/workload_s3dis.json")
+    if d:
+        rows = []
+        for p, r in d["results"].items():
+            last = r[max(r, key=int)]
+            first = r[min(r, key=int)]
+            rows.append([p] + [pct(r[c]["AP50"]) for c in r] + [f"{last['cracked']:.1f}", f"{last['MB']:.2f}", f"{last['rejected']:.1f}",
+                                                             f"{last['evicted']:.1f}", f"{last['ms_per_query']:.1f}"])
+        cps = list(next(iter(d["results"].values())))
+        table("C7 · Long cracking workload: probe AP50 drift, growth and safeguards (S3DIS Area 5)", "compare/workload_s3dis.json",
+              ["policy"] + [f"AP50 @{c}" for c in cps] + ["cracked rows", "relation MB", "rejected", "evicted", "ms / query"], rows,
+              f"{d['rooms']} rooms x {d['queries_per_room']} random IS queries (50% LVIS nouns, 25% training vocabulary, 25% class names and synonyms). "
+              "Probe = IS(c) for every annotated class present, scored after each checkpoint without refinement.")
+    d = load("compare/scale.json")
+    if d:
+        rows = [[r["copies"], r["rooms"], r["objects"], f"{r['catalog_MB']:.0f}", f"{r['IS_ms']:.2f}",
+                 "OOM" if r.get("padded_ms") is None else f"{r['padded_ms']:.2f}", f"{r['pushdown_ms']:.2f}", f"{r['candidates']:.0f}",
+                 f"{r['peak_GPU_MB']:.0f}"] for r in d]
+        table("C8 · Scaling past one building (HouseLayout3D catalogs replicated into a campus)", "compare/scale.json",
+              ["copies", "rooms", "objects", "catalog MB", "IS ms", "NEAR padded ms", "NEAR pushdown ms", "candidates", "peak GPU MB"], rows,
+              "pushdown = IS selections before the join + exact uniform-grid spatial join on surviving candidates (exact for threshold answers).")
+
+    rows = []
+    for name, tag in (("compare/replica_video.json", "RGB-only video, estimated metric scale"),
+                      ("compare/replica_video_oracle_scale.json", "RGB-only video, oracle scale (diagnostic)")):
+        d = load(name)
+        if d:
+            for v, r in d["results"]["all"].items():
+                ins = r["inst48_p_x_iou"]
+                ob = r.get("semantic_observed", {})
+                rows.append([tag, NAMES.get(v, v), pct(r["semantic"]["mIoU"]), pct(r["semantic"]["mAcc"]), pct(ins["AP25"]), pct(ins["AP50"]), pct(ins["AP"]),
+                             pct(ob.get("mIoU")), pct(ob.get("mAcc")), pct(ob.get("observed_fraction"))])
+    if rows:
+        rows = [["RGB-D + GT poses, 2000 frames", "OVI-MAP (published)", "26.5", "32.2", "34.5", "21.2", "8.5", "–", "–", "–"]] + rows
+        rec = None
+        p = os.path.join(R, "..", "..", "downloads", "runs", "video_replica", "reconstruction.json")
+        if os.path.exists(p):
+            rec = json.load(open(p))
+        note = "60 RGB frames per sequence (no depth, no poses) -> VGGT + metric depth -> OpenSNAP; scored on the GT mesh after a similarity " \
+               "alignment of predicted to GT camera centres (scoring only). Unobserved GT vertices count as wrong."
+        if rec:
+            note += (f" Metric-scale error {100 * np.mean([r['metric_scale_error'] for r in rec.values()]):.0f}% on average "
+                     f"(range {100 * min(r['metric_scale_error'] for r in rec.values()):.0f}-{100 * max(r['metric_scale_error'] for r in rec.values()):.0f}%), "
+                     f"camera RMSE {100 * np.mean([r['cam_rmse_m'] for r in rec.values()]):.1f} cm.")
+        table("C10 · Phone-video pipeline on the 8 Replica sequences (RGB only)", "compare/replica_video*.json", ["input", "method", "mIoU", "mAcc", "AP25", "AP50", "AP", "mIoU (observed)", "mAcc (observed)", "GT observed"],
+              rows, note)
+    d = load("compare/guard.json")
+    if d:
+        rows = [[src, v["n"], v["v1_fired"], v["v2_fired"], v.get("v3_fired", "–")] for src, v in d["summary"].items()]
+        table("C11 · Dense-collapse guard: share rule (v1), exact agreement (v2), soft agreement calibrated on clean scans (v3)", "compare/guard.json",
+              ["scenes", "n", "v1 fired", "v2 fired", "v3 fired"], rows,
+              f"v1: {d['rule_v1']}; v2: {d['rule_v2']}; v3: {d.get('rule_v3', '–')}. Calibration rows are random clean scans (false-alarm rate); "
+              "phone-video rows should fire (the 8 RGB-only Replica clouds show 45-71% 'stair rail' dense labels). "
+              "Benchmark rows are every clean scan on which v1 fired in the large runs (14/312 ScanNet val, 21/354 Matterport rooms).")
+    d = load("compare/openscan.json")
+    if d:
+        aspects = ["affordance", "property", "type", "manner", "synonyms", "requirement", "element", "material", "mean"]
+        rows = [[n] + [f1(x) for x in vals] for n, vals in OPENSCAN]
+        for v, r in d["results"].items():
+            rows.append([NAMES.get(v, v)] + [pct(r[a]["AP"]) for a in aspects])
+        table("C12 · OpenScan / GOV-3D attribute queries (ScanNet200 val, instance AP)", "compare/openscan.json; OpenScan Table 3 (published)",
+              ["method"] + aspects, rows, "Published rows use posed RGB images (CLIP crops) and pretrained 3D/2D mask proposals; ours XYZ only.")
+    rows = []
+    for ds in ("replica", "s3dis"):
+        d = load(f"compare/sweep_{ds}.json")
+        if d:
+            for k, r in d["results"].items():
+                if k.endswith("/IS") and (k.startswith("dedup") or k.startswith("opensnap")):
+                    rows.append([ds, k[:-3], pct(r["AP"]), pct(r["AP50"]), f"{r.get('refined', 0):.2f}"])
+    if rows:
+        table("C13 · Cracking trigger theta and dedup IoU across datasets (IS queries)", "compare/sweep_*.json", ["dataset", "setting", "AP", "AP50", "refined / scene"], rows)
+    rows = []
+    for ds in ("s3dis", "replica", "scannet"):
+        d = load(f"compare/agg_{ds}.json")
+        if d:
+            for v in ("opensnap", "opensnap_noisy_or", "opensnap_sum", "phrase_embedding"):
+                r = d["results"].get(f"{v}/NEAR")
+                if r:
+                    ps, ys = [], []
+                    for rec in d["records"]:
+                        for q in rec["results"][v]["queries"]:
+                            if q["kind"] == "NEAR":
+                                for sc, io in zip(q["scores"], q["ious"]):
+                                    ps.append(sc); ys.append(float(max(io, default=0) >= 0.5))
+                    ps, ys = np.asarray(ps), np.asarray(ys)
+                    e = sum(((ps > lo) & (ps <= lo + 1 / 15)).mean() * abs(ps[(ps > lo) & (ps <= lo + 1 / 15)].mean() - ys[(ps > lo) & (ps <= lo + 1 / 15)].mean())
+                            for lo in np.linspace(0, 1, 16)[:-1] if ((ps > lo) & (ps <= lo + 1 / 15)).any())
+                    name = {"opensnap": "OVQL, max witness (default)", "opensnap_noisy_or": "OVQL, noisy-OR", "opensnap_sum": "OVQL, clipped count",
+                            "phrase_embedding": "phrase embedding 'a near a b' (OpenMask3D/Search3D/OVI-MAP style)"}[v]
+                    rows.append([ds, name, pct(r["AP"]), pct(r["AP50"]), f"{e:.3f}"])
+    if rows:
+        table("C9 · Relational queries: OVQL semantics vs phrase-embedding retrieval (NEAR, d = 0.5 m)", "compare/agg_*.json",
+              ["dataset", "query evaluation", "AP", "AP50", "ECE"], rows,
+              "Same stored objects and evidence columns for every row; ground truth = GT objects of class a with a GT object of class b within 0.5 m.")
+
+
 if __name__ == "__main__":
     out.append("# OpenSNAP result tables\n\nGenerated by `scripts/make_tables.py` from the JSON files in `results/`. Do not edit by hand.\n")
-    for f in (semseg, queries, refiner, interactive, naming, text_prompts, text_s3dis, single_click, proposals, systems, sweeps, building):
+    for f in (semseg, queries, refiner, interactive, naming, text_prompts, text_s3dis, single_click, proposals, systems, sweeps, building, compare):
         f()
     open(os.path.join(R, "TABLES.md"), "w").write("\n".join(out))
     print("\n".join(out))

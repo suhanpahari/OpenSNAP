@@ -1,0 +1,109 @@
+{
+ "args": {
+  "bench": "s3dis_dev",
+  "snap_ckpt": "../downloads/ckpt/SNAP_C.pth",
+  "openscene_ckpt": "../downloads/ckpt/matterport_openseg.pth.tar",
+  "feature": "openseg",
+  "dense_voxel": 0.02,
+  "proposals": "fps",
+  "c2f_v0": 0.8,
+  "c2f_levels": 3,
+  "max_dist": 0.05,
+  "gpus": "0",
+  "procs_per_gpu": 2,
+  "limit": 0,
+  "out": "results/compare/dev/s3dis_fps400.json",
+  "num_prompts": 400,
+  "iou_thresh": 0.3,
+  "stability_thresh": 0.5,
+  "nms_thresh": 0.5,
+  "min_points": 30,
+  "tau": 0.01,
+  "alpha": 0.7,
+  "beta": 0.3,
+  "relay_tau": 0.05,
+  "relay_weight": 0.8,
+  "dense_collapse": 0.75,
+  "image_weight": 0.5,
+  "images": 0,
+  "dump": "",
+  "oracle_scale": 0,
+  "frame_step": 10
+ },
+ "n_scenes": 44,
+ "sec_per_scene": 10.021248904141514,
+ "results": {
+  "all": {
+   "opensnap": {
+    "semantic": {
+     "mIoU": 0.3694379406778756,
+     "mAcc": 0.5062874887354804
+    },
+    "inst9_p_x_iou": {
+     "AP": 0.18663319788728241,
+     "AP50": 0.24522308286334868,
+     "AP25": 0.3281227186019124,
+     "per_class_AP": {
+      "beam": 0.0,
+      "column": 0.0,
+      "window": 0.04684923952165331,
+      "door": 0.09585181478903984,
+      "table": 0.1417685298739754,
+      "chair": 0.78665216537669,
+      "sofa": 0.5210648148148148,
+      "bookcase": 0.08751221660936831,
+      "board": 0.0
+     }
+    },
+    "inst9_p": {
+     "AP": 0.14999427368021087,
+     "AP50": 0.19941428444503095,
+     "AP25": 0.27240569490750016,
+     "per_class_AP": {
+      "beam": 0.0,
+      "column": 0.0,
+      "window": 0.02401263015275862,
+      "door": 0.018903658738529044,
+      "table": 0.09506863316305553,
+      "chair": 0.7415723319092064,
+      "sofa": 0.41504629629629625,
+      "bookcase": 0.055344912862052044,
+      "board": 0.0
+     }
+    }
+   },
+   "dense_only": {
+    "semantic": {
+     "mIoU": 0.35319591215735535,
+     "mAcc": 0.49006554972565053
+    },
+    "inst9_p_x_iou": {
+     "AP": 0.1398459290623825,
+     "AP50": 0.17841036347499936,
+     "AP25": 0.231417852192805
+    },
+    "inst9_p": {
+     "AP": 0.11102329970247242,
+     "AP50": 0.1497850721874847,
+     "AP25": 0.1871191345302763
+    }
+   },
+   "token_only": {
+    "semantic": {
+     "mIoU": 0.37924589939325437,
+     "mAcc": 0.5126411438596544
+    },
+    "inst9_p_x_iou": {
+     "AP": 0.20317541498159403,
+     "AP50": 0.2794791462239395,
+     "AP25": 0.37067211682271717
+    },
+    "inst9_p": {
+     "AP": 0.13457714766817913,
+     "AP50": 0.20725908187551226,
+     "AP25": 0.33969851594920153
+    }
+   }
+  }
+ }
+}

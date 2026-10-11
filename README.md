@@ -36,7 +36,8 @@ queries such as `SELECT WHERE IS('chair') AND NEAR(IS('table'), 0.5)` over a sin
 All numbers are produced by the scripts in this repo; every table, with its source file, is in
 **[results/TABLES.md](results/TABLES.md)** (regenerate with `python3 scripts/make_tables.py`); the full analysis
 (per research question, ablations, negative results, protocol caveats, ICDE framing) is in
-**[results/RESULTS.md](results/RESULTS.md)**. A full, explained write-up of the system (data model, semantics, query
+**[results/RESULTS.md](results/RESULTS.md)**; the comparative study against Search3D, OVI-MAP and HouseLayout3D (with the
+answers to the review) is in **[results/COMPARISON.md](results/COMPARISON.md)**. A full, explained write-up of the system (data model, semantics, query
 language, every operator with its equations, experiments and lessons) is in **[paper.md](paper.md)**.
 
 | task | benchmark | SNAP (its own text head) | other baseline | **OpenSNAP** |
@@ -46,7 +47,13 @@ language, every operator with its equations, experiments and lessons) is in **[p
 | | nuScenes LiDAR val, 6019 keyframes (outdoor, 16 classes) | 23.8 | OpenScene 26.9 | **32.0** |
 | | SemanticKITTI seq 08, 19 classes (mIoU / mAcc) | **32.8** / 43.7 | OpenScene (nuScenes model) 20.8 / 37.1 | 31.5 / **45.8** |
 | open-vocab instance segmentation (AP, same protocol) | S3DIS Area 5, 13 classes | 10.5 | — | **15.4** |
-| | Replica, 8 scenes (AP / AP50) | 14.8 / 19.7 | OpenMask3D 13.1 / 18.4 (published) | **19.9 / 25.9** |
+| | Replica, 8 scenes, OVQL query workload (AP / AP50) | 14.8 / 19.7 | — | **19.9 / 25.9** |
+| | Replica, OVI-MAP closed-set protocol (AP / AP50) | — | OVI-MAP 8.5 / 21.2, OpenMask3D 13.1 / 18.4 (published) | **16.9 / 21.8** (image column), 12.9 / 15.1 (XYZ only) |
+| | ScanNet200 val, Search3D protocol (AP) | — | Search3D 23.0, OpenMask3D 15.4 (published, RGB) | 6.1 (XYZ only) |
+| relational queries vs phrase retrieval (NEAR AP50) | S3DIS | — | phrase embedding 14.3 | **21.7** |
+| calibration of IS(c) (ECE) | 5 datasets | — | 4-word background 0.04–0.12 | **0.015–0.022** |
+| building joins (HouseLayout3D, 16 buildings) | NEAR(1 m) recall | — | room-only 75.6% | **100%** (room + halo) |
+| campus scale | 1.22 M objects, NEAR | — | padded join 92.6 ms | **2.6 ms** (pushdown) |
 | | nuScenes LiDAR, 10 thing classes (AP / AP50) | 7.9 / 12.1 | — | **13.9 / 18.8** |
 | | SemanticKITTI seq 08, 8 thing classes (AP / AP50) | 13.9 / 16.3 | — | **20.6 / 23.0** |
 | click → name (accuracy) | Matterport-160, 212 clicks | 30.7 | VLM alone 18.9 | **40.1** (7B VLM) |

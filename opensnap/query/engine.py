@@ -13,8 +13,15 @@ BACKGROUND = ("wall", "floor", "ceiling", "object")
 
 
 class Engine:
-    def __init__(self, opensnap, table, refine=True, refine_below=0.3, background=BACKGROUND, gamma=0.0, dedup=0.5):
-        self.m, self.t, self.dedup = opensnap, table, dedup
+    def __init__(self, opensnap, table, refine=True, refine_below=0.3, background=BACKGROUND, gamma=0.0, dedup=0.5, agg="max",
+                 admit=0.0, verify=False, budget=0.0):
+        """admit: minimum confidence of a cracked tuple; verify: the new tuple must itself satisfy IS(text) >= refine_below;
+        budget: cap on cracked rows as a fraction of base rows, least-used cracked row evicted first."""
+        self.m, self.t, self.dedup, self.agg = opensnap, table, dedup, agg
+        self.admit, self.verify, self.budget = admit, verify, budget
+        self.base_rows = len(table)
+        self.hits = {}
+        self.stats_extra = dict(rejected=0, evicted=0)
         self.refine, self.refine_below, self.background, self.gamma = refine, refine_below, background, gamma
         self.stats = dict(refined=0, is_calls=0)
 
@@ -67,9 +74,24 @@ class Engine:
             if iou.max() > self.dedup:
                 self.stats["dedup"] = self.stats.get("dedup", 0) + 1
                 return int(iou.argmax())
+        if float(conf) < self.admit:
+            self.stats_extra["rejected"] += 1
+            return None
         pooled = F.normalize(dense[mask].mean(0), dim=-1) if dense is not None else None
         oid = self.t.append(torch.nonzero(mask)[:, 0], vc, conf, token, pooled, source)
+        if self.verify and float(self.is_prob(source.split(":", 1)[1], torch.tensor([oid], device=vc.device))[0]) < self.refine_below:
+            self.t.remove(oid)
+            self.stats_extra["rejected"] += 1
+            return None
         self.stats["refined"] += 1
+        if self.budget:
+            cracked = [i for i, p in enumerate(self.t.provenance) if p != "auto"]
+            if len(cracked) > self.budget * self.base_rows:
+                victim = min((i for i in cracked if i != oid), key=lambda i: self.hits.get(self.t.provenance[i], 0), default=None)
+                if victim is not None:
+                    self.t.remove(victim)
+                    self.stats_extra["evicted"] += 1
+                    oid = oid - 1 if victim < oid else oid
         return oid
 
     def plan(self, node):
@@ -108,17 +130,26 @@ class Engine:
             if self.t.room is None:
                 rel = self.relation(op, a[1])
                 rel.fill_diagonal_(0)
-                return (rel * pa[None]).max(1).values
+                return self.exists(rel * pa[None], 1)
             pad = self.padded()                                   # (R, P) row ids, -1 = padding
             valid = pad >= 0
             ids = pad.clamp(min=0)
             rel = self.relation(op, a[1], ids) * (valid[:, :, None] & valid[:, None, :])
             rel = rel * (1 - torch.eye(pad.shape[1], device=rel.device))[None]
-            sub = (rel * pa[ids][:, None, :]).max(2).values       # (R, P)
+            sub = self.exists(rel * pa[ids][:, None, :], 2)      # (R, P)
             out = torch.zeros_like(pa)
             out[pad[valid]] = sub[valid]
             return out
         raise ValueError(op)
+
+    def exists(self, w, dim):
+        """Existential quantifier over witnesses: max (most probable witness), noisy-OR (independent witnesses) or
+        clipped expected count."""
+        if self.agg == "max":
+            return w.max(dim).values
+        if self.agg == "noisy_or":
+            return 1 - torch.exp(torch.log1p(-w.clamp(max=1 - 1e-6)).sum(dim))
+        return w.sum(dim).clamp(max=1.0)
 
     def padded(self):
         """(R, P) object ids per scene, padded with -1 (cached): spatial joins never cross scenes."""
@@ -159,4 +190,7 @@ class Engine:
         if q.limit:
             order = order[: q.limit]
         idx, val = order.cpu().numpy(), score[order].cpu().numpy()
+        for i, v in zip(idx[:10].tolist(), val[:10].tolist() if self.budget else []):
+            if v >= 0.5 and self.t.provenance[i] != "auto":
+                self.hits[self.t.provenance[i]] = self.hits.get(self.t.provenance[i], 0) + 1
         return list(zip(idx.tolist(), val.tolist())), dict(ms=1000 * (time.time() - t0), **self.stats)

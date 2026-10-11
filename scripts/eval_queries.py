@@ -33,6 +33,11 @@ DECODER_VARIANTS = {"opensnap_refine_v4": dict(dense=True, relay=0.8, refine=Tru
                     "opensnap_refine_v4_nodedup": dict(dense=True, relay=0.8, refine=True, decoder=True, dedup=0.0)}
 
 
+AGG_VARIANTS = {"opensnap_noisy_or": dict(dense=True, relay=0.8, refine=False, agg="noisy_or"),
+                "opensnap_sum": dict(dense=True, relay=0.8, refine=False, agg="sum"),
+                "phrase_embedding": dict(dense=True, relay=0.8, refine=False, phrase=True)}
+
+
 def sweep_variants():
     return {f"dedup{d}_t{t}": dict(dense=True, relay=0.8, refine=True, theta=t, dedup=d)
             for d in (0.3, 0.5, 0.7) for t in (0.1, 0.2, 0.3)}
@@ -88,6 +93,8 @@ def worker(rank, gpu, files, args, queue):
     decoder = None
     if args.text_ckpt:
         EXTRA.update(DECODER_VARIANTS)
+    if args.agg_sweep:
+        EXTRA.update(AGG_VARIANTS)
     import dataclasses
     from opensnap.core import Config, OpenSNAP
     from opensnap.data import snap_train_vocab
@@ -135,10 +142,12 @@ def worker(rank, gpu, files, args, queue):
             m.cfg = dataclasses.replace(Config(), relay_weight=v["relay"])
             m.text_decoder = decoder if v.get("decoder") else None
             eng = Engine(m, table, refine=v["refine"], gamma=v.get("gamma", 0.0), refine_below=v.get("theta", 0.3),
-                         dedup=v.get("dedup", 0.0))
+                         dedup=v.get("dedup", 0.0), agg=v.get("agg", "max"))
             out = []
             for kind, a, b in queries:
                 q = f"SELECT WHERE IS('{a}')" if kind == "IS" else f"SELECT WHERE IS('{a}') AND NEAR(IS('{b}'), {args.near})"
+                if v.get("phrase") and kind == "NEAR":
+                    q = f"SELECT WHERE IS('{a} near a {b}')"
                 res, st = eng.run(q)
                 masks = [np.isin(np.arange(len(vc)), table.points[i]) for i, _ in res]
                 gt_idx = [k for k, o in enumerate(objs) if o[0] == a] if kind == "IS" else relational_gt(objs, a, b, args.near)
@@ -229,6 +238,7 @@ def main():
     ap.add_argument("--proposals", default="fps", choices=["fps", "c2f"])
     ap.add_argument("--text_ckpt", default="")
     ap.add_argument("--split_override", default="")
+    ap.add_argument("--agg_sweep", type=int, default=0)
     args = ap.parse_args()
 
     root, splits, _ = DATA[args.dataset]

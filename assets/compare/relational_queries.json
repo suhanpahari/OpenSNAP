@@ -1,0 +1,42 @@
+[
+ {
+  "dataset": "replica",
+  "scene": "room1",
+  "a": "nightstand",
+  "b": "pillow",
+  "ovql_top1_iou": 0.8778135048231511,
+  "phrase_top1_iou": 0.0,
+  "ovql_score": 0.9977794289588928,
+  "phrase_score": 0.9989996552467346
+ },
+ {
+  "dataset": "replica",
+  "scene": "office4",
+  "a": "window",
+  "b": "chair",
+  "ovql_top1_iou": 0.6892247043363995,
+  "phrase_top1_iou": 0.0,
+  "ovql_score": 0.12471926212310791,
+  "phrase_score": 0.9955072402954102
+ },
+ {
+  "dataset": "s3dis",
+  "scene": "conferenceRoom_2",
+  "a": "sofa",
+  "b": "chair",
+  "ovql_top1_iou": 0.9967045454545455,
+  "phrase_top1_iou": 0.0,
+  "ovql_score": 0.9838499426841736,
+  "phrase_score": 0.9999740123748779
+ },
+ {
+  "dataset": "s3dis",
+  "scene": "office_1",
+  "a": "window",
+  "b": "chair",
+  "ovql_top1_iou": 0.7888512044525611,
+  "phrase_top1_iou": 0.0,
+  "ovql_score": 0.9931472539901733,
+  "phrase_score": 0.9964392781257629
+ }
+]

@@ -65,12 +65,14 @@ def load_models(cache_dir=None, device="cuda"):
     return vggt, metric
 
 
-def reconstruct(video, out, vggt, metric, frames=48, conf_pct=65, max_depth=2.5, voxel=0.005, scale_frames=8, ply=True, log=print):
-    """Writes coord.npy, color.npy, views.npz (cameras, metric depth, frame paths) and optionally cloud.ply into `out`."""
+def reconstruct(video, out, vggt, metric, frames=48, conf_pct=65, max_depth=2.5, voxel=0.005, scale_frames=8, ply=True, log=print,
+                frame_paths=None):
+    """Writes coord.npy, color.npy, views.npz (cameras, metric depth, frame paths) and optionally cloud.ply into `out`.
+    `frame_paths` skips frame extraction (an image sequence instead of a video file)."""
     from vggt.utils.geometry import unproject_depth_map_to_point_map
     from vggt.utils.load_fn import load_and_preprocess_images
     from vggt.utils.pose_enc import pose_encoding_to_extri_intri
-    paths = extract_frames(video, os.path.join(out, "frames"), frames)
+    paths = frame_paths if frame_paths is not None else extract_frames(video, os.path.join(out, "frames"), frames)
     log(f"{len(paths)} frames")
     dev = next(vggt.parameters()).device
     images = load_and_preprocess_images(paths).to(dev)

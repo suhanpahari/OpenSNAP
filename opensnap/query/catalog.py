@@ -36,6 +36,19 @@ class ObjectTable:
         self.provenance.append(source)
         return len(self) - 1
 
+    def remove(self, i):
+        """Delete row i (used by cracking eviction); query-time cracked map is re-pointed."""
+        keep = torch.arange(len(self), device=self.conf.device) != i
+        self.points.pop(i)
+        self.provenance.pop(i)
+        for k in ("bbox_min", "bbox_max", "centroid", "conf", "token"):
+            setattr(self, k, getattr(self, k)[keep])
+        if self.pooled.numel():
+            self.pooled = self.pooled[keep]
+        if self.room is not None:
+            self.room = self.room[keep]
+        self.cracked = {t: (None if o is None or o == i else (o - 1 if o > i else o)) for t, o in self.cracked.items()}
+
     def nbytes(self):
         pts = sum(p.nbytes for p in self.points)
         emb = sum(t.numel() * 2 for t in (self.token, self.pooled))  # stored as fp16
