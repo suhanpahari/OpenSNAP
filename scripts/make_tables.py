@@ -433,8 +433,18 @@ def compare():
                     ins = r[f"inst{key}_p_x_iou"]
                     tag = prop + ("" if split == "all" else " (15 val scenes)")
                     rows.append([NAMES.get(v, v) + tag, pct(r["semantic"]["mIoU"]), pct(r["semantic"]["mAcc"]), pct(ins["AP25"]), pct(ins["AP50"]), pct(ins["AP"])])
+        idev, ich = image_dev()
+        for k, lab in ((("replica_union", "[union_l4]"), ("replica_lift", "[union_l4 + lifted 2D]")) if "replica" in names[0] else
+                       (("scannet18", "[union_l4]"),)):
+            if k in idev:
+                c = idev[k]["dev-chosen image setting"]
+                rows.append([f"**OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** {lab}", pct(c["mIoU"]), pct(c["mAcc"]),
+                             pct(c["AP25"]), pct(c["AP50"]), pct(c["AP"])])
         tu = load("compare/tuned.json")
         bench_name = "replica" if "replica" in names[0] else "scannet18"
+        s18 = load("compare/scannet18_tuned.json") if bench_name == "scannet18" else None
+        if s18:
+            tu = {"test": {"scannet18": {"default": s18["default"], "dev-chosen": s18["chosen"]}}}
         if tu and bench_name in tu["test"]:
             t = tu["test"][bench_name]
             for k, lab in (("default", "OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay"),
@@ -634,6 +644,17 @@ SCANNET200_312 = [("OVO-SLAM Tab. III (FVS)", "Open3DIS (SigLIP)", 9.4, 17.0), (
                   ("OVO-SLAM Tab. III (FVS)", "OVO-mapping", 17.4, 35.9)]
 
 
+def image_dev():
+    """Merged test results of the image setting chosen on ScanNet train development scenes (tune_image_dev.py)."""
+    out, chosen = {}, None
+    for f in ("compare/scannet_image_dev.json", "compare/image_dev_a.json", "compare/image_dev_b.json"):
+        d = load(f)
+        if d:
+            out.update(d["test"])
+            chosen = d["chosen"]
+    return out, chosen
+
+
 def landscape():
     rows = [[src, m, inp, f1(a), f1(b)] for src, m, inp, a, b in REPLICA51]
     for name, tag in (("compare/replica_ovimap_c2f.json", "c2f"), ("compare/replica_lift.json", "union_l4 + lifted 2D proposals")):
@@ -643,6 +664,11 @@ def landscape():
                 r = d["results"]["all"].get(v)
                 if r:
                     rows.append(["ours", f"{NAMES.get(v, v)} [{tag}]", "mesh (+ RGB for image rows)", pct(r["semantic"]["mIoU"]), pct(r["semantic"]["mAcc"])])
+    idev, _ = image_dev()
+    if "replica_union" in idev:
+        c = idev["replica_union"]["dev-chosen image setting"]
+        rows.append(["ours", "**OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** [union_l4]", "mesh + RGB",
+                     pct(c["mIoU"]), pct(c["mAcc"])])
     tu = load("compare/tuned.json")
     if tu and "replica" in tu["test"]:
         c = tu["test"]["replica"]["dev-chosen + image (LOSO w_img)"]

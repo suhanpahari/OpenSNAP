@@ -26,7 +26,7 @@ datasets (ScanNet, ScanNet200, Matterport3D-160, S3DIS, Replica, nuScenes, Seman
 | Open-vocab 3D semantic segmentation beats both SNAP's text head and OpenScene | T1/T2, T2b | ScanNet 58.2 vs 41.5 (SNAP) / 52.0 (OpenScene); nuScenes 32.0 vs 23.8 / 26.9 |
 | Generalises to classes the segmenter never saw | T1/T2 | Matterport-160 unseen classes 5.7 vs 1.9 (SNAP), 5.5 (OpenScene) |
 | OVQL query accuracy beats SNAP's text token on every dataset (query workload, classes present) | T4, T4b–d | S3DIS 15.4 vs 10.5; Replica 19.9 vs 14.8; nuScenes 13.9 vs 7.9; SemanticKITTI 20.6 vs 13.9 (not comparable to OpenMask3D's closed-set protocol, see C1) |
-| Under OVI-MAP's exact protocol, stored objects beat OVI-MAP on strict AP | C1, C2 | Replica AP 21.9 and mIoU 29.0 (image column + lifted proposals) / AP 12.9 (XYZ only) vs 8.5 and 26.5; ScanNet-18 AP 9.8 (XYZ only) vs 7.2 |
+| Under OVI-MAP's exact protocol, with settings chosen on ScanNet train scenes, OpenSNAP beats OVI-MAP on all five metrics | C1, C2 | Replica 31.6 / 44.1 / 34.8 / 30.6 / 24.7 vs 26.5 / 32.2 / 34.5 / 21.2 / 8.5; ScanNet-18 28.8 / 42.8 / 38.1 / 30.1 / 20.0 vs 17.5 / 27.6 / 23.4 / 15.7 / 7.2 (mIoU / mAcc / AP25 / AP50 / AP) |
 | OVQL beats phrase-embedding retrieval on relational queries | C9 | NEAR AP50 21.7 vs 14.3 (S3DIS), 24.8 vs 21.7 (Replica); ECE 0.02–0.03 vs 0.07–0.09 |
 | IS(c) is calibrated across 5 datasets | C5 | ECE 0.015–0.022 with the 234-word background; 0.004–0.010 after Platt scaling fitted on ScanNet train |
 | Building joins: halo makes room partitioning exact; cross-floor vertical answers removed | C4 | 16 HouseLayout3D buildings: room-only NEAR recall 68–85%, room+halo 100%; ~50% of global ABOVE/BELOW answers are cross-floor |
@@ -294,8 +294,8 @@ The full comparative study against Search3D, OVI-MAP and HouseLayout3D, and the 
 video), is in **[COMPARISON.md](COMPARISON.md)** with tables C1–C13 in `TABLES.md`. Short version:
 
 * **Ahead (same protocol):**
-  * Strict-IoU instance quality vs OVI-MAP (Replica AP 21.9 / 12.9 vs 8.5; ScanNet AP 9.8 vs 7.2).
-  * All five Replica metrics vs OVI-MAP with the image column and lifted proposals (29.0 / 41.5 / 35.0 / 28.1 / 21.9 vs 26.5 / 32.2 / 34.5 / 21.2 / 8.5).
+  * Strict-IoU instance quality vs OVI-MAP (Replica AP 24.7 / 12.9 vs 8.5; ScanNet AP 20.0 / 9.8 vs 7.2; image column / XYZ only).
+  * All five metrics vs OVI-MAP on Replica and ScanNet-18 with the image column, settings chosen on ScanNet train scenes.
   * Relational queries vs phrase retrieval (C9).
   * Calibration (C5).
   * Building and campus joins (C4, C8).

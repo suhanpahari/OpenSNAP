@@ -547,6 +547,8 @@ _Source: compare/replica_lift.json (ours); OVI-MAP Table 3 (published)_
 |   segmenter token only [union_l4 + lifted 2D] | 17.3 | 25.5 | 15.1 | 13.5 | 11.7 |
 | **OpenSNAP + image column** [union_l4 + lifted 2D] | 19.6 | 29.6 | 22.7 | 17.9 | 13.1 |
 |   image column only [union_l4 + lifted 2D] | 21.6 | 38.5 | 26.3 | 19.7 | 13.6 |
+| **OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** [union_l4] | 31.6 | 44.1 | 34.8 | 30.6 | 24.7 |
+| **OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** [union_l4 + lifted 2D] | 28.1 | 39.8 | 33.1 | 27.9 | 19.6 |
 | OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay | 18.3 | 27.9 | 17.5 | 15.7 | 13.5 |
 | OpenSNAP (XYZ only) [union_l4], labelling setting chosen on dev scenes | 17.5 | 27.0 | 18.0 | 16.0 | 13.8 |
 | **OpenSNAP + image column** [union_l4], dev-chosen setting, image weight by leave-one-scene-out | 29.8 | 40.3 | 33.1 | 27.3 | 21.2 |
@@ -577,8 +579,9 @@ _Source: compare/scannet18.json (ours); OVI-MAP Table 3 (published)_
 | OpenSNAP (XYZ only) (15 val scenes) | 15.6 | 22.2 | 19.7 | 16.8 | 11.5 |
 |   dense 3D expert only (15 val scenes) | 11.0 | 17.3 | 11.9 | 11.1 | 7.7 |
 |   segmenter token only (15 val scenes) | 15.4 | 23.4 | 17.8 | 15.5 | 11.2 |
-| OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay | 14.4 | 20.7 | 18.3 | 13.6 | 8.9 |
-| OpenSNAP (XYZ only) [union_l4], labelling setting chosen on dev scenes | 15.0 | 21.3 | 18.2 | 13.5 | 8.8 |
+| **OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** [union_l4] | 28.8 | 42.8 | 38.1 | 30.1 | 20.0 |
+| OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay | 14.4 | 20.7 | 19.2 | 14.6 | 9.8 |
+| OpenSNAP (XYZ only) [union_l4], labelling setting chosen on dev scenes | 15.0 | 21.3 | 19.1 | 14.5 | 9.8 |
 
 Published rows are copied from OVI-MAP (CVPR 2026) Table 3. Ours: same scenes, classes and per-vertex scoring (classes without GT vertices skipped; instance AP with the ScanNet evaluator, predictions < 100 vertices dropped).
 
@@ -852,6 +855,7 @@ _Source: papers cited per row; ours from compare/*.json_
 | ours | OpenSNAP (XYZ only) [union_l4 + lifted 2D proposals] | mesh (+ RGB for image rows) | 18.4 | 27.9 |
 | ours | **OpenSNAP + image column** [union_l4 + lifted 2D proposals] | mesh (+ RGB for image rows) | 19.6 | 29.6 |
 | ours |   image column only [union_l4 + lifted 2D proposals] | mesh (+ RGB for image rows) | 21.6 | 38.5 |
+| ours | **OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** [union_l4] | mesh + RGB | 31.6 | 44.1 |
 | ours | **OpenSNAP + image column** [union_l4], dev-chosen setting, image weight by leave-one-scene-out | mesh + RGB | 29.8 | 40.3 |
 | ours | **OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4] | mesh + RGB | 25.5 | 35.5 |
 | ours | **OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4, dev-chosen setting] | mesh + RGB | 29.0 | 41.5 |
