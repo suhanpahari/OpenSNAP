@@ -27,9 +27,10 @@ def render(coord, color, layers, size=520):
     keep = coord[:, 2] < np.percentile(coord[:, 2], 99) - 0.35
     c, col = coord[keep], color[keep].astype(np.float32) / 255
     rgb = 0.35 + 0.45 * col.mean(1, keepdims=True).repeat(3, 1)
-    for mask, tint in layers:
-        m = mask[keep]
-        rgb[m] = np.asarray(tint, np.float32)
+    for layer in layers:
+        m, tint = layer[0][keep], np.asarray(layer[1], np.float32)
+        a = layer[2] if len(layer) > 2 else 1.0
+        rgb[m] = (1 - a) * rgb[m] + a * tint
     ctr = c.mean(0)
     ext = np.ptp(c[:, :2], 0).max()
     eye = ctr + np.array([0.12 * ext, -0.38 * ext, 1.25 * ext])

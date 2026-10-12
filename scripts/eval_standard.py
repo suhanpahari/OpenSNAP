@@ -23,6 +23,7 @@ from opensnap.core import Config  # noqa: E402
 VOCAB = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "opensnap", "vocab")
 PC = os.path.join(paths.DOWNLOADS, "data", "pointcept")
 NICE = os.path.join(paths.DOWNLOADS, "replica_nice", "Replica")
+SCANNET_2D = os.path.join(paths.DOWNLOADS, "data", "scannet_2d")
 OVIMAP_GT = os.path.join(paths.DOWNLOADS, "papers", "ovimap", "scripts", "datasets")
 SCANNET18 = ["scene0011_00", "scene0011_01", "scene0050_00", "scene0050_01", "scene0050_02", "scene0084_00", "scene0084_01",
              "scene0084_02", "scene0168_00", "scene0168_01", "scene0168_02", "scene0231_00", "scene0231_01", "scene0231_02",
@@ -154,7 +155,7 @@ def _worker(rank, gpu, scenes, args, queue):
     intr = json.load(open(os.path.join(NICE, "cam_params.json")))["camera"] if args.bench.startswith("replica") else None
     from opensnap.views import PosedFrames
     if args.images:
-        from opensnap.views import ImageExpert, PosedFrames, VideoFrames, object_embeddings
+        from opensnap.views import ImageExpert, PosedFrames, ScanNetFrames, VideoFrames, object_embeddings
         expert = ImageExpert(cache_dir=os.path.join(paths.DOWNLOADS, "hf", "hub"))
 
     for scene in scenes:
@@ -186,7 +187,8 @@ def _worker(rank, gpu, scenes, args, queue):
             frames = VideoFrames(os.path.join(paths.DOWNLOADS, "runs", "video_replica", scene, "views.npz"),
                                  scale=float(np.load(os.path.join(paths.DOWNLOADS, "runs", "video_replica", scene, "align.npz"))["s"])
                                  if args.oracle_scale else 1.0) \
-                if args.bench == "replica_video" else PosedFrames(os.path.join(NICE, scene), intr, step=args.frame_step)
+                if args.bench == "replica_video" else ScanNetFrames(os.path.join(SCANNET_2D, scene)) if args.bench.startswith("scannet") \
+                else PosedFrames(os.path.join(NICE, scene), intr, step=args.frame_step)
             emb, nviews = object_embeddings(frames, expert, coord, vmask[:, inv])
             rec["image_sec"], rec["views_per_object"] = time.time() - t1, float(nviews.mean())
             variants.update({k: {**v, "image": (emb, expert)} for k, v in IMAGE_VARIANTS.items()})

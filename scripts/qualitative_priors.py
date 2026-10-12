@@ -2,7 +2,9 @@
 * Each prior's query interface is emulated on the same stored objects with its published image encoder: the phrase
 "a near a b" is embedded and the most similar object returned (OpenMask3D: CLIP ViT-L/14@336 crops; Search3D: SigLIP
 so400m crops; OVI-MAP: SigLIP-L/16-384 crops from selected views). Ours: IS(a) AND NEAR(IS(b), 0.5).
-Rows: candidate queries where OVQL won by AP50 margin, kept if ours is correct and every prior is wrong."""
+Rows: candidate queries where OVQL won by AP50 margin, kept if ours is correct and every prior is wrong.
+Method columns are probability heatmaps: every stored object is coloured by that method's probability for the query
+(ours: the OVQL answer probability; priors: softmax over objects of phrase similarity), painted in ascending order."""
 import json
 import os
 import sys
@@ -22,6 +24,22 @@ def candidates():
     return sorted({(r["scene"], q["a"], q["b"]) for r in d["records"] for q in r["results"]["opensnap"]["queries"] if q["kind"] == "NEAR"})
 PRIORS = [("OpenMask3D*", "clip"), ("Search3D*", "google/siglip-so400m-patch14-384"), ("OVI-MAP*", "google/siglip-large-patch16-384")]
 GREEN, BLUE, RED = (0.15, 0.75, 0.25), (0.2, 0.45, 0.95), (0.92, 0.15, 0.15)
+TAU = 0.01
+
+
+def heat(vox, inv, p):
+    """Layers for render(): objects in ascending probability, coloured by q = p / max p (turbo), opacity rising with q;
+    objects with q < 0.02 stay grey."""
+    from matplotlib import colormaps
+    cmap = colormaps["turbo"]
+    q = np.asarray(p, np.float64) / max(float(np.max(p)), 1e-12)
+    return [(vox[i][inv], cmap(0.08 + 0.9 * q[i])[:3], min(1.0, 0.35 + 0.65 * q[i])) for i in np.argsort(q) if q[i] >= 0.02]
+
+
+def colorbar(w, h):
+    from matplotlib import colormaps
+    x = colormaps["turbo"](0.08 + 0.9 * np.linspace(0, 1, w))[:, :3]
+    return Image.fromarray((np.repeat(x[None], h, 0) * 255).astype(np.uint8))
 
 
 def font(size, bold=False):
@@ -78,15 +96,18 @@ def main():
         vox = [np.isin(np.arange(len(vc)), p) for p in table.points]
         iou = lambda i: max([(vox[i] & objs[g][1]).sum() / max((vox[i] | objs[g][1]).sum(), 1) for g in gs] or [0])
         eng = Engine(m, table, refine=False)
-        top_o = eng.run(f"SELECT WHERE IS('{a}') AND NEAR(IS('{b}'), 0.5)")[0][0][0]
-        rel = eng.relation("NEAR", 0.5)
-        rel.fill_diagonal_(0)
-        wit = int((rel[top_o] * eng.is_prob(b)).argmax())
+        res = eng.run(f"SELECT WHERE IS('{a}') AND NEAR(IS('{b}'), 0.5)")[0]
+        top_o = res[0][0]
+        p_ours = np.zeros(len(vox))
+        for i, v in res:
+            p_ours[i] = v
         if "emb" not in cache[scene]:
             frames = PosedFrames(os.path.join(nice, scene), intr, step=10)
             pts_masks = np.stack([v[inv] for v in vox])
             cache[scene]["emb"] = {k: object_embeddings(frames, experts[k], coord, pts_masks)[0] for _, k in PRIORS}
-        picks = {name: int((cache[scene]["emb"][k] @ experts[k].text([f"{a} near a {b}"]).T)[:, 0].argmax()) for name, k in PRIORS}
+        sims = {name: (cache[scene]["emb"][k] @ experts[k].text([f"{a} near a {b}"]).T)[:, 0] for name, k in PRIORS}
+        probs = {name: (s / TAU).softmax(0).cpu().numpy() for name, s in sims.items()}
+        picks = {name: int(s.argmax()) for name, s in sims.items()}
         rec = dict(scene=scene, a=a, b=b, ours=float(iou(top_o)), **{n: float(iou(i)) for n, i in picks.items()})
         results.append(rec)
         print(rec, flush=True)
@@ -98,8 +119,8 @@ def main():
             refm = np.zeros(len(coord), bool)
             for g in gr:
                 refm |= objs[g][1][inv]
-            ims = [render(coord, color, [(refm, BLUE), (gtm, GREEN)]), render(coord, color, [(to_pts(wit), BLUE), (to_pts(top_o), RED)])]
-            ims += [render(coord, color, [(to_pts(picks[n]), RED)]) for n, _ in PRIORS]
+            ims = [render(coord, color, [(refm, BLUE), (gtm, GREEN)]), render(coord, color, heat(vox, inv, p_ours))]
+            ims += [render(coord, color, heat(vox, inv, probs[n])) for n, _ in PRIORS]
             notes = ["Target And Reference", f"Correct (IoU {rec['ours']:.2f})"] + [f"Wrong (IoU {rec[n]:.2f})" for n, _ in PRIORS]
             panels.append((f"Query: {title(a)} Near {title(b)}  ({title(scene)})", ims, notes))
     json.dump(results, open("assets/compare/priors_relational.json", "w"), indent=1)
@@ -112,7 +133,7 @@ def main():
     W, H, pad, top, lab = panels[0][1][0].width, panels[0][1][0].height, 8, 46, 34
     heads = ["GT", "Ours"] + [n for n, _ in PRIORS]
     rowh = lab + H + 30
-    fig = Image.new("RGB", (5 * W + 6 * pad, top + len(panels) * rowh + 70), "white")
+    fig = Image.new("RGB", (5 * W + 6 * pad, top + len(panels) * rowh + 110), "white")
     d = ImageDraw.Draw(fig)
     for c, h in enumerate(heads):
         centred(d, pad + c * (W + pad), W, 10, h, font(24, True))
@@ -123,9 +144,17 @@ def main():
             x = pad + c * (W + pad)
             fig.paste(im, (x, y + lab))
             centred(d, x, W, y + lab + H + 4, nt, font(16), fill=(30, 120, 40) if nt.startswith("Correct") else (60, 60, 60) if c == 0 else (170, 30, 30))
-    foot = ("Green: Target Objects; Blue: Reference Objects (Ours: The Witness); Red: Top-1 Answer.  * Query Interface Emulated On The Same "
-            "Stored Objects With Each Method's Published Image Encoder.")
-    centred(d, 0, fig.width, fig.height - 50, foot, font(15), fill=(70, 70, 70))
+    bw = 2 * W
+    bx = (fig.width - bw) // 2
+    by = fig.height - 96
+    fig.paste(colorbar(bw, 16), (bx, by))
+    f = font(15)
+    d.text((bx - d.textlength("Low", font=f) - 10, by), "Low", font=f, fill=(60, 60, 60))
+    d.text((bx + bw + 10, by), "High", font=f, fill=(60, 60, 60))
+    centred(d, 0, fig.width, by + 22, "Probability Of The Query, Normalised Per Method", f, fill=(60, 60, 60))
+    foot = ("GT: Green Targets, Blue References.  Methods: Stored Objects Coloured By Their Probability (Grey: Near Zero), Highest Drawn On Top.  "
+            "* Query Interface Emulated On The Same Stored Objects With Each Method's Published Image Encoder.")
+    centred(d, 0, fig.width, fig.height - 30, foot, font(14), fill=(70, 70, 70))
     fig.save("assets/compare/relational_priors.jpg", quality=92)
 
 

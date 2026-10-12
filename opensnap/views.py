@@ -45,6 +45,26 @@ class PosedFrames:
         return vis, uv
 
 
+class ScanNetFrames(PosedFrames):
+    """OpenScene's processed ScanNet frames: <scene>/{color,depth,pose}/<frame>.{jpg,png,txt}, every 20th frame, 320x240,
+    depth in millimetres, shared intrinsics.txt one level up. Frames with invalid poses are skipped."""
+
+    def __init__(self, root, step=1, depth_scale=1000.0):
+        self.root, self.step, self.depth_scale = root, step, depth_scale
+        fids = sorted(int(f[:-4]) for f in os.listdir(os.path.join(root, "pose")))[::step]
+        poses = {f: np.loadtxt(os.path.join(root, "pose", f"{f}.txt")) for f in fids}
+        self.ids = [f for f in fids if np.isfinite(poses[f]).all()]
+        self.c2w = np.stack([poses[f] for f in self.ids]).astype(np.float32)
+        self.K = np.loadtxt(os.path.join(os.path.dirname(root.rstrip("/")), "intrinsics.txt"))[:3, :3].astype(np.float32)
+        self.W, self.H = 320, 240
+
+    def color(self, k):
+        return Image.open(os.path.join(self.root, "color", f"{self.ids[k]}.jpg")).convert("RGB")
+
+    def depth(self, k):
+        return np.asarray(Image.open(os.path.join(self.root, "depth", f"{self.ids[k]}.png")), np.float32) / self.depth_scale
+
+
 def _tensor(x):
     return x if torch.is_tensor(x) else x.pooler_output
 
