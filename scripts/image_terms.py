@@ -1,4 +1,4 @@
-"""Per-object class probabilities from additional image encoders, on the stored objects of a dump (Replica posed frames).
+"""Per-object class probabilities from additional image encoders, on the stored objects of a dump (Replica or ScanNet frames).
 Saved beside the dump as <dump>_img/<scene>.pt: {encoder name: (M, C) half}."""
 import argparse
 import glob
@@ -22,9 +22,12 @@ def main():
     ap.add_argument("--dump", nargs="+", default=["../downloads/runs/dump_replica_ul4", "../downloads/runs/dump_replica_lift"])
     ap.add_argument("--encoders", nargs="+", default=list(ENCODERS))
     ap.add_argument("--frame_step", type=int, default=10)
+    ap.add_argument("--bench", default="replica")
+    ap.add_argument("--shard", default="0/1", help="i/n: every n-th scene starting at i")
     a = ap.parse_args()
-    from opensnap.views import CLIPExpert, ImageExpert, PosedFrames, object_embeddings
-    labels, ids, _, _ = E.benchmark("replica")
+    from opensnap.views import CLIPExpert, ImageExpert, PosedFrames, ScanNetFrames, object_embeddings
+    labels, ids, _, _ = E.benchmark(a.bench)
+    replica = a.bench == "replica"
     intr = json.load(open(os.path.join(E.NICE, "cam_params.json")))["camera"]
     hub = os.path.join(paths.DOWNLOADS, "hf", "hub")
     for name in a.encoders:
@@ -33,17 +36,21 @@ def main():
         for dump in a.dump:
             out_dir = dump.rstrip("/") + "_img"
             os.makedirs(out_dir, exist_ok=True)
-            for f in sorted(glob.glob(os.path.join(dump, "*.pt"))):
+            i, n = (int(x) for x in a.shard.split("/"))
+            for f in sorted(glob.glob(os.path.join(dump, "*.pt")))[i::n]:
                 scene = os.path.basename(f)[:-3]
                 o = os.path.join(out_dir, f"{scene}.pt")
                 cur = torch.load(o, weights_only=False) if os.path.exists(o) else {}
+                if "siglip_l" not in cur:
+                    cur["siglip_l"] = torch.load(f, weights_only=False)["terms"]["image"]
                 if name in cur:
                     continue
                 d = torch.load(f, weights_only=False)
                 assert list(d["ids"]) == list(ids)
-                coord = E.load_replica(scene)[0]
+                coord = (E.load_replica if replica else E.load_scannet)(scene)[0]
                 masks = (d["w"].float() > 0).numpy()[:, d["inverse"].numpy()]
-                frames = PosedFrames(os.path.join(E.NICE, scene), intr, step=a.frame_step)
+                frames = PosedFrames(os.path.join(E.NICE, scene), intr, step=a.frame_step) if replica \
+                    else ScanNetFrames(os.path.join(E.SCANNET_2D, scene))
                 emb, _ = object_embeddings(frames, expert, coord, masks)
                 p = expert.probs(emb, labels)
                 p = torch.where((emb.norm(dim=-1) > 0)[:, None], p, torch.full_like(p, 1.0 / len(labels)))

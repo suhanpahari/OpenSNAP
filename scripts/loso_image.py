@@ -26,8 +26,8 @@ G, M, VALID = {}, {}, []
 
 
 def _match(job):
-    s, preds = job
-    return bench.match_scene(G[s], [(mk, l, c) for mk, (l, c) in zip(M[s], preds)], VALID)
+    k, preds = job
+    return bench.match_scene(G[k[1]], [(mk, l, c) for mk, (l, c) in zip(M[k], preds)], VALID)
 
 
 def probs(d, img, base, w, mix, t_img):
@@ -44,8 +44,8 @@ def metrics(cms, matches):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dump", default="../downloads/runs/dump_replica_lift")
-    ap.add_argument("--recs", default="results/compare/replica_lift_recs.pt")
+    ap.add_argument("--dump", nargs="+", default=["../downloads/runs/dump_replica_lift"], help="several dumps: proposal set is a grid dimension")
+    ap.add_argument("--recs", nargs="+", default=["results/compare/replica_lift_recs.pt"])
     ap.add_argument("--base", default="results/compare/tuned.json")
     ap.add_argument("--out", default="results/compare/replica_lift_loso_image.json")
     ap.add_argument("--workers", type=int, default=12)
@@ -53,42 +53,47 @@ def main():
     ap.add_argument("--inst", default="")
     ap.add_argument("--weights", default="0.6,0.75,0.9")
     a = ap.parse_args()
-    R = {r["scene"]: r for r in torch.load(a.recs, weights_only=False)}
     if a.bench == "replica":
         v = json.load(open(os.path.join(VOCAB, "replica51.json")))
         VALID.extend(v["labels"].index(l) + 1 for l in v["instance_labels"])
     else:
         VALID.extend(E.benchmark(a.bench)[3][a.inst])
     base = tuple(json.load(open(a.base))["chosen"][:4])
-    scenes = sorted(os.path.basename(f)[:-3] for f in glob.glob(os.path.join(a.dump, "*.pt")))
-    D = {s: torch.load(os.path.join(a.dump, f"{s}.pt"), weights_only=False) for s in scenes}
-    side = a.dump.rstrip("/") + "_img"
-    I = {s: {k: x.float() for k, x in torch.load(os.path.join(side, f"{s}.pt"), weights_only=False).items()} if os.path.isdir(side)
-         else {"siglip_l": D[s]["terms"]["image"].float()} for s in scenes}
-    mixes = [k for k in MIXES if all(e in I[scenes[0]] for e in MIXES[k])]
-    for s in scenes:
-        G[s], M[s] = R[s]["gt"], T.masks_of(D[s])
-    lifted = any(R[s].get("n_lifted", 0) for s in scenes)
-    grid = list(itertools.product(tuple(float(w) for w in a.weights.split(",")), tuple(mixes), (1.0, 2.0), (0.0, 1.0), (0.25, 0.5) if lifted else (1.0,)))
+    scenes = sorted(os.path.basename(f)[:-3] for f in glob.glob(os.path.join(a.dump[0], "*.pt")))
+    D, I, R, grid = {}, {}, {}, []
+    for p, (dump, recs) in enumerate(zip(a.dump, a.recs)):
+        rr = {r["scene"]: r for r in torch.load(recs, weights_only=False)}
+        side = dump.rstrip("/") + "_img"
+        for s in scenes:
+            D[(p, s)] = torch.load(os.path.join(dump, f"{s}.pt"), weights_only=False)
+            I[(p, s)] = {k: x.float() for k, x in torch.load(os.path.join(side, f"{s}.pt"), weights_only=False).items()} \
+                if os.path.isdir(side) else {"siglip_l": D[(p, s)]["terms"]["image"].float()}
+            R[(p, s)] = rr[s].get("n_lifted", 0)
+            G[s], M[(p, s)] = rr[s]["gt"], T.masks_of(D[(p, s)])
+        mixes = [k for k in MIXES if all(e in I[(p, scenes[0])] for e in MIXES[k])]
+        lifted = any(R[(p, s)] for s in scenes)
+        grid += [(p, *g) for g in itertools.product(tuple(float(w) for w in a.weights.split(",")), tuple(mixes), (1.0, 2.0), (0.0, 1.0),
+                                                   (0.25, 0.5) if lifted else (1.0,))]
     pool = mp.get_context("fork").Pool(a.workers)
     cm, mt = {}, {}
     for n, g in enumerate(grid):
-        w, mix, t_img, gamma, mult = g
+        p, w, mix, t_img, gamma, mult = g
         jobs = []
         for s in scenes:
-            d = D[s]
-            if R[s].get("n_lifted", 0) and mult != 1.0:
+            d = D[(p, s)]
+            if R[(p, s)] and mult != 1.0:
                 d = dict(d)
                 sc = d["scores"].clone().float()
-                sc[len(sc) - R[s]["n_lifted"]:] *= mult
+                sc[len(sc) - R[(p, s)]:] *= mult
                 d["scores"] = sc
-            pm = probs(d, I[s], base, w, mix, t_img)
+            pm = probs(d, I[(p, s)], base, w, mix, t_img)
             cm[(s, g)] = T.sem_cm(d, pm, base[1], base[2], gamma)
-            jobs.append((s, T.preds(d, pm, base[3])))
+            jobs.append(((p, s), T.preds(d, pm, base[3])))
         for s, r in zip(scenes, pool.map(_match, jobs)):
             mt[(s, g)] = r
         if n % 12 == 0:
             print(f"{n + 1}/{len(grid)}", flush=True)
+    torch.save(dict(cm=cm, mt=mt, scenes=scenes, grid=grid, dumps=a.dump), a.out.replace(".json", "_cache.pt"))
     full = {g: metrics([cm[(s, g)] for s in scenes], [mt[(s, g)] for s in scenes]) for g in grid}
     chosen, hcm, hmt = {}, [], []
     for s in scenes:
@@ -98,7 +103,7 @@ def main():
         hcm.append(cm[(s, chosen[s])])
         hmt.append(mt[(s, chosen[s])])
     cv = metrics(hcm, hmt)
-    json.dump(dict(base=list(base), loso_cv=cv, chosen={s: list(g) for s, g in chosen.items()}, grid={str(g): r for g, r in full.items()}),
+    json.dump(dict(dumps=a.dump, base=list(base), loso_cv=cv, chosen={s: list(g) for s, g in chosen.items()}, grid={str(g): r for g, r in full.items()}),
               open(a.out, "w"), indent=1)
     print("LOSO-CV:", {k: round(100 * x, 1) for k, x in cv.items()}, chosen, flush=True)
     for g in sorted(full, key=lambda g: -T.objective(full[g]))[:8]:

@@ -95,13 +95,26 @@ def load_set(dump, recs, valid_key):
     return scenes, D, {s: R[s]["gt"] for s in scenes}, {s: masks_of(D[s]) for s in scenes}
 
 
+def valid_set(spec):
+    """'s3dis_dev/9', 'scannet200/198', 'scannet200/200' (the evaluator's instance sets), 'replica51', or a JSON list."""
+    if spec.startswith("["):
+        return json.loads(spec)
+    if spec == "replica51":
+        v = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "opensnap", "vocab", "replica51.json")))
+        return [v["labels"].index(l) + 1 for l in v["instance_labels"]]
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import eval_standard as E
+    bench_name, key = spec.split("/")
+    return E.benchmark(bench_name)[3][key]
+
+
 def objective(m):
     return (m["mIoU"] + m["AP25"] + m["AP50"] + m["AP"]) / 4
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dev", nargs="+", required=True, help="dump_dir:recs:valid_json")
+    ap.add_argument("--dev", nargs="+", required=True, help="dump_dir:recs:valid (see valid_set)")
     ap.add_argument("--test", nargs="+", required=True, help="name:dump_dir:recs:valid_json")
     ap.add_argument("--out", default="results/compare/tuned.json")
     a = ap.parse_args()
@@ -110,7 +123,7 @@ def main():
     dev_scores = {g: 0.0 for g in grid}
     for spec in a.dev:
         dump, recs, valid = spec.split(":")
-        valid = json.loads(valid)
+        valid = valid_set(valid)
         scenes, D, G, M = load_set(dump, recs, valid)
         for alpha, t in itertools.product(*AT):
             pm = {s: probs(D[s], alpha, t, 0.0) for s in scenes}
@@ -128,7 +141,7 @@ def main():
     res = dict(chosen=list(best), default=list(default), dev_objective={str(k): v for k, v in sorted(dev_scores.items(), key=lambda x: -x[1])[:20]}, test={})
     for spec in a.test:
         name, dump, recs, valid = spec.split(":", 3)
-        valid = json.loads(valid)
+        valid = valid_set(valid)
         scenes, D, G, M = load_set(dump, recs, valid)
         row = {}
         for tag, g in (("default", default), ("dev-chosen", best)):
