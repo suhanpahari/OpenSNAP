@@ -301,7 +301,7 @@ video), is in **[COMPARISON.md](COMPARISON.md)** with tables C1–C13 in `TABLES
   * Building and campus joins (C4, C8).
 * **Behind:**
   * mIoU / AP25 vs OVI-MAP without images (coverage).
-  * ScanNet200 long tail vs Search3D (6.1 vs 23.0 AP, XYZ only).
+  * ScanNet200 instance AP vs Search3D-SigLIP / Open3DIS / RAZER (15.3 with the image column vs 23.0–24.7; level with OpenMask3D at 15.4).
   * OpenScan attributes (2.7 vs 9.9 mean AP).
   * RGB-only video (metric scale off 20–42%).
 * **Method changes:**

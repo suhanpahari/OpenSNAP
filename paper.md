@@ -482,8 +482,10 @@ The full study is in `results/COMPARISON.md`. In brief:
   * Replica with an image column (SigLIP so400m crops): 31.6 mIoU / 44.1 mAcc / 34.8 AP25 / 30.6 AP50 / 24.7 AP, against OVI-MAP's 26.5 / 32.2 / 34.5 / 21.2 / 8.5.
   * ScanNet-18 with an image column: 28.8 / 42.8 / 38.1 / 30.1 / 20.0 (mIoU / mAcc / AP25 / AP50 / AP), against 17.5 / 27.6 / 23.4 / 15.7 / 7.2.
   * From XYZ only: Replica AP 12.9, ScanNet AP 9.8 vs 7.2.
-* **Search3D / OpenMask3D on ScanNet200:** XYZ-only OpenSNAP reaches 6.1 AP against 15.4 / 23.0 for these image-based
-  systems; the long tail needs image evidence.
+* **Search3D / OpenMask3D on ScanNet200 (312 val scenes):** with the image column, OpenSNAP reaches 15.3 AP / 24.1 AP50 /
+  29.9 AP25. That is level with OpenMask3D on AP (15.4) and ahead on AP50 / AP25 (19.9 / 23.1). It is still behind
+  Search3D-SigLIP (23.0), Open3DIS (23.7) and RAZER (24.7). From XYZ only, OpenSNAP gets 6.1 AP. Semantic segmentation
+  on the same scenes reaches 22.7 mIoU vs OVO-mapping's 17.4.
 * **OpenScan attributes:** 2.7 vs 9.9 mean AP.
 * **HouseLayout3D buildings:** strict room partitioning loses 15–32% of NEAR answers, room + halo h ≥ d is exact, and about
   half of the global ABOVE / BELOW answers have their only witness on another floor, so vertical predicates are
@@ -514,8 +516,8 @@ The full study is in `results/COMPARISON.md`. In brief:
 * Truly novel concepts remain hard; most unseen-class gains come from near-synonyms of seen classes.
 * Tuple independence is an assumption for composite predicates; in practice max-witness, noisy-OR and clipped-count
   semantics differ by ≤ 0.5 AP50 (C9).
-* Geometry-only evidence is weak on long-tail classes and attributes (ScanNet200 common/tail ≈ 2 AP, OpenScan 2.7 mean AP);
-  the image column helps where posed frames exist.
+* Geometry-only evidence is weak on long-tail classes and attributes (ScanNet200 common/tail ≈ 2 AP, OpenScan 2.7 mean AP).
+  The image column lifts ScanNet200 common/tail to 12.1 AP, still below the strongest image-based systems (21–24).
 * RGB-only video ingest is limited by monocular metric scale (20–42% error on Replica).
 * No scene-level collapse guard we tried separates collapse from clean scans (C11); per-object gating is future work.
 * Several baselines are in-domain for SNAP (nuScenes, SemanticKITTI, ScanNet200); S3DIS, Replica and Matterport-160

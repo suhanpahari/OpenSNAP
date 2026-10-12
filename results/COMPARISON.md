@@ -154,20 +154,29 @@ test bed for building-scale joins (C4).
 **C3** uses ScanNet200 val (312 scenes, 198 classes, head / common / tail), the protocol of Search3D Table V and
 OpenMask3D.
 
-| | AP | head | common | tail |
-|---|---|---|---|---|
-| OpenMask3D (published) | 15.4 | 17.1 | 14.1 | 14.9 |
-| Search3D, SigLIP (published) | 23.0 | 26.3 | 21.2 | 21.4 |
-| Open3DIS 2D+3D (published) | 23.7 | 27.8 | 21.2 | 21.8 |
-| **OpenSNAP, XYZ only** | **6.1** | 14.0 | 1.7 | 2.1 |
+| | AP | AP50 | AP25 | head | common | tail |
+|---|---|---|---|---|---|---|
+| OVIR-3D (published) | 13.0 | 24.9 | 32.3 | 14.4 | 12.7 | 11.7 |
+| OpenMask3D (published) | 15.4 | 19.9 | 23.1 | 17.1 | 14.1 | 14.9 |
+| Search3D, CLIP (published) | 14.3 | – | – | 16.1 | 13.6 | 12.9 |
+| Search3D, SigLIP (published) | 23.0 | – | – | 26.3 | 21.2 | 21.4 |
+| Open3DIS 2D+3D (published) | 23.7 | 29.4 | 32.8 | 27.8 | 21.2 | 21.8 |
+| RAZER (published) | 24.7 | 31.7 | 36.2 | 27.8 | 24.3 | 21.6 |
+| OpenSNAP, XYZ only | 6.1 | 9.3 | 11.0 | 14.0 | 1.7 | 2.1 |
+| **OpenSNAP + image column, dev-chosen** | 15.3 | 24.1 | 29.9 | 21.3 | 12.1 | 12.1 |
 
-**This is our weakest comparison, and we state it plainly.**
-- Without images, the 3D-distilled features cannot name ScanNet200's long tail: common and tail classes score about 2 AP.
-- Every published row encodes multi-view RGB crops and uses Mask3D masks trained on ScanNet200.
-- On the head classes, XYZ-only OpenSNAP (14.0) is about level with OpenMask3D (17.1).
-- We could not run the image column on ScanNet, because the RGB-D frames require the ScanNet terms of use. On Replica,
-  where frames are public, the image column lifts strict AP from 12.9 to 16.9 (C1).
-- In the paper, C3 should appear as the *geometry-only* operating point, not as a head-to-head with image-based systems.
+Published rows: Search3D Table V and RAZER Table II. The image column uses OpenScene's processed ScanNet frames, with
+the same setting chosen on ScanNet *train* development scenes as for Replica and ScanNet-18.
+- **Against OpenMask3D** (the same kind of system: masks plus multi-view crop embeddings):
+  - ahead on AP50 (24.1 vs 19.9), AP25 (29.9 vs 23.1) and head (21.3 vs 17.1);
+  - level on strict AP (15.3 vs 15.4);
+  - behind on common and tail classes (12.1 vs 14.1 / 14.9).
+- **Also ahead of** OVIR-3D, Search3D (CLIP), SAM3D and both OpenScene variants on AP.
+- **Still behind** Search3D (SigLIP), Open3DIS and RAZER, by 8–9 AP. All three use Mask3D masks trained on ScanNet200
+  with many more views; Open3DIS and RAZER add 2D-lifted proposals. Our lifted proposals did not help on Replica (C1).
+- **Without images**, common and tail classes score about 2 AP: geometry-only evidence cannot name the long tail.
+- **Semantic segmentation on the same 312 scenes (C15):** 22.7 mIoU / 37.3 mAcc. That is above OVO-mapping (17.4 /
+  35.9), OpenScene (11.6 / 22.8) and Open3DIS (9.4 / 17.0) in OVO-SLAM's Table III.
 
 **C12 (OpenScan / GOV-3D attributes).** Same stored objects; each is labelled with the most probable attribute of each
 aspect (raw attribute text as the query). ScanNet instance AP per aspect, and the mean over all 341 attributes.
@@ -180,7 +189,8 @@ aspect (raw attribute text as the query). ScanNet instance AP per aspect, and th
 
 - **Geometry-only evidence carries little attribute meaning.** Material is the least bad aspect (9.7), which is
   surprising for XYZ-only input; affordances and parts are close to zero.
-- Same conclusion as C3: attribute grounding needs image evidence, which is what the image column is for.
+- Same conclusion as C3 without images: attribute grounding needs image evidence. C12 has not yet been re-run with the
+  image column.
 - OVQL can express attribute queries directly, e.g. `IS('something used to sit')` or `IS('wooden chair')`, and conjunctions
   `IS('chair') AND IS('made of wood')`. The open question is only how well geometry-only evidence carries attribute
   meaning.
@@ -438,8 +448,8 @@ removes the loss exactly, and level scoping keeps vertical predicates correct (�
 
 ## 8. Remaining limitations (honest list)
 
-- **Long-tail naming without images is weak** (ScanNet200 common / tail about 2 AP). The image column helps where frames
-  exist.
+- **Long-tail naming without images is weak** (ScanNet200 common / tail about 2 AP). With the image column they reach
+  12.1 AP, still below Search3D-SigLIP, Open3DIS and RAZER (21–24).
 - **Image-fusion weights are sensitive to α and the temperature** and are not learned. With the old setting the fused
   Replica row is 23.4 mIoU; with the dev-chosen one it is 31.6. A learned per-object gate is future work.
 - **Leave-one-scene-out on 8 Replica scenes is too noisy to pick settings** (per-fold choices pool to lower numbers than

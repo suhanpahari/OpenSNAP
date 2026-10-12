@@ -400,6 +400,10 @@ OVIMAP_SCANNET = [("Mask3D+OpenMask3D (offline, RGB-D)", 8.6, 17.5, 10.4, 8.0, 5
                   ("Semantic Gaussian (offline)", 10.7, 17.8, None, None, None),
                   ("OpenScene (offline)", 10.3, 17.3, None, None, None), ("OpenFusion (online)", 8.3, 11.5, None, None, None),
                   ("OVO-SLAM (online)", 14.6, 27.8, 19.4, 12.6, 5.5), ("OVI-MAP (online)", 17.5, 27.6, 23.4, 15.7, 7.2)]
+RAZER_SCANNET200 = [("SAM3D", 6.1, 14.2, 21.3, 7.0, 6.2, 4.6), ("OVIR-3D", 13.0, 24.9, 32.3, 14.4, 12.7, 11.7),
+                    ("Open3DIS", 23.7, 29.4, 32.8, 27.8, 21.2, 21.8), ("OpenScene (2D fusion)", 11.7, 15.2, 17.8, 13.4, 11.6, 9.9),
+                    ("OpenScene (ensemble)", 5.3, 6.7, 8.1, 11.0, 3.2, 1.1), ("OpenMask3D", 15.4, 19.9, 23.1, 17.1, 14.1, 14.9),
+                    ("RAZER", 24.7, 31.7, 36.2, 27.8, 24.3, 21.6)]
 SEARCH3D_SCANNET200 = [("Mask3D (closed vocabulary, supervised)", 26.9, 39.8, 21.7, 17.9), ("OpenScene 2D fusion + Mask3D masks", 11.7, 13.4, 11.6, 9.9),
                        ("OpenMask3D", 15.4, 17.1, 14.1, 14.9), ("Open3DIS 3D-only (Mask3D)", 18.9, 23.9, 17.4, 15.3),
                        ("Open3DIS 2D+3D", 23.7, 27.8, 21.2, 21.8), ("Search3D (CLIP)", 14.3, 16.1, 13.6, 12.9), ("Search3D (SigLIP)", 23.0, 26.3, 21.2, 21.4)]
@@ -484,14 +488,22 @@ def compare():
               "the only fused number to report; this grid shows how sensitive the fusion is to alpha (dense vs token split).")
     d = load("compare/scannet200_val.json")
     if d:
-        rows = [[n, f1(a), f1(h), f1(c), f1(t)] for n, a, h, c, t in SEARCH3D_SCANNET200]
-        for v, r in d["results"]["all"].items():
-            ins = r["inst198_p_x_iou"]
-            rows.append([NAMES.get(v, v), pct(ins["AP"]), pct(ins["AP_head"]), pct(ins["AP_common"]), pct(ins["AP_tail"])])
-        table("C3 · ScanNet200 val open-vocabulary instance segmentation (312 scenes, 198 classes)", "compare/scannet200_val.json; Search3D Table V (published)",
-              ["method", "AP", "head", "common", "tail"], rows,
-              "Published rows from Search3D (RA-L 2025) Table V; all of them use posed RGB images (CLIP/SigLIP/OpenSeg crops) and "
-              "Mask3D masks trained on ScanNet200. Ours uses XYZ only.")
+        rows = [[f"{n} (Search3D Tab. V)", f1(a), "–", "–", f1(h), f1(c), f1(t)] for n, a, h, c, t in SEARCH3D_SCANNET200]
+        rows += [[f"{n} (RAZER Tab. II)", *[f1(x) for x in v]] for n, *v in RAZER_SCANNET200]
+        sp = lambda r: [pct(r[k]) for k in ("AP", "AP50", "AP25", "AP_head", "AP_common", "AP_tail")]
+        rows.append(["OpenSNAP, XYZ only", *sp(d["results"]["all"]["opensnap"]["inst198_p_x_iou"])])
+        t = load("compare/scannet200_tuned.json")
+        if t:
+            rows.append(["OpenSNAP, XYZ only [union_l4], dev-chosen", *sp(t["chosen"])])
+        idev, _ = image_dev()
+        if "scannet200" in idev:
+            rows.append(["**OpenSNAP + image column [union_l4], all settings chosen on ScanNet train dev scenes**",
+                         *sp(idev["scannet200"]["dev-chosen image setting"])])
+        table("C3 · ScanNet200 val open-vocabulary instance segmentation (312 scenes, 198 classes)",
+              "compare/scannet200_val.json, scannet200_tuned.json, image_dev_b.json; Search3D Table V, RAZER Table II (published)",
+              ["method", "AP", "AP50", "AP25", "head", "common", "tail"], rows,
+              "Published rows use posed RGB(-D) images; most use Mask3D masks trained on ScanNet200. Head / common / tail are AP. "
+              "Our image column uses OpenScene's processed ScanNet frames (every 20th frame, 320x240); dev scenes are ScanNet train scenes.")
     else:
         pending("C3 · ScanNet200 val", "compare/scannet200_val.json")
 
@@ -692,6 +704,10 @@ def landscape():
     t = load("compare/scannet200_tuned.json")
     if t:
         rows.append(["ours", "OpenSNAP (XYZ only), union_l4, labelling setting chosen on dev scenes", pct(t["chosen"]["mIoU"]), pct(t["chosen"]["mAcc"])])
+    idev, _ = image_dev()
+    if "scannet200" in idev:
+        c = idev["scannet200"]["dev-chosen image setting"]
+        rows.append(["ours", "**OpenSNAP + image column, all settings chosen on ScanNet train dev scenes**", pct(c["mIoU"]), pct(c["mAcc"])])
     table("C15 · ScanNet200 semantic segmentation, all 312 val scenes", "OVO-SLAM Tab. III; compare/scannet200_val.json", ["source", "method", "mIoU", "mAcc"], rows)
 
 

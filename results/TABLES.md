@@ -620,22 +620,29 @@ Per-point semantics mix 30% dense per-point evidence (beta = 0.3) as in the syst
 
 ### C3 · ScanNet200 val open-vocabulary instance segmentation (312 scenes, 198 classes)
 
-_Source: compare/scannet200_val.json; Search3D Table V (published)_
+_Source: compare/scannet200_val.json, scannet200_tuned.json, image_dev_b.json; Search3D Table V, RAZER Table II (published)_
 
-| method | AP | head | common | tail |
-|---|---|---|---|---|
-| Mask3D (closed vocabulary, supervised) | 26.9 | 39.8 | 21.7 | 17.9 |
-| OpenScene 2D fusion + Mask3D masks | 11.7 | 13.4 | 11.6 | 9.9 |
-| OpenMask3D | 15.4 | 17.1 | 14.1 | 14.9 |
-| Open3DIS 3D-only (Mask3D) | 18.9 | 23.9 | 17.4 | 15.3 |
-| Open3DIS 2D+3D | 23.7 | 27.8 | 21.2 | 21.8 |
-| Search3D (CLIP) | 14.3 | 16.1 | 13.6 | 12.9 |
-| Search3D (SigLIP) | 23.0 | 26.3 | 21.2 | 21.4 |
-| OpenSNAP (XYZ only) | 6.1 | 14.0 | 1.7 | 2.1 |
-|   dense 3D expert only | 3.2 | 7.7 | 0.9 | 0.5 |
-|   segmenter token only | 4.5 | 11.4 | 1.3 | 0.0 |
+| method | AP | AP50 | AP25 | head | common | tail |
+|---|---|---|---|---|---|---|
+| Mask3D (closed vocabulary, supervised) (Search3D Tab. V) | 26.9 | – | – | 39.8 | 21.7 | 17.9 |
+| OpenScene 2D fusion + Mask3D masks (Search3D Tab. V) | 11.7 | – | – | 13.4 | 11.6 | 9.9 |
+| OpenMask3D (Search3D Tab. V) | 15.4 | – | – | 17.1 | 14.1 | 14.9 |
+| Open3DIS 3D-only (Mask3D) (Search3D Tab. V) | 18.9 | – | – | 23.9 | 17.4 | 15.3 |
+| Open3DIS 2D+3D (Search3D Tab. V) | 23.7 | – | – | 27.8 | 21.2 | 21.8 |
+| Search3D (CLIP) (Search3D Tab. V) | 14.3 | – | – | 16.1 | 13.6 | 12.9 |
+| Search3D (SigLIP) (Search3D Tab. V) | 23.0 | – | – | 26.3 | 21.2 | 21.4 |
+| SAM3D (RAZER Tab. II) | 6.1 | 14.2 | 21.3 | 7.0 | 6.2 | 4.6 |
+| OVIR-3D (RAZER Tab. II) | 13.0 | 24.9 | 32.3 | 14.4 | 12.7 | 11.7 |
+| Open3DIS (RAZER Tab. II) | 23.7 | 29.4 | 32.8 | 27.8 | 21.2 | 21.8 |
+| OpenScene (2D fusion) (RAZER Tab. II) | 11.7 | 15.2 | 17.8 | 13.4 | 11.6 | 9.9 |
+| OpenScene (ensemble) (RAZER Tab. II) | 5.3 | 6.7 | 8.1 | 11.0 | 3.2 | 1.1 |
+| OpenMask3D (RAZER Tab. II) | 15.4 | 19.9 | 23.1 | 17.1 | 14.1 | 14.9 |
+| RAZER (RAZER Tab. II) | 24.7 | 31.7 | 36.2 | 27.8 | 24.3 | 21.6 |
+| OpenSNAP, XYZ only | 6.1 | 9.3 | 11.0 | 14.0 | 1.7 | 2.1 |
+| OpenSNAP, XYZ only [union_l4], dev-chosen | 6.3 | 9.8 | 11.7 | 14.5 | 1.6 | 2.1 |
+| **OpenSNAP + image column [union_l4], all settings chosen on ScanNet train dev scenes** | 15.3 | 24.1 | 29.9 | 21.3 | 12.1 | 12.1 |
 
-Published rows from Search3D (RA-L 2025) Table V; all of them use posed RGB images (CLIP/SigLIP/OpenSeg crops) and Mask3D masks trained on ScanNet200. Ours uses XYZ only.
+Published rows use posed RGB(-D) images; most use Mask3D masks trained on ScanNet200. Head / common / tail are AP. Our image column uses OpenScene's processed ScanNet frames (every 20th frame, 320x240); dev scenes are ScanNet train scenes.
 
 ### C4 · Spatial joins over whole multi-floor buildings (HouseLayout3D / Matterport3D)
 
@@ -873,3 +880,4 @@ _Source: OVO-SLAM Tab. III; compare/scannet200_val.json_
 | OVO-SLAM Tab. III (FVS) | OVO-mapping | 17.4 | 35.9 |
 | ours | OpenSNAP (XYZ only) | 10.4 | 16.5 |
 | ours | OpenSNAP (XYZ only), union_l4, labelling setting chosen on dev scenes | 11.0 | 16.7 |
+| ours | **OpenSNAP + image column, all settings chosen on ScanNet train dev scenes** | 22.7 | 37.3 |
