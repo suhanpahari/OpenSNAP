@@ -11,3 +11,4 @@ assets/gallery_src*/
 assets/openvocab/
 assets/replica/
 results/compare/**/*_recs.pt
+results/compare/*_cache.pt
