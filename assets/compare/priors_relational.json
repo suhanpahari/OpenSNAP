@@ -1,0 +1,362 @@
+[
+ {
+  "scene": "office0",
+  "a": "blinds",
+  "b": "door",
+  "ours": 0.0,
+  "OpenMask3D*": 0.006650410108623365,
+  "Search3D*": 0.0039049235993208827,
+  "OVI-MAP*": 0.0039049235993208827
+ },
+ {
+  "scene": "office0",
+  "a": "blinds",
+  "b": "pillar",
+  "ours": 0.46500943473623757,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office0",
+  "a": "clock",
+  "b": "tv screen",
+  "ours": 0.0,
+  "OpenMask3D*": 0.013964899037554256,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.013964899037554256
+ },
+ {
+  "scene": "office0",
+  "a": "desk organizer",
+  "b": "sofa",
+  "ours": 0.02565328234544296,
+  "OpenMask3D*": 0.02565328234544296,
+  "Search3D*": 0.02565328234544296,
+  "OVI-MAP*": 0.02565328234544296
+ },
+ {
+  "scene": "office0",
+  "a": "vent",
+  "b": "lamp",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office1",
+  "a": "bin",
+  "b": "desk",
+  "ours": 0.9297805642633229,
+  "OpenMask3D*": 0.9297805642633229,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office1",
+  "a": "bottle",
+  "b": "desk",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office1",
+  "a": "lamp",
+  "b": "blinds",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office1",
+  "a": "monitor",
+  "b": "pillar",
+  "ours": 0.9814733127481253,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office1",
+  "a": "table",
+  "b": "chair",
+  "ours": 0.7539109506618532,
+  "OpenMask3D*": 0.027482993197278913,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office2",
+  "a": "camera",
+  "b": "clock",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office2",
+  "a": "lamp",
+  "b": "door",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office2",
+  "a": "panel",
+  "b": "door",
+  "ours": 0.09829763866007687,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.09829763866007687,
+  "OVI-MAP*": 0.09829763866007687
+ },
+ {
+  "scene": "office2",
+  "a": "table",
+  "b": "panel",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office2",
+  "a": "tv screen",
+  "b": "table",
+  "ours": 0.30354879594423323,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0043306925003078695,
+  "OVI-MAP*": 0.30354879594423323
+ },
+ {
+  "scene": "office3",
+  "a": "bench",
+  "b": "tv stand",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.5031173759826512,
+  "OVI-MAP*": 0.5031173759826512
+ },
+ {
+  "scene": "office3",
+  "a": "blinds",
+  "b": "camera",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office3",
+  "a": "blinds",
+  "b": "vent",
+  "ours": 0.0,
+  "OpenMask3D*": 0.02933219421899473,
+  "Search3D*": 0.02933219421899473,
+  "OVI-MAP*": 0.02933219421899473
+ },
+ {
+  "scene": "office3",
+  "a": "desk organizer",
+  "b": "sofa",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office3",
+  "a": "pipe",
+  "b": "tv stand",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office4",
+  "a": "bin",
+  "b": "door",
+  "ours": 0.8747412008281573,
+  "OpenMask3D*": 0.9318600368324125,
+  "Search3D*": 0.8747412008281573,
+  "OVI-MAP*": 0.8747412008281573
+ },
+ {
+  "scene": "office4",
+  "a": "bin",
+  "b": "window",
+  "ours": 0.8747412008281573,
+  "OpenMask3D*": 0.9318600368324125,
+  "Search3D*": 0.9318600368324125,
+  "OVI-MAP*": 0.8747412008281573
+ },
+ {
+  "scene": "office4",
+  "a": "tv screen",
+  "b": "camera",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office4",
+  "a": "tv screen",
+  "b": "clock",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "office4",
+  "a": "window",
+  "b": "chair",
+  "ours": 0.689127680540566,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room0",
+  "a": "basket",
+  "b": "rug",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room0",
+  "a": "cushion",
+  "b": "rug",
+  "ours": 0.9240506329113924,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.9399293286219081,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room0",
+  "a": "plate",
+  "b": "plant stand",
+  "ours": 0.043530113297555156,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room0",
+  "a": "rug",
+  "b": "blanket",
+  "ours": 0.0007536899403328797,
+  "OpenMask3D*": 0.0007536899403328797,
+  "Search3D*": 0.07892293407613742,
+  "OVI-MAP*": 0.08695506820005348
+ },
+ {
+  "scene": "room0",
+  "a": "vent",
+  "b": "lamp",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.8738170347003155,
+  "OVI-MAP*": 0.8738170347003155
+ },
+ {
+  "scene": "room1",
+  "a": "bed",
+  "b": "blanket",
+  "ours": 0.20207138304652644,
+  "OpenMask3D*": 0.032916234956563324,
+  "Search3D*": 0.20207138304652644,
+  "OVI-MAP*": 0.20207138304652644
+ },
+ {
+  "scene": "room1",
+  "a": "bed",
+  "b": "comforter",
+  "ours": 0.20207138304652644,
+  "OpenMask3D*": 0.032916234956563324,
+  "Search3D*": 0.20207138304652644,
+  "OVI-MAP*": 0.20207138304652644
+ },
+ {
+  "scene": "room1",
+  "a": "lamp",
+  "b": "panel",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room1",
+  "a": "nightstand",
+  "b": "pillow",
+  "ours": 0.8775964391691394,
+  "OpenMask3D*": 0.0009953078344945257,
+  "Search3D*": 0.8775964391691394,
+  "OVI-MAP*": 0.8560311284046692
+ },
+ {
+  "scene": "room1",
+  "a": "vase",
+  "b": "blanket",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.0,
+  "OVI-MAP*": 0.2452300785634119
+ },
+ {
+  "scene": "room2",
+  "a": "bowl",
+  "b": "plate",
+  "ours": 0.0,
+  "OpenMask3D*": 0.0,
+  "Search3D*": 0.5063492063492063,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room2",
+  "a": "indoor plant",
+  "b": "plate",
+  "ours": 0.3056234718826406,
+  "OpenMask3D*": 0.3056234718826406,
+  "Search3D*": 0.10752056404230317,
+  "OVI-MAP*": 0.10752056404230317
+ },
+ {
+  "scene": "room2",
+  "a": "table",
+  "b": "chair",
+  "ours": 0.9054517727792604,
+  "OpenMask3D*": 0.003873504075851304,
+  "Search3D*": 0.010800459594025277,
+  "OVI-MAP*": 0.0
+ },
+ {
+  "scene": "room2",
+  "a": "vase",
+  "b": "indoor plant",
+  "ours": 0.6792682926829269,
+  "OpenMask3D*": 0.24219910846953938,
+  "Search3D*": 0.0008910490076954233,
+  "OVI-MAP*": 0.0008910490076954233
+ },
+ {
+  "scene": "room2",
+  "a": "vent",
+  "b": "lamp",
+  "ours": 0.0,
+  "OpenMask3D*": 0.008692333049950552,
+  "Search3D*": 0.008692333049950552,
+  "OVI-MAP*": 0.008692333049950552
+ }
+]

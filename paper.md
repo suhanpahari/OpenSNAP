@@ -471,15 +471,17 @@ single-video result.
   every comparison we make uses one protocol.
 * SNAP@auto's 16.1 S3DIS AP uses the authors' evaluation; under ours SNAP's text token gives 10.5 and OpenSNAP 15.4.
 * OpenMask3D's 13.1 Replica AP is a closed-set 51-class protocol and is not comparable with the query workload above; the
-  closed-set comparison is §8.10 (OpenSNAP 12.9 XYZ-only, 16.9 with the image column).
+  closed-set comparison is §8.10 (OpenSNAP 12.9 XYZ-only, 21.9 with the image column).
 * OpenScene's published nuScenes 36.7 uses its own processed sweeps and script; ours, on single keyframes, is 26.9
   (31.1 on OpenScene's processed sweeps).
 
 ### 8.10 Comparative study under the protocols of Search3D, OVI-MAP and HouseLayout3D [C1–C13]
 The full study is in `results/COMPARISON.md`. In brief:
 * **OVI-MAP protocol** (same 8 Replica and 18 ScanNet scenes, same 51 / ScanNet200 classes, same evaluator):
-  * OpenSNAP's stored objects reach Replica AP 16.9 with an image column (SigLIP, the same encoder) and 12.9 from XYZ only,
-    against 8.5 for OVI-MAP, and AP50 21.8 vs 21.2. OVI-MAP leads on mIoU (26.5 vs 23.4) and AP25 (34.5 vs 27.1).
+  * OpenSNAP's stored objects with an image column (SigLIP, the same encoder) and lifted 2D proposals reach Replica
+    29.0 mIoU / 41.5 mAcc / 35.0 AP25 / 28.1 AP50 / 21.9 AP, against OVI-MAP's 26.5 / 32.2 / 34.5 / 21.2 / 8.5. The
+    labelling setting is chosen on development scenes; the image settings by leave-one-scene-out. From XYZ only,
+    OpenSNAP gets 12.9 AP.
   * On ScanNet, XYZ only, AP is 9.8 vs 7.2.
 * **Search3D / OpenMask3D on ScanNet200:** XYZ-only OpenSNAP reaches 6.1 AP against 15.4 / 23.0 for these image-based
   systems; the long tail needs image evidence.

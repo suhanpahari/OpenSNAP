@@ -124,6 +124,16 @@ def load_replica(scene, mesh_only=False):
 
 
 def worker(rank, gpu, scenes, args, queue):
+    try:
+        _worker(rank, gpu, scenes, args, queue)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"worker {rank} failed: {e}", flush=True)
+    queue.put(None)
+
+
+def _worker(rank, gpu, scenes, args, queue):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
     global ORACLE_SCALE
     ORACLE_SCALE = bool(args.oracle_scale)
@@ -141,10 +151,12 @@ def worker(rank, gpu, scenes, args, queue):
     labels, ids, _, _ = benchmark(args.bench)
     load = {"replica": load_replica, "replica_video": load_replica_video, "s3dis_dev": load_s3dis}.get(args.bench, load_scannet)
     expert = None
+    intr = json.load(open(os.path.join(NICE, "cam_params.json")))["camera"] if args.bench.startswith("replica") else None
+    from opensnap.views import PosedFrames
     if args.images:
         from opensnap.views import ImageExpert, PosedFrames, VideoFrames, object_embeddings
         expert = ImageExpert(cache_dir=os.path.join(paths.DOWNLOADS, "hf", "hub"))
-        intr = json.load(open(os.path.join(NICE, "cam_params.json")))["camera"]
+
     for scene in scenes:
         coord, verts, sem, gt, split, match = load(scene)
         np.random.seed(abs(hash(scene)) % 2 ** 31)
@@ -207,7 +219,6 @@ def worker(rank, gpu, scenes, args, queue):
         rec["gt"] = gt
         rec["sec"] = time.time() - t0
         queue.put(rec)
-    queue.put(None)
 
 
 def score(recs, args, inst_sets, labels, ids):
@@ -288,6 +299,8 @@ def main():
         print(f"[{len(recs)}/{len(scenes)}] {r['scene']} props={r['n_props']} {r['sec']:.1f}s", flush=True)
     for p in procs:
         p.join()
+    if len(recs) < len(scenes):
+        print(f"INCOMPLETE: {len(recs)} of {len(scenes)} scenes; results marked incomplete", flush=True)
     torch.save(recs, args.out.replace(".json", "_recs.pt"))
     res = dict(all=score(recs, args, inst_sets, labels, ids))
     if args.bench == "scannet18":
@@ -297,7 +310,7 @@ def main():
             for kk, a in res[k][v].items():
                 if (k, v) != ("all", "opensnap") and isinstance(a, dict):
                     a.pop("per_class_AP", None)
-    json.dump(dict(args=vars(args), n_scenes=len(recs), sec_per_scene=float(np.mean([r["sec"] for r in recs])), results=res),
+    json.dump(dict(args=vars(args), n_scenes=len(recs), expected_scenes=len(scenes), complete=len(recs) == len(scenes), sec_per_scene=float(np.mean([r["sec"] for r in recs])), results=res),
               open(args.out, "w"), indent=1)
     for k in res:
         for v, r in res[k].items():

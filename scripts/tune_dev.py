@@ -27,12 +27,14 @@ def sharpen(p, t):
     return q / q.sum(-1, keepdim=True)
 
 
-def outputs(d, g):
-    alpha, t, beta, conf, w_img, gamma = g if len(g) == 6 else (*g, 0.0)
+def probs(d, alpha, t, w_img):
     lp = alpha * sharpen(d["terms"]["dense"], t).log() + (1 - alpha) * sharpen(d["terms"]["token"], t).log()
     if w_img > 0 and "image" in d["terms"]:
         lp = (1 - w_img) * lp + w_img * sharpen(d["terms"]["image"], t).log()
-    pm = lp.softmax(-1).cuda()
+    return lp.softmax(-1).cuda()
+
+
+def sem_cm(d, pm, t, beta, gamma):
     w = d["w"].float().cuda()
     cover = w.sum(0)
     wv = w / (w > 0).float().sum(1, keepdim=True).clamp(min=1) ** gamma if gamma else w
@@ -47,10 +49,20 @@ def outputs(d, g):
     lut = np.zeros(int(max(ids.max(), sem.max())) + 1, int)
     lut[ids] = np.arange(1, C)
     ok = sem > 0
-    cm = np.bincount(lut[sem[ok]] * C + lut[pv[ok]], minlength=C * C).reshape(C, C)
+    return np.bincount(lut[sem[ok]] * C + lut[pv[ok]], minlength=C * C).reshape(C, C)
+
+
+def preds(d, pm, conf):
+    ids = np.asarray(d["ids"])
     p, c = pm.max(1)
     sc = d["scores"].float()
-    return cm, [(int(ids[int(c[k])]), float(CONF[conf](float(p[k]), float(sc[k])))) for k in range(len(c))]
+    return [(int(ids[int(c[k])]), float(CONF[conf](float(p[k]), float(sc[k])))) for k in range(len(c))]
+
+
+def outputs(d, g):
+    alpha, t, beta, conf, w_img, gamma = g if len(g) == 6 else (*g, 0.0)
+    pm = probs(d, alpha, t, w_img)
+    return sem_cm(d, pm, t, beta, gamma), preds(d, pm, conf)
 
 
 def masks_of(d):
@@ -60,14 +72,20 @@ def masks_of(d):
     return m
 
 
-def metrics(outs, gts, masks, valid):
-    cm = sum(o[0] for o in outs)
+def sem_metrics(cm):
     tp, g, pr = np.diag(cm)[1:].astype(float), cm[1:].sum(1).astype(float), cm[:, 1:].sum(0).astype(float)
     pres = g > 0
+    return dict(mIoU=float((tp / np.maximum(g + pr - tp, 1))[pres].mean()), mAcc=float((tp / np.maximum(g, 1))[pres].mean()))
+
+
+def ap_metrics(outs, gts, masks, valid):
     sc = [bench.match_scene(gt, [(mk, l, c) for mk, (l, c) in zip(ms, o[1])], valid) for o, gt, ms in zip(outs, gts, masks)]
     ap = bench.summarize_ap(bench.evaluate(sc, valid), [str(v) for v in valid])
-    return dict(mIoU=float((tp / np.maximum(g + pr - tp, 1))[pres].mean()), mAcc=float((tp / np.maximum(g, 1))[pres].mean()),
-                AP=ap["AP"], AP50=ap["AP50"], AP25=ap["AP25"])
+    return dict(AP=ap["AP"], AP50=ap["AP50"], AP25=ap["AP25"])
+
+
+def metrics(outs, gts, masks, valid):
+    return {**sem_metrics(sum(o[0] for o in outs)), **ap_metrics([(None, o[1]) for o in outs], gts, masks, valid)}
 
 
 def load_set(dump, recs, valid_key):
@@ -87,15 +105,22 @@ def main():
     ap.add_argument("--test", nargs="+", required=True, help="name:dump_dir:recs:valid_json")
     ap.add_argument("--out", default="results/compare/tuned.json")
     a = ap.parse_args()
-    grid = list(itertools.product((0.3, 0.5, 0.7, 0.9), (0.5, 1.0, 2.0), (0.0, 0.3, 0.6), tuple(CONF), (0.0,), (0.0, 0.5, 1.0)))
+    AT, BG = ((0.3, 0.5, 0.7, 0.9), (0.5, 1.0, 2.0)), ((0.0, 0.3, 0.6), (0.0, 0.5, 1.0))
+    grid = [(al, t, b, c, 0.0, gm) for al, t, b, c, gm in itertools.product(*AT, BG[0], tuple(CONF), BG[1])]
     dev_scores = {g: 0.0 for g in grid}
     for spec in a.dev:
         dump, recs, valid = spec.split(":")
         valid = json.loads(valid)
         scenes, D, G, M = load_set(dump, recs, valid)
-        for g in grid:
-            m = metrics([outputs(D[s], g) for s in scenes], [G[s] for s in scenes], [M[s] for s in scenes], valid)
-            dev_scores[g] += objective(m)
+        for alpha, t in itertools.product(*AT):
+            pm = {s: probs(D[s], alpha, t, 0.0) for s in scenes}
+            miou = {(b, gm): sem_metrics(sum(sem_cm(D[s], pm[s], t, b, gm) for s in scenes))["mIoU"] for b, gm in itertools.product(*BG)}
+            aps = {c: ap_metrics([(None, preds(D[s], pm[s], c)) for s in scenes], [G[s] for s in scenes], [M[s] for s in scenes], valid)
+                   for c in CONF}
+            for c in CONF:
+                for b, gm in miou:
+                    dev_scores[(alpha, t, b, c, 0.0, gm)] += (miou[(b, gm)] + aps[c]["AP25"] + aps[c]["AP50"] + aps[c]["AP"]) / 4
+            print(" ", alpha, t, flush=True)
         print("dev done", dump, flush=True)
     best = max(grid, key=dev_scores.get)
     default = (0.7, 1.0, 0.3, "p*s", 0.0, 0.0)

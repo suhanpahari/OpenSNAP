@@ -48,7 +48,7 @@ language, every operator with its equations, experiments and lessons) is in **[p
 | | SemanticKITTI seq 08, 19 classes (mIoU / mAcc) | **32.8** / 43.7 | OpenScene (nuScenes model) 20.8 / 37.1 | 31.5 / **45.8** |
 | open-vocab instance segmentation (AP, same protocol) | S3DIS Area 5, 13 classes | 10.5 | — | **15.4** |
 | | Replica, 8 scenes, OVQL query workload (AP / AP50) | 14.8 / 19.7 | — | **19.9 / 25.9** |
-| | Replica, OVI-MAP closed-set protocol (AP / AP50) | — | OVI-MAP 8.5 / 21.2, OpenMask3D 13.1 / 18.4 (published) | **16.9 / 21.8** (image column), 12.9 / 15.1 (XYZ only) |
+| | Replica, OVI-MAP closed-set protocol (AP / AP50) | — | OVI-MAP 8.5 / 21.2, OpenMask3D 13.1 / 18.4 (published) | **21.9 / 28.1** (image column + lifted 2D proposals, settings chosen without test scenes; beats OVI-MAP on all 5 metrics), 12.9 / 15.1 (XYZ only) |
 | | ScanNet200 val, Search3D protocol (AP) | — | Search3D 23.0, OpenMask3D 15.4 (published, RGB) | 6.1 (XYZ only) |
 | relational queries vs phrase retrieval (NEAR AP50) | S3DIS | — | phrase embedding 14.3 | **21.7** |
 | calibration of IS(c) (ECE) | 5 datasets | — | 4-word background 0.04–0.12 | **0.015–0.022** |

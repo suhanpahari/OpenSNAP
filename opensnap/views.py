@@ -138,3 +138,32 @@ class VideoFrames:
         uv, vis = self.pv.project(pts / self.scale)
         uv = (uv + np.array([0, self.top])) * self.fx
         return torch.from_numpy(vis).to(device), torch.from_numpy(uv).half().to(device)
+
+
+class CLIPExpert:
+    """CLIP crop embeddings (OpenMask3D uses ViT-L/14@336px); same interface as ImageExpert."""
+
+    def __init__(self, name="ViT-L/14@336px", download_root=None, device="cuda"):
+        import clip
+        self.model, self.pre = clip.load(name, device=device, download_root=download_root)
+        self.model.eval()
+        self.device, self.cache, self.clip = device, {}, clip
+
+    @torch.no_grad()
+    def text(self, labels):
+        key = tuple(labels)
+        if key not in self.cache:
+            t = self.clip.tokenize([f"a photo of a {l}" for l in labels]).to(self.device)
+            self.cache[key] = F.normalize(self.model.encode_text(t).float(), dim=-1)
+        return self.cache[key]
+
+    @torch.no_grad()
+    def images(self, ims, bs=64):
+        out = []
+        for i in range(0, len(ims), bs):
+            x = torch.stack([self.pre(im) for im in ims[i:i + bs]]).to(self.device)
+            out.append(F.normalize(self.model.encode_image(x).float(), dim=-1))
+        return torch.cat(out) if out else torch.zeros(0, self.model.visual.output_dim, device=self.device)
+
+    def probs(self, emb, labels, tau=0.01):
+        return (emb @ self.text(labels).T / tau).softmax(-1)

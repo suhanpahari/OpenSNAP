@@ -1,0 +1,111 @@
+{
+ "args": {
+  "bench": "s3dis_dev",
+  "snap_ckpt": "../downloads/ckpt/SNAP_C.pth",
+  "openscene_ckpt": "../downloads/ckpt/matterport_openseg.pth.tar",
+  "feature": "openseg",
+  "dense_voxel": 0.02,
+  "proposals": "fps",
+  "c2f_v0": 0.8,
+  "c2f_levels": 3,
+  "max_dist": 0.05,
+  "gpus": "0",
+  "procs_per_gpu": 2,
+  "limit": 0,
+  "out": "results/compare/dev/s3dis_fps1000.json",
+  "num_prompts": 1000,
+  "iou_thresh": 0.3,
+  "stability_thresh": 0.5,
+  "nms_thresh": 0.5,
+  "min_points": 30,
+  "tau": 0.01,
+  "alpha": 0.7,
+  "beta": 0.3,
+  "relay_tau": 0.05,
+  "relay_weight": 0.8,
+  "dense_collapse": 0.75,
+  "image_weight": 0.5,
+  "images": 0,
+  "dump": "",
+  "oracle_scale": 0,
+  "lift2d": "",
+  "lift_step": 20,
+  "frame_step": 10
+ },
+ "n_scenes": 44,
+ "sec_per_scene": 21.757077916101977,
+ "results": {
+  "all": {
+   "opensnap": {
+    "semantic": {
+     "mIoU": 0.37398440978711844,
+     "mAcc": 0.513115083162093
+    },
+    "inst9_p_x_iou": {
+     "AP": 0.19818207051376202,
+     "AP50": 0.25858981360815586,
+     "AP25": 0.32680534897530017,
+     "per_class_AP": {
+      "beam": 0.0,
+      "column": 0.0,
+      "window": 0.04074354764009937,
+      "door": 0.0916327455305089,
+      "table": 0.1548059438285415,
+      "chair": 0.8080801925634226,
+      "sofa": 0.5990562678062678,
+      "bookcase": 0.08931993725501824,
+      "board": 0.0
+     }
+    },
+    "inst9_p": {
+     "AP": 0.141948458675417,
+     "AP50": 0.18933875708266198,
+     "AP25": 0.2414303833729832,
+     "per_class_AP": {
+      "beam": 0.0,
+      "column": 0.0,
+      "window": 0.01702870157655923,
+      "door": 0.02148888449281049,
+      "table": 0.08776833125339813,
+      "chair": 0.7051913621532093,
+      "sofa": 0.398658440325107,
+      "bookcase": 0.04740040827766886,
+      "board": 0.0
+     }
+    }
+   },
+   "dense_only": {
+    "semantic": {
+     "mIoU": 0.35087153434668783,
+     "mAcc": 0.4879779464150421
+    },
+    "inst9_p_x_iou": {
+     "AP": 0.14485945743074793,
+     "AP50": 0.17966779784987497,
+     "AP25": 0.22846101905969218
+    },
+    "inst9_p": {
+     "AP": 0.09562159650082608,
+     "AP50": 0.12325174483246205,
+     "AP25": 0.15281452672490237
+    }
+   },
+   "token_only": {
+    "semantic": {
+     "mIoU": 0.3920972381358406,
+     "mAcc": 0.5210002505185014
+    },
+    "inst9_p_x_iou": {
+     "AP": 0.22010750319179445,
+     "AP50": 0.31341920330207257,
+     "AP25": 0.38289348631952813
+    },
+    "inst9_p": {
+     "AP": 0.12931078756731926,
+     "AP50": 0.22503628970689535,
+     "AP25": 0.30734604248124636
+    }
+   }
+  }
+ }
+}

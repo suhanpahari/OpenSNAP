@@ -515,7 +515,7 @@ _Source: building_s3dis_area5.json, building_latency.json_
 
 ### C1 · Replica, OVI-MAP protocol (8 scenes, 51 classes, GT mesh vertices)
 
-_Source: compare/replica_ovimap_c2f.json (ours); OVI-MAP Table 3 (published)_
+_Source: compare/replica_lift.json (ours); OVI-MAP Table 3 (published)_
 
 | method | mIoU | mAcc | AP25 | AP50 | AP |
 |---|---|---|---|---|---|
@@ -537,6 +537,23 @@ _Source: compare/replica_ovimap_c2f.json (ours); OVI-MAP Table 3 (published)_
 |   segmenter token only [c2f] | 16.2 | 23.6 | 15.0 | 13.7 | 11.8 |
 | **OpenSNAP + image column** [c2f] | 19.9 | 29.9 | 22.3 | 19.1 | 16.1 |
 |   image column only [c2f] | 22.1 | 37.9 | 27.1 | 21.8 | 16.9 |
+| OpenSNAP (XYZ only) [union_l4, dev-selected] | 18.4 | 28.1 | 17.5 | 15.7 | 13.6 |
+|   dense 3D expert only [union_l4, dev-selected] | 18.2 | 27.4 | 16.3 | 15.2 | 13.1 |
+|   segmenter token only [union_l4, dev-selected] | 16.0 | 23.1 | 15.2 | 14.1 | 11.8 |
+| **OpenSNAP + image column** [union_l4, dev-selected] | 19.7 | 29.8 | 22.2 | 19.9 | 16.8 |
+|   image column only [union_l4, dev-selected] | 23.4 | 38.6 | 28.5 | 22.5 | 17.7 |
+| OpenSNAP (XYZ only) [union_l4 + lifted 2D] | 18.4 | 27.9 | 15.4 | 12.5 | 11.0 |
+|   dense 3D expert only [union_l4 + lifted 2D] | 18.0 | 27.1 | 12.6 | 11.6 | 8.9 |
+|   segmenter token only [union_l4 + lifted 2D] | 17.3 | 25.5 | 15.1 | 13.5 | 11.7 |
+| **OpenSNAP + image column** [union_l4 + lifted 2D] | 19.6 | 29.6 | 22.7 | 17.9 | 13.1 |
+|   image column only [union_l4 + lifted 2D] | 21.6 | 38.5 | 26.3 | 19.7 | 13.6 |
+| OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay | 18.3 | 27.9 | 17.5 | 15.7 | 13.5 |
+| OpenSNAP (XYZ only) [union_l4], labelling setting chosen on dev scenes | 17.5 | 27.0 | 18.0 | 16.0 | 13.8 |
+| **OpenSNAP + image column** [union_l4], dev-chosen setting, image weight by leave-one-scene-out | 29.8 | 40.3 | 33.1 | 27.3 | 21.2 |
+| **OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4] | 25.5 | 35.5 | 29.5 | 23.4 | 18.3 |
+|   same, setting chosen in 7/8 folds applied to all scenes (not a held-out number) | 27.1 | 37.5 | 33.4 | 26.6 | 20.2 |
+| **OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4, dev-chosen setting] | 29.0 | 41.5 | 35.0 | 28.1 | 21.9 |
+|   same, setting chosen in 4/8 folds applied to all scenes (not a held-out number) | 29.4 | 41.9 | 35.0 | 28.1 | 21.9 |
 | **OpenSNAP + image column, fused, weights by leave-one-scene-out CV** [c2f] | 23.4 | 32.5 | 24.4 | 18.8 | 14.9 |
 
 Published rows are copied from OVI-MAP (CVPR 2026) Table 3. Ours: same scenes, classes and per-vertex scoring (classes without GT vertices skipped; instance AP with the ScanNet evaluator, predictions < 100 vertices dropped).
@@ -560,6 +577,8 @@ _Source: compare/scannet18.json (ours); OVI-MAP Table 3 (published)_
 | OpenSNAP (XYZ only) (15 val scenes) | 15.6 | 22.2 | 19.7 | 16.8 | 11.5 |
 |   dense 3D expert only (15 val scenes) | 11.0 | 17.3 | 11.9 | 11.1 | 7.7 |
 |   segmenter token only (15 val scenes) | 15.4 | 23.4 | 17.8 | 15.5 | 11.2 |
+| OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay | 14.4 | 20.7 | 18.3 | 13.6 | 8.9 |
+| OpenSNAP (XYZ only) [union_l4], labelling setting chosen on dev scenes | 15.0 | 21.3 | 18.2 | 13.5 | 8.8 |
 
 Published rows are copied from OVI-MAP (CVPR 2026) Table 3. Ours: same scenes, classes and per-vertex scoring (classes without GT vertices skipped; instance AP with the ScanNet evaluator, predictions < 100 vertices dropped).
 
@@ -799,3 +818,54 @@ _Source: compare/agg_*.json_
 | replica | phrase embedding 'a near a b' (OpenMask3D/Search3D/OVI-MAP style) | 18.0 | 21.7 | 0.065 |
 
 Same stored objects and evidence columns for every row; ground truth = GT objects of class a with a GT object of class b within 0.5 m.
+
+### C14 · Replica open-vocabulary 3D semantic segmentation, 51 classes, 8 scenes: published landscape
+
+_Source: papers cited per row; ours from compare/*.json_
+
+| source | method | input | mIoU | mAcc |
+|---|---|---|---|---|
+| OVO-SLAM Tab. II | OpenScene (distilled) | mesh | 14.8 | 23.0 |
+| OVO-SLAM Tab. II | OpenScene (ensemble) | mesh + RGB | 15.9 | 24.6 |
+| OVO-SLAM Tab. II | OpenNeRF | RGB-D + GT poses | 20.4 | 31.7 |
+| OVO-SLAM Tab. II | HOV-SG | RGB-D + GT poses | 22.5 | 34.2 |
+| OVO-SLAM Tab. II | Open3DIS (SigLIP) | mesh + RGB | 25.6 | 38.7 |
+| OVO-SLAM Tab. II | ConceptGraphs | RGB-D + GT poses | 16.7 | 33.7 |
+| OVO-SLAM Tab. II | Open-Fusion | RGB-D + GT poses | 20.5 | 34.8 |
+| OVO-SLAM Tab. II | OVO-mapping | RGB-D + GT poses | 27.0 | 39.1 |
+| Ov3R Tab. 3 | O2V-mapping | RGB-D + GT poses | 7.8 | 13.9 |
+| Ov3R Tab. 3 | Ov3R | RGB + GT geometry | 31.9 | 42.3 |
+| Ov3R Tab. 3 | Ov3R (own reconstruction) | RGB only | 30.4 | 41.2 |
+| VOIM Tab. I | VOIM | RGB-D + GT poses | 28.6 | – |
+| VOIM Tab. I | VOIM (monocular) | RGB only | 27.8 | – |
+| OVI-MAP Tab. 3 | OVI-MAP | RGB-D + GT poses | 26.5 | 32.2 |
+| IRIS-SLAM Tab. II (own re-runs) | OVO-SLAM | RGB-D + GT poses | 29.9 | 43.6 |
+| IRIS-SLAM Tab. II (own re-runs) | Omni-Map | RGB-D + GT poses | 29.1 | 44.5 |
+| IRIS-SLAM Tab. II (own re-runs) | IRIS-mapping | RGB-D + GT poses | 31.1 | 40.6 |
+| IRIS-SLAM Tab. II (own re-runs) | LangSplat | RGB-D + GT poses | 10.0 | 22.9 |
+| IRIS-SLAM Tab. II (own re-runs) | GraspSplats | RGB-D + GT poses | 10.4 | 23.8 |
+| IRIS-SLAM Tab. II (own re-runs) | OpenGaussian | RGB-D + GT poses | 6.8 | 16.7 |
+| IRIS-SLAM Tab. II (own re-runs) | ConceptFusion | RGB-D + GT poses | 4.8 | 19.3 |
+| ours | OpenSNAP (XYZ only) [c2f] | mesh (+ RGB for image rows) | 18.7 | 28.5 |
+| ours | **OpenSNAP + image column** [c2f] | mesh (+ RGB for image rows) | 19.9 | 29.9 |
+| ours |   image column only [c2f] | mesh (+ RGB for image rows) | 22.1 | 37.9 |
+| ours | OpenSNAP (XYZ only) [union_l4 + lifted 2D proposals] | mesh (+ RGB for image rows) | 18.4 | 27.9 |
+| ours | **OpenSNAP + image column** [union_l4 + lifted 2D proposals] | mesh (+ RGB for image rows) | 19.6 | 29.6 |
+| ours |   image column only [union_l4 + lifted 2D proposals] | mesh (+ RGB for image rows) | 21.6 | 38.5 |
+| ours | **OpenSNAP + image column** [union_l4], dev-chosen setting, image weight by leave-one-scene-out | mesh + RGB | 29.8 | 40.3 |
+| ours | **OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4] | mesh + RGB | 25.5 | 35.5 |
+| ours | **OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4, dev-chosen setting] | mesh + RGB | 29.0 | 41.5 |
+
+All rows: Replica NICE-SLAM scenes, 51 classes, per-vertex scoring of the GT mesh. Groups differ in small details (OVO's k-NN vote vs OVI-MAP's mapping, frame subsampling); IRIS-SLAM re-ran its baselines and gets higher numbers for OVO than OVO itself, so compare within a group. Our points are the GT mesh vertices.
+
+### C15 · ScanNet200 semantic segmentation, all 312 val scenes
+
+_Source: OVO-SLAM Tab. III; compare/scannet200_val.json_
+
+| source | method | mIoU | mAcc |
+|---|---|---|---|
+| OVO-SLAM Tab. III (FVS) | Open3DIS (SigLIP) | 9.4 | 17.0 |
+| OVO-SLAM Tab. III (FVS) | OpenScene (ensemble) | 11.6 | 22.8 |
+| OVO-SLAM Tab. III (FVS) | OVO-mapping | 17.4 | 35.9 |
+| ours | OpenSNAP (XYZ only) | 10.4 | 16.5 |
+| ours | OpenSNAP (XYZ only), union_l4, labelling setting chosen on dev scenes | 11.0 | 16.7 |

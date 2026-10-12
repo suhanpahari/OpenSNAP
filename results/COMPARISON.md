@@ -36,6 +36,10 @@ We added four things to the method:
 We measured calibration (ECE, Brier, reliability) and replaced the 4-word background vocabulary with the segmenter's
 234-word training vocabulary. That one change cuts ECE 3–9× on all five datasets.
 
+On Replica, under OVI-MAP's protocol and with settings chosen without the test scenes, OpenSNAP with the image column
+with lifted 2D proposals reaches 29.0 mIoU / 41.5 mAcc / 35.0 AP25 / 28.1 AP50 / 21.9 AP. That beats OVI-MAP
+(26.5 / 32.2 / 34.5 / 21.2 / 8.5) on all five metrics.
+
 We also ran the reviewer's sensitivity, workload, partition, attribute (OpenScan) and multi-capture video studies. Two
 earlier claims were wrong and are corrected (§9).
 
@@ -93,10 +97,35 @@ test bed for building-scale joins (C4).
 | OpenSNAP, XYZ only [c2f] | 18.7 | 28.5 | 17.3 | 15.1 | 12.9 |
 | OpenSNAP, image column only [c2f] | 22.1 | **37.9** | 27.1 | **21.8** | **16.9** |
 | OpenSNAP, image + 3D fused, LOSO-CV weights [c2f] | 23.4 | 32.5 | 24.4 | 18.8 | 14.9 |
+| OpenSNAP, image + 3D fused, lifted 2D proposals, LOSO [union_l4] | 25.5 | 35.5 | 29.5 | 23.4 | 18.3 |
+| OpenSNAP, image + 3D fused, dev-chosen setting, LOSO image weight [union_l4] | **29.8** | 40.3 | 33.1 | 27.3 | 21.2 |
+| **OpenSNAP, image + 3D fused, lifted 2D proposals, dev-chosen setting, LOSO [union_l4]** | 29.0 | **41.5** | **35.0** | **28.1** | **21.9** |
 
-- With the same SigLIP encoder, OpenSNAP's stored objects give **2× OVI-MAP's strict AP** (16.9 vs 8.5), higher AP50
-  (21.8 vs 21.2) and higher mAcc (37.9 vs 32.2).
-- OVI-MAP is still ahead on mIoU (26.5) and AP25 (34.5). The reason is coverage: our relation holds 58–70 objects per
+How the last row is chosen, with nothing tuned on the test scenes:
+- **Proposals (union_l4):** chosen on the development scenes (S3DIS Area 1 and 30 ScanNet *train* scenes).
+- **Labelling setting:** chosen on the same development scenes: α = 0.7, temperature ×2, β = 0, confidence √p·s
+  (`scripts/tune_dev.py`, `results/compare/tuned.json`). No development scene has images.
+- **Image weight:** chosen by leave-one-scene-out. All 8 folds picked 0.75, so the held-out number equals the
+  all-scene number.
+- **Lifted 2D proposals (last row):** SAM masks of the posed frames are projected onto the scan and merged into 3D
+  segments (`opensnap/lift2d.py`). Their confidence multiplier and γ are also chosen by leave-one-scene-out (8 folds:
+  image weight 0.75 every time, multiplier 0.25 in 6/8, γ = 1 in 6/8).
+- **Precision note:** these rows are rescored from saved outputs stored in fp16. Rescoring the default setting this
+  way reproduces the online run's masks and labels exactly, with AP within +0.2.
+
+- With the same SigLIP encoder and settings chosen without the test scenes, OpenSNAP with lifted 2D proposals **beats
+  OVI-MAP on all five metrics**:
+  - mIoU 29.0 vs 26.5;
+  - mAcc 41.5 vs 32.2;
+  - AP25 35.0 vs 34.5;
+  - AP50 28.1 vs 21.2;
+  - strict AP 21.9 vs 8.5, about 2.6×.
+- Without lifted proposals: 29.8 mIoU, but AP25 33.1 is below OVI-MAP's.
+- In the wider Replica landscape (C14), 29.0–29.8 mIoU is above OVO-mapping (27.0), VOIM (28.6) and OVI-MAP (26.5). It is
+  below Ov3R (31.9) and IRIS-mapping (31.1, measured in IRIS-SLAM's own re-runs).
+- Why the softer temperature matters: the dev-chosen temperature ×2 keeps the 3D experts from overriding the image
+  column. With the old setting, the fused row is 23.4 mIoU.
+- Before the image column was added (earlier rows), OVI-MAP was ahead on mIoU (26.5) and AP25 (34.5). The reason is coverage: our relation holds 58–70 objects per
   scene, and large or unsegmented surfaces fall back to point-level evidence. OVI-MAP's instance map covers everything it
   observed.
 - **Even XYZ-only OpenSNAP beats both online systems on strict AP** (12.9 vs 8.5 / 9.1): the promptable segmenter's masks
@@ -114,6 +143,7 @@ test bed for building-scale joins (C4).
 | OpenScene (published) | 10.3 | 17.3 | – | – | – |
 | OpenSNAP, XYZ only | 14.4 | 20.4 | 17.6 | 14.7 | **9.8** |
 | OpenSNAP, XYZ only, the 15 val scenes | 15.6 | 22.2 | 19.7 | 16.8 | 11.5 |
+| OpenSNAP, XYZ only [union_l4], dev-chosen labelling setting | 15.0 | 21.3 | 18.2 | 13.5 | 8.8 |
 
 - OpenSNAP **beats OVI-MAP on strict AP without any image** (9.8 vs 7.2) and is close on AP50 (14.7 vs 15.7).
 - Caveats:
@@ -199,6 +229,28 @@ aspect (raw attribute text as the query). ScanNet instance AP per aspect, and th
   - if a building has no room layout at all, a layout-free grid with halo (T = 4–8 m, h ≥ d) is exact for NEAR at 2–4×
     the join cells.
 - Level + halo trades 1–7% of NEAR recall (objects across levels, e.g. on stairs) for floor-correct vertical semantics.
+
+---
+
+## 4b. Qualitative comparison — `assets/compare/relational_priors.jpg`
+
+**Layout:** GT | Ours | OpenMask3D* | Search3D* | OVI-MAP*, on Replica, using relational queries.
+
+**Suggested caption:** *Relational queries on Replica. Ours evaluates `IS(a) AND NEAR(IS(b), 0.5)` over the stored object
+relation and returns the target (red) with the witness that satisfied NEAR (blue). The three prior methods answer by
+embedding the phrase "a near a b" and returning the most similar object. Each one's query interface is emulated (\*) on
+the same stored objects with its published image encoder: CLIP ViT-L/14@336 crops (OpenMask3D), SigLIP so400m crops
+(Search3D) and SigLIP-L/16-384 view-selected crops (OVI-MAP). Over all 40 measured relational queries on Replica, ours is
+correct where all three priors are wrong on 5, and a prior is correct where ours is wrong on 3.*
+
+**How the rows were picked:** from those 5, the three where the target is legible at figure scale. The other two involve
+small objects (a table and a vase in room2).
+
+**Emulation caveat:** the priors' outputs are emulated, not produced by running their code (the user chose not to
+install it). They share our masks, so the figure isolates the *query semantics*, not mask quality.
+
+**Extra figure,** `assets/compare/relational_queries.jpg`: the same idea on Replica and S3DIS, comparing against
+phrase-embedding retrieval over our own 3D evidence. Its rows win in at least 4 of 5 seeds.
 
 ---
 
@@ -380,8 +432,12 @@ removes the loss exactly, and level scoping keeps vertical predicates correct (�
    - OpenScene's Matterport model is distilled on Matterport *train* without labels, and 11 of the 16 HouseLayout3D
      buildings are Matterport train scans. The partition study (C4) compares joins over the same relation, so it is
      unaffected.
-3. **Selections without the test set.** The ScanNet dense features and the proposal mode were picked on 30 ScanNet *train*
-   scenes. The image-fusion weights come from leave-one-scene-out CV (C1); C1b is shown only as sensitivity.
+3. **Selections without the test set.**
+   - Chosen on the development scenes (S3DIS Area 1 and 30 ScanNet *train* scenes): the ScanNet dense features, the
+     proposal mode and the labelling setting (α, temperature, β, confidence form).
+   - The image weight, and for lifted 2D proposals their confidence multiplier and γ, have no image-bearing
+     development set. They are chosen by leave-one-scene-out on Replica.
+   - C1b is shown only as sensitivity.
 4. **Evaluator.** `opensnap/bench.py` equals OVI-MAP's `eval_utils.evaluate` to five decimals (AP 0.11164 / 0.19113 /
    0.23952 on the same predictions).
 5. **OVI-MAP's ScanNet list** includes three ScanNet train scenes. C2 also reports the 15 val scenes.
@@ -392,7 +448,12 @@ removes the loss exactly, and level scoping keeps vertical predicates correct (�
 
 - **Long-tail naming without images is weak** (ScanNet200 common / tail about 2 AP). The image column helps where frames
   exist.
-- **Image-fusion weights are sensitive to α** and are not learned. A learned per-object gate is future work.
+- **Image-fusion weights are sensitive to α and the temperature** and are not learned. With the old setting the fused
+  Replica row is 23.4 mIoU; with the dev-chosen one it is 29.8. A learned per-object gate is future work.
+- **The dev-chosen labelling setting helps semantics but not instances without images:**
+  - mIoU: ScanNet-18 14.4 → 15.0, ScanNet200 10.4 → 11.0;
+  - AP: unchanged on both.
+  On ScanNet-18, union_l4 proposals give lower AP than fps (8.9 vs 9.8), so C2 keeps fps as its main row.
 - **RGB-only metric scale** (20–42% error) is the main failure of phone-video ingest. An IMU or a known object size would
   fix it.
 - **Coverage.** Proposal-based relations miss large structural surfaces and some small objects (AP25 below OVI-MAP).
@@ -409,6 +470,7 @@ removes the loss exactly, and level scoping keeps vertical predicates correct (�
    - Under the closed-set protocol (C1), XYZ-only OpenSNAP gets 12.9 / 15.1 / 17.3 (AP / AP50 / AP25), *below* OpenMask3D's
      published 13.1 / 18.4 / 24.2.
    - With the image column it gets 16.9 / 21.8 / 27.1, *above* them.
+   - With the dev-chosen setting, lifted 2D proposals and leave-one-scene-out image weight, it gets 21.9 / 28.1 / 35.0.
    - The query-workload numbers (T4b) stay valid as *query* accuracy, not as a comparison with OpenMask3D.
 2. *"Dense-collapse guard: fires only on the phone video"* (T18, 13 scenes) does not hold at scale. It fires on 4.5–5.9%
    of clean scans and misses the partial collapse on the 8 RGB-only Replica videos (C11).

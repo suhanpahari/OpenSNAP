@@ -414,7 +414,7 @@ def f1(x):
 
 
 def compare():
-    for names, title, ref in ((("compare/replica_ovimap_fps.json", "compare/replica_ovimap_c2f.json"),
+    for names, title, ref in ((("compare/replica_ovimap_fps.json", "compare/replica_ovimap_c2f.json", "compare/replica_ul4.json", "compare/replica_lift.json"),
                                "C1 · Replica, OVI-MAP protocol (8 scenes, 51 classes, GT mesh vertices)", OVIMAP_REPLICA),
                               (("compare/scannet18.json",), "C2 · ScanNet, OVI-MAP protocol (18 scenes, ScanNet200 labels)", OVIMAP_SCANNET)):
         if not load(names[0]):
@@ -426,12 +426,36 @@ def compare():
             if not d:
                 continue
             key = "48" if "replica" in name else "200"
-            prop = " [fps]" if "fps" in name else (" [c2f]" if "c2f" in name else "")
+            prop = {"fps": " [fps]", "c2f": " [c2f]", "ul4": " [union_l4, dev-selected]", "lift": " [union_l4 + lifted 2D]"}.get(
+                next((k for k in ("fps", "c2f", "ul4", "lift") if k in name), ""), "")
             for split in d["results"]:
                 for v, r in d["results"][split].items():
                     ins = r[f"inst{key}_p_x_iou"]
                     tag = prop + ("" if split == "all" else " (15 val scenes)")
                     rows.append([NAMES.get(v, v) + tag, pct(r["semantic"]["mIoU"]), pct(r["semantic"]["mAcc"]), pct(ins["AP25"]), pct(ins["AP50"]), pct(ins["AP"])])
+        tu = load("compare/tuned.json")
+        bench_name = "replica" if "replica" in names[0] else "scannet18"
+        if tu and bench_name in tu["test"]:
+            t = tu["test"][bench_name]
+            for k, lab in (("default", "OpenSNAP (XYZ only) [union_l4], default labelling setting, dump replay"),
+                           ("dev-chosen", "OpenSNAP (XYZ only) [union_l4], labelling setting chosen on dev scenes"),
+                           ("dev-chosen + image (LOSO w_img)", "**OpenSNAP + image column** [union_l4], dev-chosen setting, image weight by leave-one-scene-out")):
+                if k in t:
+                    c = t[k]
+                    rows.append([lab, pct(c["mIoU"]), pct(c["mAcc"]), pct(c["AP25"]), pct(c["AP50"]), pct(c["AP"])])
+        for f, tag in (("compare/replica_lift_loso.json", ""), ("compare/replica_lift_loso_tuned.json", ", dev-chosen setting")):
+            lc = load(f) if "replica" in names[0] else None
+            if not lc:
+                continue
+            c = lc["loso_cv"]
+            rows.append([f"**OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4{tag}]", pct(c["mIoU"]), pct(c["mAcc"]),
+                         pct(c["AP25"]), pct(c["AP50"]), pct(c["AP"])])
+            from collections import Counter
+            mode = Counter(tuple(v) for v in lc["chosen"].values()).most_common(1)[0]
+            if mode[1] < 8:
+                g = lc["grid"][str(tuple(mode[0]))] if str(tuple(mode[0])) in lc["grid"] else lc["grid"][str(mode[0])]
+                rows.append([f"  same, setting chosen in {mode[1]}/8 folds applied to all scenes (not a held-out number)", pct(g["mIoU"]), pct(g["mAcc"]),
+                             pct(g["AP25"]), pct(g["AP50"]), pct(g["AP"])])
         cv = load("compare/replica_fusion_cv.json") if "replica" in names[0] else None
         if cv:
             c = cv["loso_cv"]
@@ -593,10 +617,61 @@ def compare():
               ["dataset", "query evaluation", "AP", "AP50", "ECE"], rows,
               "Same stored objects and evidence columns for every row; ground truth = GT objects of class a with a GT object of class b within 0.5 m.")
 
+REPLICA51 = [  # (source, method, input, mIoU, mAcc)
+    ("OVO-SLAM Tab. II", "OpenScene (distilled)", "mesh", 14.8, 23.0), ("OVO-SLAM Tab. II", "OpenScene (ensemble)", "mesh + RGB", 15.9, 24.6),
+    ("OVO-SLAM Tab. II", "OpenNeRF", "RGB-D + GT poses", 20.4, 31.7), ("OVO-SLAM Tab. II", "HOV-SG", "RGB-D + GT poses", 22.5, 34.2),
+    ("OVO-SLAM Tab. II", "Open3DIS (SigLIP)", "mesh + RGB", 25.6, 38.7), ("OVO-SLAM Tab. II", "ConceptGraphs", "RGB-D + GT poses", 16.7, 33.7),
+    ("OVO-SLAM Tab. II", "Open-Fusion", "RGB-D + GT poses", 20.5, 34.8), ("OVO-SLAM Tab. II", "OVO-mapping", "RGB-D + GT poses", 27.0, 39.1),
+    ("Ov3R Tab. 3", "O2V-mapping", "RGB-D + GT poses", 7.8, 13.9), ("Ov3R Tab. 3", "Ov3R", "RGB + GT geometry", 31.9, 42.3),
+    ("Ov3R Tab. 3", "Ov3R (own reconstruction)", "RGB only", 30.4, 41.2),
+    ("VOIM Tab. I", "VOIM", "RGB-D + GT poses", 28.6, None), ("VOIM Tab. I", "VOIM (monocular)", "RGB only", 27.8, None),
+    ("OVI-MAP Tab. 3", "OVI-MAP", "RGB-D + GT poses", 26.5, 32.2),
+    ("IRIS-SLAM Tab. II (own re-runs)", "OVO-SLAM", "RGB-D + GT poses", 29.93, 43.60), ("IRIS-SLAM Tab. II (own re-runs)", "Omni-Map", "RGB-D + GT poses", 29.06, 44.54),
+    ("IRIS-SLAM Tab. II (own re-runs)", "IRIS-mapping", "RGB-D + GT poses", 31.15, 40.63), ("IRIS-SLAM Tab. II (own re-runs)", "LangSplat", "RGB-D + GT poses", 10.00, 22.93),
+    ("IRIS-SLAM Tab. II (own re-runs)", "GraspSplats", "RGB-D + GT poses", 10.42, 23.79), ("IRIS-SLAM Tab. II (own re-runs)", "OpenGaussian", "RGB-D + GT poses", 6.82, 16.66),
+    ("IRIS-SLAM Tab. II (own re-runs)", "ConceptFusion", "RGB-D + GT poses", 4.75, 19.29)]
+SCANNET200_312 = [("OVO-SLAM Tab. III (FVS)", "Open3DIS (SigLIP)", 9.4, 17.0), ("OVO-SLAM Tab. III (FVS)", "OpenScene (ensemble)", 11.6, 22.8),
+                  ("OVO-SLAM Tab. III (FVS)", "OVO-mapping", 17.4, 35.9)]
+
+
+def landscape():
+    rows = [[src, m, inp, f1(a), f1(b)] for src, m, inp, a, b in REPLICA51]
+    for name, tag in (("compare/replica_ovimap_c2f.json", "c2f"), ("compare/replica_lift.json", "union_l4 + lifted 2D proposals")):
+        d = load(name)
+        if d:
+            for v in ("opensnap", "opensnap+image", "image_only"):
+                r = d["results"]["all"].get(v)
+                if r:
+                    rows.append(["ours", f"{NAMES.get(v, v)} [{tag}]", "mesh (+ RGB for image rows)", pct(r["semantic"]["mIoU"]), pct(r["semantic"]["mAcc"])])
+    tu = load("compare/tuned.json")
+    if tu and "replica" in tu["test"]:
+        c = tu["test"]["replica"]["dev-chosen + image (LOSO w_img)"]
+        rows.append(["ours", "**OpenSNAP + image column** [union_l4], dev-chosen setting, image weight by leave-one-scene-out", "mesh + RGB",
+                     pct(c["mIoU"]), pct(c["mAcc"])])
+    for f, tag in (("compare/replica_lift_loso.json", ""), ("compare/replica_lift_loso_tuned.json", ", dev-chosen setting")):
+        lc = load(f)
+        if lc:
+            rows.append(["ours", f"**OpenSNAP + image column + lifted 2D proposals, leave-one-scene-out** [union_l4{tag}]", "mesh + RGB",
+                         pct(lc["loso_cv"]["mIoU"]), pct(lc["loso_cv"]["mAcc"])])
+    table("C14 · Replica open-vocabulary 3D semantic segmentation, 51 classes, 8 scenes: published landscape", "papers cited per row; ours from compare/*.json",
+          ["source", "method", "input", "mIoU", "mAcc"], rows,
+          "All rows: Replica NICE-SLAM scenes, 51 classes, per-vertex scoring of the GT mesh. Groups differ in small details "
+          "(OVO's k-NN vote vs OVI-MAP's mapping, frame subsampling); IRIS-SLAM re-ran its baselines and gets higher numbers "
+          "for OVO than OVO itself, so compare within a group. Our points are the GT mesh vertices.")
+    d = load("compare/scannet200_val.json")
+    rows = [[src, m, f1(a), f1(b)] for src, m, a, b in SCANNET200_312]
+    if d:
+        r = d["results"]["all"]["opensnap"]["semantic"]
+        rows.append(["ours", "OpenSNAP (XYZ only)", pct(r["mIoU"]), pct(r["mAcc"])])
+    t = load("compare/scannet200_tuned.json")
+    if t:
+        rows.append(["ours", "OpenSNAP (XYZ only), union_l4, labelling setting chosen on dev scenes", pct(t["chosen"]["mIoU"]), pct(t["chosen"]["mAcc"])])
+    table("C15 · ScanNet200 semantic segmentation, all 312 val scenes", "OVO-SLAM Tab. III; compare/scannet200_val.json", ["source", "method", "mIoU", "mAcc"], rows)
+
 
 if __name__ == "__main__":
     out.append("# OpenSNAP result tables\n\nGenerated by `scripts/make_tables.py` from the JSON files in `results/`. Do not edit by hand.\n")
-    for f in (semseg, queries, refiner, interactive, naming, text_prompts, text_s3dis, single_click, proposals, systems, sweeps, building, compare):
+    for f in (semseg, queries, refiner, interactive, naming, text_prompts, text_s3dis, single_click, proposals, systems, sweeps, building, compare, landscape):
         f()
     open(os.path.join(R, "TABLES.md"), "w").write("\n".join(out))
     print("\n".join(out))
