@@ -1,0 +1,1 @@
+subject=chair reference=table cracked=radiator provenance=query-snap:radiator
